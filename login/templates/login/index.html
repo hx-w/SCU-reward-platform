@@ -1,7 +1,11 @@
 {#login/templates/login/index.html#}
 
 {% extends 'login/base.html' %}
-{% block title %}主页{% endblock %}
+{% block title %}Index{% endblock %}
 {% block content %}
-    <h1>欢迎回来！</h1>
+    {% if request.session.is_login %}
+    <h1>Hello,{{ request.session.user_name }} Welcome</h1>
+    {% else %}
+    <h1>你尚未登录，只能访问公开内容！</h1>
+    {% endif %}
 {% endblock %}
