@@ -2,12 +2,12 @@
 
 from django.conf.urls import url
 from django.contrib import admin
+from django.urls import path
 from login import views
 
 urlpatterns = [
-    url('admin/', admin.site.urls),
-    url('index/', views.index),
-    url('login/', views.login),
-    url('register/', views.register),
-    url('logout/', views.logout),
+    path('index/', views.index),
+    path('login/', views.login),
+    path('register/', views.register),
+    path('logout/', views.logout),
 ]
