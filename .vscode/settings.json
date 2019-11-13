@@ -1,0 +1,11 @@
+{
+    "python.pythonPath": "D:/Python/python",
+    "python.linting.pylintPath": "D:/Python/Scripts/pylint",
+    "python.formatting.provider": "yapf",
+    "python.linting.enabled": false,
+    "python.linting.flake8Enabled": true,
+    "files.associations": {
+        "xutility": "cpp"
+    },
+    "editor.fontFamily": "Consolas"
+}
