@@ -1,7 +1,9 @@
 {% extends 'login/base.html' %}
 {% load staticfiles %}
 {% block title %}登录{% endblock %}
-{% block css %}<link href="{% static 'css/login.css' %}" rel="stylesheet"/>{% endblock %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
 
 
 {% block content %}
@@ -14,14 +16,19 @@
               {% endif %}
               {% csrf_token %}
               <h2 class="text-center">欢迎登录</h2>
-
               <div class="form-group">
-                {{ login_form.username.label_tag }}
-                {{ login_form.username}}
+                  {{ login_form.username.label_tag }}
+                  {{ login_form.username}}
               </div>
               <div class="form-group">
-                {{ login_form.password.label_tag }}
-                {{ login_form.password }}
+                  {{ login_form.password.label_tag }}
+                  {{ login_form.password }}
+              </div>
+
+              <div class="form-group">
+                  {{ login_form.captcha.errors }}
+                  {{ login_form.captcha.label_tag }}
+                  {{ login_form.captcha }}
               </div>
 
               <button type="reset" class="btn btn-default pull-left">重置</button>

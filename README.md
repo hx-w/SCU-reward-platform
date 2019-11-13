@@ -8,6 +8,7 @@
 
 - Python 3.*
 - Django
+- captcha(验证码功能)
 
 `python -m django --version`判断是否安装成功
 

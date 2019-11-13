@@ -1,4 +1,5 @@
 from django import forms
+from captcha.fields import CaptchaField
 
 class UserForm(forms.Form):
     username = forms.CharField(
@@ -10,4 +11,8 @@ class UserForm(forms.Form):
         label="密码", 
         max_length=256, 
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    captcha = CaptchaField(
+        label='验证码'
+       # widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
