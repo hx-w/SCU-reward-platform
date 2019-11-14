@@ -25,7 +25,7 @@ SECRET_KEY = 're#r_yuaxl3m#sth#cu%d&#nv$rwf(w@s$6yrmmo16$6bpr$mh'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -82,7 +82,7 @@ DATABASES = {
         'NAME': 'db.sqlite3',        #数据库名字
         'USER': 'root',          #账号
         'PASSWORD': '123456',      #密码
-        'HOST': '127.0.0.1',    #IP
+        'HOST': "127.0.0.1",           #IP
         'PORT': '3306',                   #端口
     }
 }
@@ -120,6 +120,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = '17361019875@163.com'
+EMAIL_HOST_PASSWORD = 'Hexiang811021'
+
+# 注册有效期天数
+CONFIRM_DAYS = 7
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

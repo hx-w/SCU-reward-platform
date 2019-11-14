@@ -34,7 +34,7 @@ class RegisterForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     password1 = forms.CharField(
-        label="密码", 
+        label="密码(六位以上)", 
         max_length=256, 
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
     )
@@ -42,6 +42,11 @@ class RegisterForm(forms.Form):
         label="确认密码", 
         max_length=256, 
         widget=forms.PasswordInput(attrs={'class': 'form-control'})
+    )
+    phone = forms.CharField(
+        label="手机号码", 
+        max_length=256, 
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     email = forms.EmailField(
         label="邮箱地址", 
