@@ -42,7 +42,7 @@ def send_email(email, code):
 
 def login(request):
     if request.session.get('is_login',None):
-        return redirect('')
+        return redirect('/')
 
     if request.method == "POST":
         login_form = UserForm(request.POST)
@@ -59,7 +59,7 @@ def login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
-                    return redirect('')
+                    return redirect('/')
                 else:
                     message = "密码不正确！"
             except:
@@ -72,7 +72,7 @@ def login(request):
 def register(request):
     if request.session.get('is_login', None):
         # 登录状态不允许注册。你可以修改这条原则！
-        return redirect("")
+        return redirect("/")
 
     if request.method == "POST":
         register_form = RegisterForm(request.POST)
@@ -127,13 +127,13 @@ def register(request):
 def logout(request):
     if not request.session.get('is_login', None):
         # 如果本来就未登录，也就没有登出一说
-        return redirect("")
+        return redirect("/")
     request.session.flush()
     # 或者使用下面的方法
     # del request.session['is_login']
     # del request.session['user_id']
     # del request.session['user_name']
-    return redirect("")
+    return redirect("/")
 
 def user_confirm(request):
     code = request.GET.get('code', None)
