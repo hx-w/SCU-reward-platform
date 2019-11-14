@@ -1,0 +1,15 @@
+{#task_platform/templates/task_platform/detail.html#}
+
+{% extends 'task_platform/base.html' %}
+{% block title %}Index{% endblock %}
+{% block content %}
+    {% if request.session.is_login %}
+    <h1>{{ task.task_description }}</h1>
+    <h2>{{ task.task_detail }}</h2>
+    <p> 发起人: {{ task.publisher }} </p>
+    <p> 任务状态: {{ task.task_state }} </p>
+
+    {% else %}
+    <h1>你尚未登录，无法查看任务详细信息！</h1>
+    {% endif %}
+{% endblock %}

@@ -31,7 +31,6 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'polls.apps.PollsConfig',
     'login.apps.LoginConfig',
     'task_platform.apps.TaskPlatformConfig',
     'captcha',
