@@ -41,7 +41,6 @@ def send_email(email, code):
     msg.send()
 
 def index(request):
-    pass
     return render(request,'login/index.html')
 
 def login(request):

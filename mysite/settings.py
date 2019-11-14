@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     'polls.apps.PollsConfig',
     'login.apps.LoginConfig',
+    'task_platform.apps.TaskPlatformConfig',
     'captcha',
     'django.contrib.admin',
     'django.contrib.auth',
