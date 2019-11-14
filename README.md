@@ -15,7 +15,7 @@
 > 测试
 
 1. 在SCU-reward-platform/目录下运行`python manage.py runserver`
-2. 打开浏览器访问[http://localhost:8000/polls/](http://localhost:8000/polls)查看本地服务器是否启动成功
+2. 打开浏览器访问[http://localhost:8000/index/](http://localhost:8000/index)查看本地服务器是否启动成功
 
 >代办
 
@@ -26,3 +26,9 @@
 - [x] 增加基础数据库内容，SQLite(Django自带)
 - [ ] 图片验证码点击更新
 - [ ] 主页设计
+
+## 2019/11/14 [test]
+
+>代办
+
+- [x] 完成邮箱验证
