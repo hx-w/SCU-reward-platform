@@ -6,9 +6,14 @@ import datetime
 from django.shortcuts import render,redirect
 from django.conf import settings
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from captcha.models import CaptchaStore
+from captcha.helpers import captcha_image_url
 from .forms import UserForm, RegisterForm
 from . import models
 
+
+@csrf_exempt
 def hash_code(s, salt='hx+ltq+wzy+hxj'):# 加点盐
     h = hashlib.sha256()
     h.update((s + salt).encode())  # update方法只接收bytes类型
@@ -41,15 +46,18 @@ def send_email(email, code):
     msg.send()
 
 def login(request):
+    
+    hashkey = CaptchaStore.generate_key()
+    imgage_url = captcha_image_url(hashkey)
     if request.session.get('is_login',None):
-        return redirect('/')
+         return redirect('/')
 
     if request.method == "POST":
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
         message = "请检查填写的内容！"
         if login_form.is_valid():
-            username = login_form.cleaned_data['username']
-            password = login_form.cleaned_data['password']
             try:
                 user = models.User.objects.get(name=username)
                 if not user.has_confirmed:
@@ -63,8 +71,8 @@ def login(request):
                 else:
                     message = "密码不正确！"
             except:
-                message = "用户不存在！"
-        return render(request, 'login/login.html', locals())
+                message = "用户"+ username +"不存在" 
+            return render(request, 'login/login.html', locals())
 
     login_form = UserForm()
     return render(request, 'login/login.html', locals())
