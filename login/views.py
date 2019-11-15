@@ -46,7 +46,6 @@ def send_email(email, code):
     msg.send()
 
 def login(request):
-    
     hashkey = CaptchaStore.generate_key()
     imgage_url = captcha_image_url(hashkey)
     if request.session.get('is_login',None):
@@ -91,7 +90,7 @@ def register(request):
             password1 = register_form.cleaned_data['password1']
             password2 = register_form.cleaned_data['password2']
             phone = register_form.cleaned_data['phone']
-            email = register_form.cleaned_data['email']
+            email = student_id + '@stu.scu.edu.cn' # SCU邮箱
             sex = register_form.cleaned_data['sex']
             if password1 != password2:  # 判断两次密码是否相同
                 message = "两次输入的密码不同！"
@@ -103,22 +102,17 @@ def register(request):
                     return render(request, 'login/register.html', locals())
                 same_stu_id = models.User.objects.filter(stu_id=student_id)
                 if same_stu_id:   # 学号唯一
-                    message = '学号已被注册，请重新输入学号！'
+                    message = '学生邮箱已被注册，请重新输入邮箱！'
                     return render(request, 'login/register.html', locals())
                 same_phone = models.User.objects.filter(phone=phone)
                 if same_phone:   # 学号唯一
                     message = '手机号码已被注册，请重新输入学号！'
-                    return render(request, 'login/register.html', locals())
-                same_email_user = models.User.objects.filter(email=email)
-                if same_email_user:  # 邮箱地址唯一
-                    message = '该邮箱地址已被注册，请使用别的邮箱！'
                     return render(request, 'login/register.html', locals())
                 # 当一切都OK的情况下，创建新用户
                 new_user = models.User.objects.create()
                 new_user.name = username
                 new_user.stu_id = student_id
                 new_user.password = hash_code(password1)  # 使用加密密码
-                new_user.email = email
                 new_user.phone = phone
                 new_user.sex = sex
                 new_user.save()

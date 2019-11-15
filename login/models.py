@@ -15,7 +15,6 @@ class User(models.Model):
     password = models.CharField(max_length=256)
     stu_id = models.CharField(max_length=13, unique=True)
     phone = models.CharField(max_length=11, unique=True)
-    email = models.EmailField(unique=True)
     sex = models.CharField(max_length=32, choices=gender, default='男')
     c_time = models.DateTimeField(auto_now_add=True)
     has_confirmed = models.BooleanField(default=False)

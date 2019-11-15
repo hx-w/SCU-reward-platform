@@ -30,7 +30,7 @@ class RegisterForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     student_id = forms.CharField(
-        label="学号",
+        label="学生邮箱",
         max_length=13,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
@@ -48,10 +48,6 @@ class RegisterForm(forms.Form):
         label="手机号码", 
         max_length=256, 
         widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    email = forms.EmailField(
-        label="邮箱地址", 
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
     sex = forms.ChoiceField(
         label='性别', 
