@@ -129,6 +129,15 @@ EMAIL_HOST_PASSWORD = 'Hexiang811021'
 # 注册有效期天数
 CONFIRM_DAYS = 7
 
+# 支付宝接口设置
+ALIPAY_APPID = '2016101600701040'
+APP_NOTIFY_URL = 'http://127.0.0.1:8000/alipay/return/'
+APP_PRIVATE_KEY_PATH = './login/keys/private_2048.txt'
+ALIPAY_PUBLIC_KEY_PATH = './login/keys/alipay_key_2048.txt'
+ALIPAY_DEBUG = True
+RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
+EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 

@@ -12,4 +12,13 @@
 {% else %}
     <p>No task are available.</p>
 {% endif %}
+<body>
+    <form  action="/alipay/pay/" method="POST">
+        {% csrf_token %}
+        <input type="text" name="money">
+        <input type="submit" value="去支付" />
+    </form>
+
+<script></script>
+</body>
 {% endblock %}
