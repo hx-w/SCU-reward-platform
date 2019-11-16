@@ -12,4 +12,7 @@ def detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     context = { 'task': task }
     return render(request, 'task_platform/detail.html', context)
+
+def settings(request):
+    return render(request, 'task_platform/page-single_settings.html', locals())
     
