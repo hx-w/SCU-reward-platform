@@ -58,31 +58,11 @@
                         <input type="password"  class="form-control"  name="password" id="loginUserPassword" placeholder="你的密码" value="{{password}}">
                     </div>
                     <div class="form-group">
-                      <a href="#" class="next-captcha">
                         <label>验证码</label>
                         <img src="{{imgage_url}}" class="captcha" alt="captcha">
                         <input type="text"    class="form-control" name="captcha_1" placeholder="验证码">
-                      </a>
                       <input id="id_reg_captcha_0" name="captcha_0" type="hidden" value="{{hashkey}}">
                     </div>
-                    {% comment %} <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <div class="checkbox-group">
-                                    <input type="checkbox" id="settingsCheckBox01" name="checkbox">
-                                    <label for="settingsCheckBox01">
-                                        <span class="check"></span>
-                                        <span class="box"></span>
-                                        <span class="tt-text">Remember me</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col ml-auto text-right">
-                            <a href="#" class="tt-underline">Forgot Password</a>
-                        </div>
-                    </div> {% endcomment %}
-
                     {% if message %}
                     <div class="alert alert-warning">{{ message }}</div>
                     {% endif %}

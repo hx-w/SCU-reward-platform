@@ -74,7 +74,7 @@ def login(request):
                 else:
                     message = "密码不正确！"
             except:
-                message = "用户"+ username +"不存在" 
+                message = "用户"+ username + "不存在" 
             return render(request, 'login/login.html', locals())
 
     login_form = UserForm()
@@ -87,8 +87,8 @@ def page_login(request):
          return redirect('/')
 
     if request.method == "POST":
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
+        # username = request.POST.get('username', '')
+        # password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
         message = "请检查填写的傻逼内容！fuck"
         if login_form.is_valid():
@@ -142,7 +142,7 @@ def register(request):
                     return render(request, 'login/register.html', locals())
                 same_phone = models.User.objects.filter(phone=phone)
                 if same_phone:   # 学号唯一
-                    message = '手机号码已被注册，请重新输入学号！'
+                    message = '手机号码已被注册，请重新输入手机号码！'
                     return render(request, 'login/register.html', locals())
                 # 当一切都OK的情况下，创建新用户
                 new_user = models.User.objects.create()

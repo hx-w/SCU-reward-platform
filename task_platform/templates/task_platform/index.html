@@ -172,20 +172,7 @@
                 <!-- /tt-search -->
             </div>
 
-            {% comment %} <div class="col-auto ml-auto">
-                <div class="tt-account-btn">
-                    <a href="login/" class="btn btn-primary">Log in</a>
-                    <a href="/register/" class="btn btn-secondary">Sign up</a>
-                </div>
-            </div> {% endcomment %}
-
             {% if request.session.is_login %}
-                {% comment %} <div class="col-auto ml-auto"> {% endcomment %}
-                    {% comment %} <div class="tt-account-btn"> {% endcomment %}
-                        {% comment %} <a href="#" class="btn btn-primary" >当前在线：{{ request.session.user_name }}</a> {% endcomment %}
-                        {% comment %} <a href="/logout/" class="btn btn-secondary">登出</a> {% endcomment %}
-                    {% comment %} </div> {% endcomment %}
-                {% comment %} </div> {% endcomment %}
                 <div class="col-auto ml-auto">
                     <div class="tt-user-info d-flex ">
                         <center>
@@ -241,7 +228,6 @@
                       <use xlink:href="#icon-ava-k"></use>
                     </svg>
                 </div>
-                {% comment %} <a href="/register/">注册</a> {% endcomment %}
                 <div class="tt-col-description">
                     <h6 class="tt-title"><a href="page-single-topic.html">
                         <svg class="tt-icon">
@@ -753,7 +739,7 @@
 				</svg>
 			</span>
 			<span class="tt-icon-text">
-				Settings
+				个人信息修改
 			</span>
 			<span class="tt-icon-close">
 				<svg>
@@ -762,35 +748,39 @@
 			</span>
 		</a>
 	</div>
-	<form class="form-default">
+        {% if message %}
+        <div class="alert alert-warning">{{ message }}</div>
+        {% endif %}
+	<form class="form-default" method="POST">
+        {% csrf_token %}          
 		<div class="form-group">
 		    <label for="settingsUserName">用户名</label>
-		   <p name="name" class="form-control" id="settingsUserName" style="background-color:#ffffff;"><b>sb</b></p>
+		   <p name="name" class="form-control" id="settingsUserName" style="background-color:#ffffff;"><b>{{ request.session.user_name }}</b></p>
 		</div>
 		<div class="form-group">
 		    <label for="settingsUserEmail">邮箱</label>
-		   <p name="name" class="form-control" id="settingsUserName" style="background-color:#ffffff;"><b>sb@stu.scu.edu.cn</b></p>
+		   <p name="student_id" class="form-control" id="settingsUserName" style="background-color:#ffffff;"><b>{{ student_id }}@stu.scu.edu.cn</b></p>
 		</div>
         <div class="form-group">
 		    <label for="settingsUserLocation">手机号</label>
-		   <input type="text" name="name" class="form-control" id="settingsUserLocation" placeholder="***">
+		   <input type="text" name="new_phone" class="form-control" id="settingsUserLocation" placeholder={{ phone }}>
 		</div>
 		<div class="form-group">
-		    <label for="settingsUserPassword">密码</label>
-		   <input type="password" name="name" class="form-control" id="settingsUserPassword" placeholder="不修改密码即不填写">
+		    <label for="settingsUserPassword">新密码</label>
+		   <input type="password" name="new_password1" class="form-control" id="settingsUserPassword" placeholder="不修改密码即不填写">
 		</div>
         <div class="form-group">
 		    <label for="settingsUserPassword">确认密码</label>
-		   <input type="password" name="name" class="form-control" id="settingsUserPassword" placeholder="">
+		   <input type="password" name="new_password2" class="form-control" id="settingsUserPassword" placeholder="">
 		</div>
 		<div class="form-group">
 		    <label for="settingsUserLocation">学院</label>
-		   <input type="text" name="name" class="form-control" id="settingsUserLocation" placeholder="计算机学院">
+		   <input type="text" name="new_dept" class="form-control" id="settingsUserLocation" placeholder={{ dept }}>
 		</div>
 		<div class="form-group">
-			<a href="#" class="btn btn-secondary">Save</a>
+			<input type="submit" class="btn btn-secondary" value="Save">
 		</div>
-		</form>
+    </form>
 </div>
 <a href="page-create-topic.html" class="tt-btn-create-topic">
     <span class="tt-icon">
