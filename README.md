@@ -1,6 +1,6 @@
 # SCU-reward-platform
 
-利用Djiango和Vue进行开发的四川大学任务悬赏平台(网页)，也是数据库课程设计项目。
+利用Djiango和bootstrap进行开发的四川大学任务悬赏平台(网页)，也是数据库课程设计项目。
 
 ## 2019/11/13 [test]
 
@@ -8,14 +8,14 @@
 
 - Python 3.*
 - Django
-- captcha(验证码功能)
+- django-simple-captcha(验证码功能)
 
 `python -m django --version`判断是否安装成功
 
 > 测试
 
 1. 在SCU-reward-platform/目录下运行`python manage.py runserver`
-2. 打开浏览器访问[http://localhost:8000/index/](http://localhost:8000/index)查看本地服务器是否启动成功
+2. 打开浏览器访问[http://127.0.0.1:8000/](http://127.0.0.1:8000/)查看本地服务器是否启动成功
 
 >代办
 
@@ -32,3 +32,9 @@
 >代办
 
 - [x] 完成邮箱验证
+
+## 2019/11/16 [test]
+
+>代办
+
+- [x] 完善注册学号验证逻辑
