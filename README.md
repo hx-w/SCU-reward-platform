@@ -9,6 +9,7 @@
 - Python 3.*
 - Django
 - django-simple-captcha(验证码功能)
+- alipay-sdk-python(支付宝接口)
 
 `python -m django --version`判断是否安装成功
 
@@ -38,3 +39,5 @@
 >代办
 
 - [x] 完善注册学号验证逻辑
+- [x] 注册/登录界面重构
+- [x] 支付宝接口接入
