@@ -59,12 +59,12 @@ def login(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
-        message = "请检查填写的内容！"
+        message = "请检查填写的内容, "+username+"!"
         if login_form.is_valid():
             try:
                 user = models.User.objects.get(name=username)
                 if not user.has_confirmed:
-                    message = '用户还未经过邮件确认！'
+                    message = '请前往您的邮箱'+user.stu_id +'@stu.scu.edu.cn 进行确认！'
                     return render(request, 'login/login.html', locals())
                 if user.password == hash_code(password):  # 哈希值和数据库内的值进行比对
                     request.session['is_login'] = True
@@ -80,22 +80,54 @@ def login(request):
     login_form = UserForm()
     return render(request, 'login/login.html', locals())
 
+def page_login(request):
+    hashkey = CaptchaStore.generate_key()
+    imgage_url = captcha_image_url(hashkey)
+    if request.session.get('is_login',None):
+         return redirect('/')
+
+    if request.method == "POST":
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        login_form = UserForm(request.POST)
+        message = "请检查填写的傻逼内容！fuck"
+        if login_form.is_valid():
+            try:
+                user = models.User.objects.get(name=username)
+                if not user.has_confirmed:
+                    message = '用户还未经过邮件确认！'
+                    return render(request, 'login/page-login.html', locals())
+                if user.password == hash_code(password):  # 哈希值和数据库内的值进行比对
+                    request.session['is_login'] = True
+                    request.session['user_id'] = user.id
+                    request.session['user_name'] = user.name
+                    return redirect('/')
+                else:
+                    message = "密码不正确！"
+            except:
+                message = "用户"+ username +"不存在" 
+            return render(request, 'login/page-login.html', locals())
+    login_form = UserForm()
+    return render(request, 'login/page-login.html', locals())
+
 def register(request):
+    hashkey = CaptchaStore.generate_key()
+    imgage_url = captcha_image_url(hashkey)
     if request.session.get('is_login', None):
         # 登录状态不允许注册。你可以修改这条原则！
         return redirect("/")
 
     if request.method == "POST":
+        username = request.POST.get('username', '')
+        student_id = request.POST.get('student_id', '')
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+        phone = request.POST.get('phone', '')
         register_form = RegisterForm(request.POST)
-        message = "请检查填写的内容！"
+        message = "请检查填写的内容, "+username+"!"
         if register_form.is_valid():  # 获取数据
-            username = register_form.cleaned_data['username']
-            student_id = register_form.cleaned_data['student_id']
-            password1 = register_form.cleaned_data['password1']
-            password2 = register_form.cleaned_data['password2']
-            phone = register_form.cleaned_data['phone']
+            message = "验证码对了， 但是请检查填写的内容！"
             email = student_id + '@stu.scu.edu.cn' # SCU邮箱
-            sex = register_form.cleaned_data['sex']
             if password1 != password2:  # 判断两次密码是否相同
                 message = "两次输入的密码不同！"
                 return render(request, 'login/register.html', locals())
@@ -118,7 +150,6 @@ def register(request):
                 new_user.stu_id = student_id
                 new_user.password = hash_code(password1)  # 使用加密密码
                 new_user.phone = phone
-                new_user.sex = sex
                 new_user.save()
 
                 code = make_confirm_string(new_user)
@@ -126,9 +157,62 @@ def register(request):
                 message = '请前往邮箱确认！'
                 return render(request, 'login/confirm.html') # 跳转确认页面
                 # return redirect('/login/')  # 自动跳转到登录页面
+        else:
+            message = '可能是验证码填写错误！'        
     register_form = RegisterForm()
     return render(request, 'login/register.html', locals())
 
+def page_signup(request):
+    hashkey = CaptchaStore.generate_key()
+    imgage_url = captcha_image_url(hashkey)
+    if request.session.get('is_login', None):
+        # 登录状态不允许注册。你可以修改这条原则！
+        return redirect("/")
+
+    if request.method == "POST":
+        username = request.POST.get('username', '')
+        student_id = request.POST.get('student_id', '')
+        password1 = request.POST.get('password1', '')
+        password2 = request.POST.get('password2', '')
+        phone = request.POST.get('phone', '')
+        register_form = RegisterForm(request.POST)
+        message = "请检查填写的内容, "+username+"!"
+        if register_form.is_valid():  # 获取数据
+            message = "验证码对了， 但是请检查填写的内容！"
+            email = student_id + '@stu.scu.edu.cn' # SCU邮箱
+            if password1 != password2:  # 判断两次密码是否相同
+                message = "两次输入的密码不同！"
+                return render(request, 'login/page-signup.html', locals())
+            else:
+                same_name_user = models.User.objects.filter(name=username)
+                if same_name_user:  # 用户名唯一
+                    message = '用户已经存在，请重新选择用户名！'
+                    return render(request, 'login/page-signup.html', locals())
+                same_stu_id = models.User.objects.filter(stu_id=student_id)
+                if same_stu_id:   # 学号唯一
+                    message = '学生邮箱已被注册，请重新输入邮箱！'
+                    return render(request, 'login/page-signup.html', locals())
+                same_phone = models.User.objects.filter(phone=phone)
+                if same_phone:   # 学号唯一
+                    message = '手机号码已被注册，请重新输入学号！'
+                    return render(request, 'login/page-signup.html', locals())
+                # 当一切都OK的情况下，创建新用户
+                new_user = models.User.objects.create()
+                new_user.name = username
+                new_user.stu_id = student_id
+                new_user.password = hash_code(password1)  # 使用加密密码
+                new_user.phone = phone
+                new_user.save()
+
+                code = make_confirm_string(new_user)
+                send_email(email, code)
+                message = '请前往邮箱确认！'
+                return render(request, 'login/confirm.html') # 跳转确认页面
+                # return redirect('/login/')  # 自动跳转到登录页面
+        else:
+            message = 'something went wrong!'        
+    register_form = RegisterForm()
+    return render(request, 'login/page-signup.html', locals())
 
 def logout(request):
     if not request.session.get('is_login', None):

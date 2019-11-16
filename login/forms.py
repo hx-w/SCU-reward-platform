@@ -20,10 +20,6 @@ class UserForm(forms.Form):
 
 
 class RegisterForm(forms.Form):
-    gender = (
-        ('male', "男"),
-        ('female', "女"),
-    )
     username = forms.CharField(
         label="用户名",
         max_length=128,
@@ -49,8 +45,4 @@ class RegisterForm(forms.Form):
         max_length=256, 
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    sex = forms.ChoiceField(
-        label='性别', 
-        choices=gender
-    )
-    captcha = CaptchaField(label='验证码')
+    captcha = CaptchaField(label='')
