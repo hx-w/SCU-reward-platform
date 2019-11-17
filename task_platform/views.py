@@ -25,6 +25,8 @@ def index(request):
         if user.dept == 'None':
             dept = '暂无信息'
 
+    latest_task_list = Task.objects.order_by('-pub_time')
+
     if request.method == 'POST':
         '''
         处理settings:
@@ -67,6 +69,7 @@ def index(request):
             user.save()
             message = ''
             return render(request, 'task_platform/index.html', locals())        
+    
     return render(request, 'task_platform/index.html', locals())        
         
 
