@@ -17,22 +17,21 @@ def hash_code(s, salt='hx+ltq+wzy+hxj'):# 加点盐
 def index(request):
     # latest_task_list = Task.objects.order_by('-pub_time')[:10]
     username = request.session.get('user_name', None)
-    
-    user = User.objects.get(name=username)
-    student_id = user.stu_id
-    phone = user.phone
-    dept = user.dept
-    if user.dept == 'None':
-        dept = '暂无信息'
+    if username:
+        user = User.objects.get(name=username)
+        student_id = user.stu_id
+        phone = user.phone
+        dept = user.dept
+        if user.dept == 'None':
+            dept = '暂无信息'
 
     if request.method == 'POST':
-        print (
         '''
         处理settings:
         student_id, phone, dept
         new_password1, new_password2, new_dept, new_phone
         message
-        ''')
+        '''
         message = '格式错误'
         new_password1 = request.POST.get('new_password1', '')
         new_password2 = request.POST.get('new_password2', '')
@@ -68,17 +67,8 @@ def index(request):
             user.save()
             message = ''
             return render(request, 'task_platform/index.html', locals())        
-
-
     return render(request, 'task_platform/index.html', locals())        
         
-
-
-
-
-
-
-    return render(request, 'task_platform/index.html', locals())
 
 def detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
