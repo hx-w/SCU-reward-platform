@@ -343,7 +343,7 @@ class AlipayView(object):
         self.order_sn = callback_data.get('out_trade_no', None) #订单号
         self.trade_no = callback_data.get('trade_no', None) #支付宝订单号
         self.order_mount = float(callback_data.get('total_amount', None)) # 
-
+        self.order.save()
         # 验证签名
         self.verify = self.alipay.verify(callback_data, sign)
         if self.verify:

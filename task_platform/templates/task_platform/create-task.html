@@ -28,7 +28,7 @@
           <div class="form-group">
             <label for="inputTopicTitle">任务简述</label>
             <div class="tt-value-wrapper">
-              <input type="text" name="task_description" class="form-control" id="inputTopicTitle" placeholder="你的任务简要描述，此部分会在主页展示">
+              <input type="text" name="task_description" class="form-control" id="inputTopicTitle" placeholder="你的任务简要描述，例如：找人取快递。此部分会在主页展示">
               <span class="tt-value-input">最多50字</span>
             </div>
             <div class="tt-note">尽量简洁得描述你的任务需求，不要透露太多个人信息！</div>
@@ -101,7 +101,7 @@
             </div>
           </div>
           <div class="pt-editor">
-            <h6 class="pt-title">任务详细描述</h6>
+            <h6 class="pt-title">任务详情</h6>
             <div class="pt-row">
               <div class="col-left">
                 <ul class="pt-edit-btn">
@@ -175,29 +175,33 @@
               </div>
             </div>
             <div class="form-group">
-              <textarea name="message" class="form-control" rows="5" placeholder="Lets get started"></textarea>
+              <textarea name="task_detail" class="form-control" rows="5" placeholder="填写任务的详细内容，例如：找人在快递街取XX快递，送到XX舍。在描述中尽量不要透露过多个人信息。如必要，请通过平台私信功能与任务接受方单独联系"></textarea>
             </div>
             <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-2">
                 <div class="form-group">
-                  <label for="inputTopicTitle">Category</label>
-                  <select class="form-control">
-                    <option value="Select">Select</option>
-                    <option value="Value 01">Value 01</option>
-                    <option value="Value 02">Value 02</option>
-                  </select>
+                  <label for="inputTopicTitle">所需人数</label>
+                  <input name="people_needed" class="form-control" placeholder="最多50人">
+                  </input>
                 </div>
               </div>
-              <div class="col-md-8">
+              <div class="col-md-2">
                 <div class="form-group">
-                  <label for="inputTopicTags">Tags</label>
-                  <input type="text" name="name" class="form-control" id="inputTopicTags" placeholder="Use comma to separate tags">
+                  <label>预估任务耗时</label>
+                  <input name="expected_time_consuming" class="form-control">
+                  </input>
+                </div>
+              </div>
+              <div class="col-md-5">
+                <div class="form-group">
+                  <label for="inputTopicTags">标签</label>
+                  <input type="text" name="tag_list" class="form-control" id="inputTopicTags" placeholder="填写你认为该任务所需要的标签，多个标签用空格分隔">
                 </div>
               </div>
             </div>
             <div class="row">
               <div class="col-auto ml-md-auto">
-                <a href="#" class="btn btn-secondary btn-width-lg">Create Post</a>
+                <input type="submit" class="btn btn-secondary btn-width-lg" value="创建任务"></input>
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Task
+from .models import Task, Task_tags
 from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
 import os
 os.path.abspath('../')
 from login.models import User
@@ -17,6 +18,7 @@ def hash_code(s, salt='hx+ltq+wzy+hxj'):# 加点盐
 def index(request):
     # latest_task_list = Task.objects.order_by('-pub_time')[:10]
     username = request.session.get('user_name', None)
+    tag_list = []
     if username:
         user = User.objects.get(name=username)
         student_id = user.stu_id
@@ -26,6 +28,11 @@ def index(request):
             dept = '暂无信息'
 
     latest_task_list = Task.objects.order_by('-pub_time')
+    for task in latest_task_list:
+        print(task.id)
+        tag_list.append((task, Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
+    
+    print (tag_list)
 
     if request.method == 'POST':
         '''
@@ -79,13 +86,53 @@ def detail(request, task_id):
     return render(request, 'task_platform/detail.html', context)
 
 def create_task(request):
+    '''
+    - task_description   - expected_time_consuming
+    - task_detail        - tag_list
+    - people_needed
+    '''
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
     if request.method == "POST":
-        # 返回该任务详细信息页 /detail/
-        pass
-
+        # 返回该任务详细信息页 /detail/tk Id
+        task_description = request.POST.get('task_description')
+        task_detail = request.POST.get('task_detail')
+        people_needed = request.POST.get('people_needed')
+        expected_time_consuming = request.POST.get('expected_time_consuming')
+        tag_list = request.POST.get('tag_list')
+        task = Task.objects.create()
+        task.publisher = username
+        tags = tag_list.split(' ')
+        message = '任务创建成功'
+        for tag in tags:
+            if len(tag) > 20:
+                message = '标签：内容过长'
+                return render(request, 'task_platform.html', locals())
+        if len(task_description) > 50:
+            message = '任务简述：内容过长！'
+            return render(request, 'task_platform.html', locals())
+        if len(task_detail) > 300:
+            message = '任务详情：内容过长！'
+            return render(request, 'task_platform.html', locals())
+        if not people_needed.isdigit():
+            message = '所需人数：请输入数字'
+            return render(request, 'task_platform.html', locals())
+        if int(people_needed) > 50:
+            message = '所需人数：数字过大'
+            return render(request, 'task_platform.html', locals())
+        # 没有检查 expected_time_consuming
+        task.task_description = task_description
+        task.task_detail = task_detail
+        task.people_needed = people_needed
+        task.expected_time_consuming = Decimal(expected_time_consuming)
+        task.save()
+        for tag in tags:
+            tag_task = Task_tags.objects.create()
+            tag_task.sig_tag = tag
+            tag_task.task_id = task.id
+            tag_task.save()
+        return redirect('/')
     return render(request, 'task_platform/create-task.html', locals())
 
 def settings(request):

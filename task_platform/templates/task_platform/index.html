@@ -18,8 +18,9 @@
         <a href="#" target="_blank">4 new posts</a> are added recently, click here to load them.
       </div> {% endcomment %}
 
-      {% if latest_task_list %}
-      {% for task in latest_task_list %}
+      {% if tag_list %}
+      {% for task, tags in tag_list %}
+
       <div class="tt-item tt-itemselect">
         <div class="tt-col-avatar">
           <svg class="tt-icon">
@@ -38,8 +39,9 @@
             <div class="col-11">
               <ul class="tt-list-badge">
                 <li class="show-mobile"><a href="#"><span class="tt-color01 tt-badge">{{ task.task_state }}</span></a></li>
-                <li><a href="#"><span class="tt-badge">#type.1</span></a></li>
-                <li><a href="#"><span class="tt-badge">#type.2</span></a></li>
+                {% for tag in tags %}
+                <li><a><span class="tt-badge">{{ tag }}</span></a></li>
+                {% endfor%}
               </ul>
             </div>
             <div class="col-1 ml-auto show-mobile">

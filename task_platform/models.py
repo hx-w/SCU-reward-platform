@@ -1,6 +1,18 @@
 from django.db import models
 
 # Create your models here.
+
+class Task_tags(models.Model):
+    sig_tag = models.CharField(max_length=20, default="None")
+    task_id = models.IntegerField(default="0")
+
+    def __str__(self):
+        return self.sig_tag
+    
+    class Meta:
+        verbose_name = "任务标签"
+        verbose_name_plural = "任务标签"
+
 class Task(models.Model):
     '''任务'''
     state = (
@@ -13,8 +25,7 @@ class Task(models.Model):
     )
 
     publisher = models.CharField(max_length=128)
-    receiver = models.CharField(max_length=128, null=True, blank=True)
-    deadline = models.DateTimeField('deadline')
+    receiver = models.CharField(max_length=128, default="", blank=True)
     pub_time = models.DateTimeField(auto_now_add=True)
     people_needed = models.IntegerField(default=1)
     people_now = models.IntegerField(default=0)
