@@ -12,6 +12,7 @@ urlpatterns = [
     path('page-signup/', views.page_signup),
     path('logout/', views.logout),
     path('confirm/', views.user_confirm),
+    path('recharge/', views.recharge),
     path('alipay/pay/', views.alipay_pay),
     path('alipay/return/', views.alipay_return)
 ]

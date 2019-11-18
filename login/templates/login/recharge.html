@@ -1,0 +1,10 @@
+{% block title %} 充值页 {% endblock %}
+{% block content %}
+<body>
+    <form action="/alipay/pay/" method="POST">
+        {% csrf_token %}
+        <input type="text" class="form-control" name="money">
+        <input type="submit" value="去支付">
+    </form>
+</body>
+{% endblock %}

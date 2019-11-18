@@ -247,6 +247,11 @@ def user_confirm(request):
         message = '感谢确认，请使用账户登录！'
         return render(request, 'login/confirm.html', locals())
 
+def recharge(request):
+    if not request.session.get('user_name', None):
+        return render(request, 'login/login.html', locals())
+    return render(request, 'login/recharge.html', locals())
+
 def alipay_pay(request):
     if not request.session.get('user_name', None):
         return redirect('/login/')
