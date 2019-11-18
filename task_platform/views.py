@@ -29,11 +29,8 @@ def index(request):
 
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
-        print(task.id)
         tag_list.append((task, Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
     
-    print (tag_list)
-
     if request.method == 'POST':
         '''
         处理settings:
