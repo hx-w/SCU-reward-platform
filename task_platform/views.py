@@ -78,6 +78,13 @@ def detail(request, task_id):
     context = { 'task': task }
     return render(request, 'task_platform/detail.html', context)
 
+def create_task(request):
+    username = request.session.get('user_name', None)
+    if not username:
+        return redirect('login/')
+
+    return render(request, 'task_platform/create-task.html', locals())
+
 def settings(request):
     return render(request, 'task_platform/page-single_settings.html', locals())
     

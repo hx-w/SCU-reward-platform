@@ -208,7 +208,6 @@ def page_signup(request):
                 send_email(email, code)
                 message = '请前往邮箱确认！'
                 return render(request, 'login/confirm.html') # 跳转确认页面
-                # return redirect('/login/')  # 自动跳转到登录页面
         else:
             message = 'something went wrong!'        
     register_form = RegisterForm()
