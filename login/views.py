@@ -342,7 +342,7 @@ class AlipayView(object):
         sign = callback_data.pop('sign', None)
         self.order_sn = callback_data.get('out_trade_no', None) #订单号
         self.trade_no = callback_data.get('trade_no', None) #支付宝订单号
-        self.order_mount = Decimal(callback_data.get('total_amount', None)) # 
+        self.order_mount = float(callback_data.get('total_amount', None)) # 
 
         # 验证签名
         self.verify = self.alipay.verify(callback_data, sign)
@@ -357,7 +357,7 @@ class AlipayView(object):
         2.更新订单状态为交易成功
         """
         def convert_rmb_to_money(rmb):
-            return rmb * settings.EXCHANGE_RATE
+            return float(rmb) * settings.EXCHANGE_RATE
         # 数据库中查询订单记录
         order = models.OrderInfo.objects.get(order_sn=self.order_sn)
         # order = models.OrderInfo.objects.get(order_sn=self.order_sn)
@@ -368,7 +368,7 @@ class AlipayView(object):
         money = convert_rmb_to_money(rmb)
         # 更新用户的金币
         user = models.User.objects.get(name=order.username)
-        user.money += Decimal(money)
+        user.money = user.money + Decimal.from_float(money)
         user.save()
         # 订单状态置为交易成功
         order.pay_status = 'TRADE_SUCCESS'

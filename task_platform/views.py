@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Task
 from django.views.decorators.csrf import csrf_exempt
 import os
@@ -81,7 +81,10 @@ def detail(request, task_id):
 def create_task(request):
     username = request.session.get('user_name', None)
     if not username:
-        return redirect('login/')
+        return redirect('/login/')
+    if request.method == "POST":
+        # 返回该任务详细信息页 /detail/
+        pass
 
     return render(request, 'task_platform/create-task.html', locals())
 
