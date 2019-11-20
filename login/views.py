@@ -133,18 +133,25 @@ def register(request):
                 return render(request, 'login/register.html', locals())
             else:
                 same_name_user = models.User.objects.filter(name=username)
-                if same_name_user:  # 用户名唯一
+                if same_name_user and list(same_name_user)[0].has_confirmed:  # 用户名唯一
                     message = '用户已经存在，请重新选择用户名！'
                     return render(request, 'login/register.html', locals())
+                elif same_name_user and list(same_name_user)[0].has_confirmed == False:
+                    same_name_user.delete()
                 same_stu_id = models.User.objects.filter(stu_id=student_id)
-                if same_stu_id:   # 学号唯一
+                if same_stu_id and list(same_stu_id)[0].has_confirmed:   # 学号唯一
                     message = '学生邮箱已被注册，请重新输入邮箱！'
                     return render(request, 'login/register.html', locals())
+                elif same_stu_id and list(same_stu_id)[0].has_confirmed == False:
+                    same_stu_id.delete()
                 same_phone = models.User.objects.filter(phone=phone)
-                if same_phone:   # 学号唯一
+                if same_phone and list(same_phone)[0].has_confirmed:   # 学号唯一
                     message = '手机号码已被注册，请重新输入手机号码！'
                     return render(request, 'login/register.html', locals())
+                elif same_phone and list(same_phone)[0].has_confirmed == False:
+                    same_phone.delete()
                 # 当一切都OK的情况下，创建新用户
+                
                 new_user = models.User.objects.create()
                 new_user.name = username
                 new_user.stu_id = student_id
@@ -328,9 +335,6 @@ class AlipayView(object):
             self.deposit()
             #返回个人中心页面
         return redirect('/') # 返回主页
-            # return redirect(reverse('users:detail', kwargs={
-            #     'username': request.user.username
-            # }))
 
     def post(self, request):
         """
