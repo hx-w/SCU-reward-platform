@@ -34,6 +34,8 @@ INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'task_platform.apps.TaskPlatformConfig',
     'captcha',
+    'ckeditor',
+    'ckeditor_uploader',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -129,6 +131,31 @@ EMAIL_HOST_PASSWORD = 'Hexiang811021'
 # 注册有效期天数
 CONFIRM_DAYS = 7
 
+# 富文本
+CKEDITOR_CONFIGS = {
+    'default' : {
+        'width': 'auto',
+        'height': 'auto',
+        'tabSpaces': 4,
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Smiley', ['CodeSnippet']],
+            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
+            ['TextColor', 'BGColor'],
+            ['Link', 'Unlink'],
+            ['NumberedList', 'BulletedList'],
+            ['Maximize']
+        ],
+        # 代码块
+        'extraPlugins': ','.join(['codesnippet'])
+    }
+}
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+CKEDITOR_UPLOAD_PATH = 'upload/'
+CKEDITOR_IMAGE_BACKEND = 'pillow'
+
 # 支付宝接口设置
 ALIPAY_APPID = '2016101600701040'
 APP_NOTIFY_URL = 'http://127.0.0.1:8000/alipay/return/'
@@ -142,6 +169,7 @@ EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(os.path.join(BASE_DIR, '/static/'))
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]

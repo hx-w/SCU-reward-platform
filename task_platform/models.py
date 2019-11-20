@@ -1,5 +1,5 @@
 from django.db import models
-
+from ckeditor_uploader.fields import RichTextUploadingField
 # Create your models here.
 
 class Task_tags(models.Model):
@@ -30,7 +30,7 @@ class Task(models.Model):
     people_needed = models.IntegerField(default=1)
     people_now = models.IntegerField(default=0)
     expected_time_consuming = models.DecimalField(max_digits=12, decimal_places=1, default=0.0)
-    task_description = models.CharField(max_length=50, default="None")
+    task_description = RichTextUploadingField(default="None")
     task_detail = models.CharField(max_length=300)
     task_state = models.CharField(max_length=32, choices=state, default='未开始')
 

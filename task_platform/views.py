@@ -91,6 +91,10 @@ def create_task(request):
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
+    tag_list = []
+    latest_task_list = Task.objects.order_by('-pub_time')
+    for task in latest_task_list:
+        tag_list.append((task, Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
     if request.method == "POST":
         # 返回该任务详细信息页 /detail/tk Id
         task_description = request.POST.get('task_description')
@@ -106,11 +110,11 @@ def create_task(request):
             if len(tag) > 20:
                 message = '标签：内容过长'
                 return render(request, 'task_platform.html', locals())
-        if len(task_description) > 50:
-            message = '任务简述：内容过长！'
+        if len(task_description) > 50 or len(task_description) == 0:
+            message = '任务简述：无内容或内容过长！'
             return render(request, 'task_platform.html', locals())
-        if len(task_detail) > 300:
-            message = '任务详情：内容过长！'
+        if len(task_detail) > 300 or len(task_detail) == 0:
+            message = '任务详情：无内容或内容过长！'
             return render(request, 'task_platform.html', locals())
         if not people_needed.isdigit():
             message = '所需人数：请输入数字'
