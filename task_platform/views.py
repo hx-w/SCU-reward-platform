@@ -113,9 +113,26 @@ def index(request):
 
 
 def detail(request, task_id):
+    '''
+    GET:
+        publisher, pub_time, task_description, tag_list
+        task_detail
+
+    '''
+    username = request.session.get('user_name', None)
+    if not username:
+        return redirect('/login/')
+    
     task = get_object_or_404(Task, pk=task_id)
-    context = {'task': task}
-    return render(request, 'task_platform/detail.html', context)
+    tag_list = Task_tags.objects.filter(task_id=task.id)
+    publisher = task.publisher
+    pub_time = task.pub_time
+    task_description = task.task_description
+    task_detail = task.task_detail
+    if username != publisher:
+        publisher = 'xxx'
+    
+    return render(request, 'task_platform/detail.html', locals())
 
 
 def create_task(request):

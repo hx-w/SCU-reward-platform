@@ -20,4 +20,6 @@ CKEDITOR.editorConfig = function (config) {
 	];
 	config.skin = 'moono-lisa';
 	config.tabSpaces = 4;
+	config.fontSize_defaultLabel = '20px';
+	config.font_defaultLabel = '黑体';
 };
