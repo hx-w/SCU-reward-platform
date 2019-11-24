@@ -134,24 +134,14 @@ CONFIRM_DAYS = 7
 # 富文本
 CKEDITOR_CONFIGS = {
     'default' : {
+        'skin': 'moono-lisa',
         'width': 'auto',
         'height': 'auto',
-        'tabSpaces': 4,
-        'toolbar': 'Custom',
-        'toolbar_Custom': [
-            ['Smiley', ['CodeSnippet']],
-            ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
-            ['TextColor', 'BGColor'],
-            ['Link', 'Unlink'],
-            ['NumberedList', 'BulletedList'],
-            ['Maximize']
-        ],
-        # 代码块
-        'extraPlugins': ','.join(['codesnippet'])
+        'toolbar': 'Full',
     }
 }
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CKEDITOR_UPLOAD_PATH = 'upload/'
 CKEDITOR_IMAGE_BACKEND = 'pillow'

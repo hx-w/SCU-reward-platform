@@ -1,18 +1,49 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
+from django.http import JsonResponse
 from .models import Task, Task_tags
 from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
+import time
 import os
+import hashlib
+from pathlib import Path
 os.path.abspath('../')
 from login.models import User
 
 # Create your views here.
 
+
 @csrf_exempt
-def hash_code(s, salt='hx+ltq+wzy+hxj'):# 加点盐
+def hash_code(s, salt='hx+ltq+wzy+hxj'):  # 加点盐
     h = hashlib.sha256()
     h.update((s + salt).encode())  # update方法只接收bytes类型
     return h.hexdigest()
+
+
+@csrf_exempt
+def sceneImgUpload(request):
+    if request.method == 'POST':
+        try:
+            path = 'media/upload/' + time.strftime("%Y/%m/%d/",
+                                                   time.localtime())
+            dirpath = Path(path)
+            dirpath.mkdir(parents=True, exist_ok=True)
+
+            f = request.FILES["upload"]
+            file_name = path + '_' + f.name
+            des_origin_f = open(file_name, "wb+")
+            for chunk in f.chunks():
+                des_origin_f.write(chunk)
+            des_origin_f.close()
+        except Exception as e:
+            print(e)
+        res = {
+            'uploaded': True,
+            'url': '/' + file_name,
+        }
+        return JsonResponse(res)
+    else:
+        raise Http404()
 
 
 def index(request):
@@ -29,8 +60,10 @@ def index(request):
 
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
-        tag_list.append((task, Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
-    
+        tag_list.append(
+            (task,
+             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
+
     if request.method == 'POST':
         '''
         处理settings:
@@ -48,7 +81,7 @@ def index(request):
         if new_password1 != new_password2:
             message = '两次输入的密码不同！'
             return render(request, 'task_platform/index.html', locals())
-        
+
         if new_phone.strip() != '':
             same_phone = User.objects.filter(phone=new_phone)
             if same_phone:
@@ -72,15 +105,16 @@ def index(request):
         if flg_changed:
             user.save()
             message = ''
-            return render(request, 'task_platform/index.html', locals())        
-    
-    return render(request, 'task_platform/index.html', locals())        
-        
+            return render(request, 'task_platform/index.html', locals())
+
+    return render(request, 'task_platform/index.html', locals())
+
 
 def detail(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    context = { 'task': task }
+    context = {'task': task}
     return render(request, 'task_platform/detail.html', context)
+
 
 def create_task(request):
     '''
@@ -94,7 +128,9 @@ def create_task(request):
     tag_list = []
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
-        tag_list.append((task, Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
+        tag_list.append(
+            (task,
+             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
     if request.method == "POST":
         # 返回该任务详细信息页 /detail/tk Id
         task_description = request.POST.get('task_description')
@@ -136,6 +172,6 @@ def create_task(request):
         return redirect('/')
     return render(request, 'task_platform/create-task.html', locals())
 
+
 def settings(request):
     return render(request, 'task_platform/page-single_settings.html', locals())
-    

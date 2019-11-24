@@ -30,8 +30,8 @@ class Task(models.Model):
     people_needed = models.IntegerField(default=1)
     people_now = models.IntegerField(default=0)
     expected_time_consuming = models.DecimalField(max_digits=12, decimal_places=1, default=0.0)
-    task_description = RichTextUploadingField(default="None")
-    task_detail = models.CharField(max_length=300)
+    task_description = models.CharField(max_length=50)
+    task_detail = RichTextUploadingField(default='None')
     task_state = models.CharField(max_length=32, choices=state, default='未开始')
 
     def __str__(self):
