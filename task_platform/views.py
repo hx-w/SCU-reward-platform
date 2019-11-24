@@ -1,12 +1,12 @@
-from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
-from django.http import JsonResponse
-from .models import Task, Task_tags
-from django.views.decorators.csrf import csrf_exempt
-from decimal import Decimal
 import time
 import os
 import hashlib
+from decimal import Decimal
 from pathlib import Path
+from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Task, Task_tags
 os.path.abspath('../')
 from login.models import User
 
@@ -22,6 +22,7 @@ def hash_code(s, salt='hx+ltq+wzy+hxj'):  # 加点盐
 
 @csrf_exempt
 def sceneImgUpload(request):
+    username = request.session.get('user_name')
     if request.method == 'POST':
         try:
             path = 'media/upload/' + time.strftime("%Y/%m/%d/",
@@ -30,7 +31,8 @@ def sceneImgUpload(request):
             dirpath.mkdir(parents=True, exist_ok=True)
 
             f = request.FILES["upload"]
-            file_name = path + '_' + f.name
+            file_name = path + '_' + username + '_' + str(
+                time.time()) + '_' + f.name
             des_origin_f = open(file_name, "wb+")
             for chunk in f.chunks():
                 des_origin_f.write(chunk)
@@ -138,27 +140,27 @@ def create_task(request):
         people_needed = request.POST.get('people_needed')
         expected_time_consuming = request.POST.get('expected_time_consuming')
         tag_list = request.POST.get('tag_list')
-        task = Task.objects.create()
-        task.publisher = username
         tags = tag_list.split(' ')
         message = '任务创建成功'
         for tag in tags:
             if len(tag) > 20:
                 message = '标签：内容过长'
-                return render(request, 'task_platform.html', locals())
+                return render(request, 'task_platform/create-task.html', locals())
         if len(task_description) > 50 or len(task_description) == 0:
             message = '任务简述：无内容或内容过长！'
-            return render(request, 'task_platform.html', locals())
-        if len(task_detail) > 300 or len(task_detail) == 0:
+            return render(request, 'task_platform/create-task.html', locals())
+        if len(task_detail) > 3000 or len(task_detail) == 0:
             message = '任务详情：无内容或内容过长！'
-            return render(request, 'task_platform.html', locals())
+            return render(request, 'task_platform/create-task.html', locals())
         if not people_needed.isdigit():
             message = '所需人数：请输入数字'
-            return render(request, 'task_platform.html', locals())
+            return render(request, 'task_platform/create-task.html', locals())
         if int(people_needed) > 50:
             message = '所需人数：数字过大'
-            return render(request, 'task_platform.html', locals())
+            return render(request, 'task_platform/create-task.html', locals())
         # 没有检查 expected_time_consuming
+        task = Task.objects.create()
+        task.publisher = username
         task.task_description = task_description
         task.task_detail = task_detail
         task.people_needed = people_needed
