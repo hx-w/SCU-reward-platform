@@ -142,6 +142,7 @@ def detail(request, task_id):
     if request.method == 'GET':
         accept_id = request.GET.get('accept')
         if accept_id:
+            
             # 接受任务
             pass
     if request.method == 'POST':
