@@ -6,7 +6,7 @@ from pathlib import Path
 from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from .models import Task, Task_tags
+from .models import Task, Task_tags, User_task
 os.path.abspath('../')
 from login.models import User
 
@@ -116,9 +116,13 @@ def detail(request, task_id):
     '''
     GET:
         publisher, pub_time, task_description, tag_list
-        task_detail
+        task_detail, user_task_list
 
     '''
+    
+    sort_choice = request.GET.get('sort_choice')
+    print('----------adwadwa---------------------', sort_choice)
+
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
@@ -129,8 +133,13 @@ def detail(request, task_id):
     pub_time = task.pub_time
     task_description = task.task_description
     task_detail = task.task_detail
+    sort_choice_list = (
+        '发布时间 最近', '发布时间 最远',
+        '报价 最低', '报价 最高'
+    )
     if username != publisher:
         publisher = 'xxx'
+    user_task_list = User_task.objects.filter(task_id=task_id)
     
     return render(request, 'task_platform/detail.html', locals())
 
