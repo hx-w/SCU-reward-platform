@@ -91,17 +91,16 @@
               </div>
             </div>
           </div>
-          <form action="" methord='GET'>
-            {% csrf_token %}
-            <label>报价排序
-              <select name="dropdown">
-                {% for choice in sort_choice_list %}
-                <option id="sort_choice" value={{ choice }}>{{ choice }}</option>
-                  {% endfor %}
-              </select>
-            </label>
-            </from>
+          <label>报价排序
+            <select name="dropdown">
+              {% for choice in sort_choice_list %}
+              <option id="sort_choice" value={{ choice }}>{{ choice }}</option>
+                {% endfor %}
+            </select>
+          </label>
 
+          <form class="form-default" method='GET'>
+            {% csrf_token %}
             {% if user_task_list %}
             {% for sig in user_task_list %}
             <div class="tt-item">
@@ -117,116 +116,73 @@
                       <a href="#">{{ sig.submit_money }}</a>
                     </div>
                     <a href="#" class="tt-info-time">
-                      <i class="tt-icon"><svg>
+                      <i class="tt-icon">
+                        <svg>
                           <use xlink:href="#icon-time"></use>
-                        </svg></i>{{ sig.pub_time }}
-              </a>
+                        </svg></i>
+                      {{ sig.pub_time }}
+                    </a>
                   </div>
                 </div>
                 <div class="tt-item-description">
                   {{ sig.description }}
-          </div>
+                </div>
+                  <button name="accept" type="submit" value={{ sig.id }}>接受</button>
                 </div>
               </div>
               {% endfor %}
               {% endif %}
-
+          </form>
+          </div>
+        <div class="tt-wrapper-inner">
+            <h4 class="tt-title-separator"><span>我是分隔线_（：3 」∠）_ </span></h4>
+        </div>
+          {% if message %}
+          <div class="tt-topic-list">
+            <div class="tt-item tt-item-popup">
+              <div class="tt-col-message">
+                {{ message }}
+                </div>
+                <div class="tt-col-btn">
+                  <button type="button" class="btn-icon" name='cancel'>
+                    <svg class="tt-icon">
+                      <use xlink:href="#icon-cancel"></use>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            <form class="form-default" method="POST">
+              {% csrf_token %}
               <div class="tt-wrapper-inner">
                 <div class="pt-editor form-default">
                   <h6 class="pt-title">提交你的报价</h6>
                   <div class="pt-row">
                     <div class="col-left">
-                      <ul class="pt-edit-btn">
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-quote"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-bold"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-italic"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-share_topic"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-blockquote"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-performatted"></use>
-                            </svg>
-                          </button></li>
-                        <li class="hr"></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-upload_files"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-bullet_list"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-heading"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-horizontal_line"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-emoticon"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-settings"></use>
-                            </svg>
-                          </button></li>
-                        <li><button type="button" class="btn-icon">
-                            <svg class="tt-icon">
-                              <use xlink:href="#icon-color_picker"></use>
-                            </svg>
-                          </button></li>
-                      </ul>
+                      <label>
+                        <span class="tt-text">报价</span>
+                      </label>
+                      <input type="text" class="form-control" name="money"></input>
                     </div>
                     <div class="col-right tt-hidden-mobile">
                       <a href="#" class="btn btn-primary">返回顶部</a>
                     </div>
                   </div>
                   <div class="form-group">
-                    <textarea name="message" class="form-control" rows="5" placeholder="Lets get started"></textarea>
+                    <textarea name="description" class="form-control" rows="5" placeholder="Lets get started"></textarea>
                   </div>
                   <div class="pt-row">
-                    <div class="col-auto">
-                      <div class="checkbox-group">
-                        <input type="checkbox" id="checkBox21" name="checkbox" checked="">
-                        <label for="checkBox21">
-                          <span class="check"></span>
-                          <span class="box"></span>
-                          <span class="tt-text">Subscribe to this topic.</span>
-                        </label>
-                      </div>
+                    <div class="col-left">
+                      <p>写出你想说的话，最多30字</p>
                     </div>
                     <div class="col-auto">
-                      <a href="#" class="btn btn-secondary btn-width-lg">Reply</a>
+                      <input type="submit" class="btn btn-secondary btn-width-lg" value="提交报价"></input>
                     </div>
                   </div>
                 </div>
-              </div>
-              {% endblock %}
+            </form>
+          </div>
+        </div>
+</main>
+{% endblock %}

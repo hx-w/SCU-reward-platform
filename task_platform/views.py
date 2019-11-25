@@ -117,12 +117,10 @@ def detail(request, task_id):
     GET:
         publisher, pub_time, task_description, tag_list
         task_detail, user_task_list
-
+    POST:
+        money, description
     '''
     
-    sort_choice = request.GET.get('sort_choice')
-    print('----------adwadwa---------------------', sort_choice)
-
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
@@ -139,7 +137,33 @@ def detail(request, task_id):
     )
     if username != publisher:
         publisher = 'xxx'
+    message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
+    if request.method == 'GET':
+        accept_id = request.GET.get('accept')
+        if accept_id:
+            # 接受任务
+            pass
+    if request.method == 'POST':
+        message = '提交成功'
+        if publisher == username:
+            message = '任务发布者无法提交报价'
+            return render(request, 'task_platform/detail.html', locals())
+        try:
+            temp = User_task.objects.get(task_id=task_id, username=username)
+            message = '您已经提交过报价，请勿重复提交！'
+            return render(request, 'task_platform/detail.html', locals())
+        except:
+            pass
+        
+        description = request.POST.get('description')
+        money = request.POST.get('money')
+        user_task = User_task.objects.create(task_id=task_id)
+        user_task.username = username
+        user_task.description = description
+        # user_task.submit_money = Decimal.from_float(float(money))
+        user_task.submit_money = float(money)
+        user_task.save()
     
     return render(request, 'task_platform/detail.html', locals())
 

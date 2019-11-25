@@ -21,7 +21,7 @@ class User_task(models.Model):
     task_id = models.IntegerField(default="0")
     username = models.CharField(max_length=128, default="None")
     description = models.CharField(max_length=50)
-    submit_money = models.DecimalField(max_digits=5, decimal_places=2)
+    submit_money = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     pub_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
