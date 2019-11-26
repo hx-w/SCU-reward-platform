@@ -116,7 +116,7 @@ def detail(request, task_id):
     '''
     GET:
         publisher, pub_time, task_description, tag_list
-        task_detail, user_task_list
+        task_detail, user_task_list, is_publisher
     POST:
         money, description
     '''
@@ -135,16 +135,22 @@ def detail(request, task_id):
         '发布时间 最近', '发布时间 最远',
         '报价 最低', '报价 最高'
     )
+    is_publisher = True
     if username != publisher:
         publisher = 'xxx'
+        is_publisher = False
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
     if request.method == 'GET':
-        accept_id = request.GET.get('accept')
+        accept_id = request.GET.get('accept', None)
         if accept_id:
-            
-            # 接受任务
-            pass
+            # 单人
+            user_task_acc = User_task.objects.get(id=accept_id)
+            task_acc = Task.objects.get(id=user_task_acc.task_id)
+            task_acc.receiver = user_task_acc.username
+            task_acc.task_state = '进行中'
+            task_acc.save()
+            return redirect('/')
     if request.method == 'POST':
         message = '提交成功'
         if publisher == username:
@@ -225,6 +231,9 @@ def create_task(request):
         return redirect('/')
     return render(request, 'task_platform/create-task.html', locals())
 
+def taskchat(request):
+    
+    return render(request, 'task_platform/taskchat.html', locals())
 
 def settings(request):
     return render(request, 'task_platform/page-single_settings.html', locals())

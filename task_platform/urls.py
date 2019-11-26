@@ -10,4 +10,5 @@ urlpatterns = [
     path('detail/tk<int:task_id>/', views.detail, name='detail'),
     path('upload/', views.sceneImgUpload, name='uploadimg'),
     path('upload/&responseType=json', views.sceneImgUpload),
+    path('taskchat/', views.taskchat, name='chat-urls'),
 ]

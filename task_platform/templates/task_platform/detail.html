@@ -127,7 +127,9 @@
                 <div class="tt-item-description">
                   {{ sig.description }}
                 </div>
+                {% if is_publisher %}
                   <button name="accept" type="submit" value={{ sig.id }}>接受</button>
+                {% endif %}
                 </div>
               </div>
               {% endfor %}
