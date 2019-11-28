@@ -19,7 +19,7 @@
       </div> {% endcomment %}
 
       {% if tag_list %}
-      {% for task, tags in tag_list %}
+      {% for task, color, tags in tag_list %}
 
       <div class="tt-item tt-itemselect">
         <div class="tt-col-avatar">
@@ -38,7 +38,7 @@
           <div class="row align-items-center no-gutters">
             <div class="col-11">
               <ul class="tt-list-badge">
-                <li class="show-mobile"><a href="#"><span class="tt-color01 tt-badge">{{ task.task_state }}</span></a></li>
+                <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_state }}</span></a></li>
                 {% for tag in tags %}
                 <li><a><span class="tt-badge">{{ tag }}</span></a></li>
                 {% endfor%}
@@ -49,7 +49,7 @@
               </div>
             </div>
           </div>
-          <div class="tt-col-category"><span class="tt-color01 tt-badge">{{ task.task_state }}</span></div>
+          <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
           <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
             <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
               <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>

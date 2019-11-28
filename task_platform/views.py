@@ -12,7 +12,6 @@ from login.models import User
 
 # Create your views here.
 
-
 @csrf_exempt
 def hash_code(s, salt='hx+ltq+wzy+hxj'):  # 加点盐
     h = hashlib.sha256()
@@ -60,10 +59,17 @@ def index(request):
         if user.dept == 'None':
             dept = '暂无信息'
 
+    finder = {
+        '未开始': '9', '进行中': '2',
+        '中止': '3', '撤销': '3', 
+        '超时': '3', '完成': '4'
+    }
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
+        color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
+
         tag_list.append(
-            (task,
+            (task, color,
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
 
     if request.method == 'POST':
@@ -230,6 +236,20 @@ def create_task(request):
             tag_task.save()
         return redirect('/')
     return render(request, 'task_platform/create-task.html', locals())
+
+
+def profile(request):
+    '''
+    GET:
+        money
+    '''
+    username = request.session.get('user_name', None)
+    if not username:
+        # 未登录用户无法访问 profile
+        return redirect('/login/')
+    user = User.objects.get(name=username)
+    money = user.money   
+    return render(request, 'task_platform/profile.html', locals())
 
 def taskchat(request):
     
