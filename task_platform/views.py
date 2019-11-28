@@ -192,11 +192,18 @@ def create_task(request):
     if not username:
         return redirect('/login/')
     tag_list = []
+    finder = {
+        '未开始': '9', '进行中': '2',
+        '中止': '3', '撤销': '3', 
+        '超时': '3', '完成': '4'
+    }
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
+        color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
         tag_list.append(
-            (task,
+            (task, color,
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
+             
     if request.method == "POST":
         # 返回该任务详细信息页 /detail/tk Id
         task_description = request.POST.get('task_description')

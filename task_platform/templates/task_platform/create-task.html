@@ -1,8 +1,6 @@
-<!doctype html>
 {% extends 'task_platform/base.html' %}
 {% load staticfiles %}
 {% block content %}
-<html lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -16,226 +14,227 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body>
-  <main id="tt-pageContent">
-    <div class="container">
-      <div class="tt-wrapper-inner">
-        <h1 class="tt-title-border">
-          创建新任务
-        </h1>
-        <form class="form-default" method="POST">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="inputTopicTitle">任务简述</label>
-            <div class="tt-value-wrapper">
-              <input type="text" name="task_description" class="form-control" id="inputTopicTitle" placeholder="你的任务简要描述，例如：找人取快递。此部分会在主页展示">
-              <span class="tt-value-input">最多50字</span>
-            </div>
-            <div class="tt-note">尽量简洁得描述你的任务需求，不要透露太多个人信息！</div>
+<main id="tt-pageContent">
+  <div class="container">
+    <div class="tt-wrapper-inner">
+      <h1 class="tt-title-border">
+        创建新任务
+      </h1>
+      <form class="form-default" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="inputTopicTitle">任务简述</label>
+          <div class="tt-value-wrapper">
+            <input type="text" name="task_description" class="form-control" id="inputTopicTitle" placeholder="你的任务简要描述，例如：找人取快递。此部分会在主页展示">
+            <span class="tt-value-input">最多50字</span>
           </div>
-          <div class="form-group">
-            <label>任务类型</label>
-            <div class="tt-js-active-btn tt-wrapper-btnicon">
-              <div class="row tt-w410-col-02">
-                <div class="col-4 col-lg-3 col-xl-2">
-                  <a href="#" class="tt-button-icon">
-                    <span class="tt-icon">
-                      <svg>
-                        <use xlink:href="#icon-discussion"></use>
-                      </svg>
-                    </span>
-                    <span class="tt-text">Discussion</span>
-                  </a>
-                </div>
-                <div class="col-4 col-lg-3 col-xl-2">
-                  <a href="#" class="tt-button-icon">
-                    <span class="tt-icon">
-                      <svg>
-                        <use xlink:href="#Question"></use>
-                      </svg>
-                    </span>
-                    <span class="tt-text">Question</span>
-                  </a>
-                </div>
-                <div class="col-4 col-lg-3 col-xl-2">
-                  <a href="#" class="tt-button-icon">
-                    <span class="tt-icon">
-                      <svg>
-                        <use xlink:href="#Poll"></use>
-                      </svg>
-                    </span>
-                    <span class="tt-text">Poll</span>
-                  </a>
-                </div>
-                <div class="col-4 col-lg-3 col-xl-2">
-                  <a href="#" class="tt-button-icon">
-                    <span class="tt-icon">
-                      <svg>
-                        <use xlink:href="#icon-gallery"></use>
-                      </svg>
-                    </span>
-                    <span class="tt-text">Gallery</span>
-                  </a>
-                </div>
-                <div class="col-4 col-lg-3 col-xl-2">
-                  <a href="#" class="tt-button-icon">
-                    <span class="tt-icon">
-                      <svg>
-                        <use xlink:href="#Video"></use>
-                      </svg>
-                    </span>
-                    <span class="tt-text">Video</span>
-                  </a>
-                </div>
-                <div class="col-4 col-lg-3 col-xl-2">
-                  <a href="#" class="tt-button-icon">
-                    <span class="tt-icon">
-                      <svg>
-                        <use xlink:href="#Others"></use>
-                      </svg>
-                    </span>
-                    <span class="tt-text">Other</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="pt-editor">
-            <h6 class="pt-title">任务详情</h6>
-            <script src="{% static "ckeditor/ckeditor-init.js" %}"></script>
-            <script src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-            <textarea name="task_detail"></textarea>
-            <script>
-              CKEDITOR.replace('task_detail', {
-                uiColor: '#9AB8F3',
-                toolbar: [
-                  ['Smiley'],
-                  ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
-                  ['TextColor', 'BGColor'],
-                  ['Image', 'Table', 'Link', 'Unlink'],
-                  ['NumberedList', 'BulletedList'],
-                  ['Maximize']
-                ],
-                skin: 'moono-lisa',
-                tabSpaces: 4,
-              });
-            </script>
-            <div class="row">
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label for="inputTopicTitle">所需人数</label>
-                  <input name="people_needed" class="form-control" placeholder="最多50人">
-                  </input>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group">
-                  <label>预估任务耗时</label>
-                  <input name="expected_time_consuming" class="form-control">
-                  </input>
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="form-group">
-                  <label for="inputTopicTags">标签</label>
-                  <input type="text" name="tag_list" class="form-control" id="inputTopicTags" placeholder="填写你认为该任务所需要的标签，多个标签用空格分隔">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-auto ml-md-auto">
-                <input type="submit" class="btn btn-secondary btn-width-lg" value="创建任务"></input>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="tt-topic-list tt-offset-top-30">
-        <div class="tt-list-search">
-          <div class="tt-title">典型任务示例</div>
-          <!-- tt-search -->
-          <div class="tt-search">
-            <form class="search-wrapper">
-              <div class="search-form">
-                <input type="text" class="tt-search__input" placeholder="搜索其他任务">
-                <button class="tt-search__btn" type="submit">
-                  <svg class="tt-icon">
-                    <use xlink:href="#icon-search"></use>
-                  </svg>
-                </button>
-                <button class="tt-search__close">
-                  <svg class="tt-icon">
-                    <use xlink:href="#icon-cancel"></use>
-                  </svg>
-                </button>
-              </div>
-            </form>
-          </div>
-          <!-- /tt-search -->
+          <div class="tt-note">尽量简洁得描述你的任务需求，不要透露太多个人信息！</div>
         </div>
-        <div class="tt-list-header tt-border-bottom">
-          <div class="tt-col-value">类型</div>
-          <div class="tt-col-topic">简述</div>
-          <div class="tt-col-category">任务状态</div>
-          <div class="tt-col-value hide-mobile">需求人数</div>
-          <div class="tt-col-value hide-mobile">竞争人数</div>
-          <div class="tt-col-value hide-mobile">发布时间</div>
-          <div class="tt-col-value">预期耗时</div>
-        </div>
-
-
-        {% if tag_list %}
-        {% for task, tags in tag_list %}
-
-        <div class="tt-item tt-itemselect">
-          <div class="tt-col-avatar">
-            <svg class="tt-icon">
-              <use xlink:href="#icon-ava-k"></use>
-            </svg>
+        <div class="form-group">
+          <label>任务类型</label>
+          <div class="tt-js-active-btn tt-wrapper-btnicon">
+            <div class="row tt-w410-col-02">
+              <div class="col-4 col-lg-3 col-xl-2">
+                <a href="#" class="tt-button-icon">
+                  <span class="tt-icon">
+                    <svg>
+                      <use xlink:href="#icon-discussion"></use>
+                    </svg>
+                  </span>
+                  <span class="tt-text">Discussion</span>
+                </a>
+              </div>
+              <div class="col-4 col-lg-3 col-xl-2">
+                <a href="#" class="tt-button-icon">
+                  <span class="tt-icon">
+                    <svg>
+                      <use xlink:href="#Question"></use>
+                    </svg>
+                  </span>
+                  <span class="tt-text">Question</span>
+                </a>
+              </div>
+              <div class="col-4 col-lg-3 col-xl-2">
+                <a href="#" class="tt-button-icon">
+                  <span class="tt-icon">
+                    <svg>
+                      <use xlink:href="#Poll"></use>
+                    </svg>
+                  </span>
+                  <span class="tt-text">Poll</span>
+                </a>
+              </div>
+              <div class="col-4 col-lg-3 col-xl-2">
+                <a href="#" class="tt-button-icon">
+                  <span class="tt-icon">
+                    <svg>
+                      <use xlink:href="#icon-gallery"></use>
+                    </svg>
+                  </span>
+                  <span class="tt-text">Gallery</span>
+                </a>
+              </div>
+              <div class="col-4 col-lg-3 col-xl-2">
+                <a href="#" class="tt-button-icon">
+                  <span class="tt-icon">
+                    <svg>
+                      <use xlink:href="#Video"></use>
+                    </svg>
+                  </span>
+                  <span class="tt-text">Video</span>
+                </a>
+              </div>
+              <div class="col-4 col-lg-3 col-xl-2">
+                <a href="#" class="tt-button-icon">
+                  <span class="tt-icon">
+                    <svg>
+                      <use xlink:href="#Others"></use>
+                    </svg>
+                  </span>
+                  <span class="tt-text">Other</span>
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="tt-col-description">
-            <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-                <!-- 跳转链接 -->>
+        </div>
+        <div class="pt-editor">
+          <h6 class="pt-title">任务详情</h6>
+          <script src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+          <script src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+          <textarea name="task_detail"></textarea>
+          <script>
+            CKEDITOR.replace('task_detail', {
+              uiColor: '#9AB8F3',
+              toolbar: [
+                ['Smiley'],
+                ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
+                ['TextColor', 'BGColor'],
+                ['Image', 'Table', 'Link', 'Unlink'],
+                ['NumberedList', 'BulletedList'],
+                ['Maximize']
+              ],
+              skin: 'moono-lisa',
+              tabSpaces: 4,
+            });
+          </script>
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="inputTopicTitle">所需人数</label>
+                <input name="people_needed" class="form-control" placeholder="最多50人">
+                </input>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group">
+                <label>预估任务耗时</label>
+                <input name="expected_time_consuming" class="form-control">
+                </input>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <div class="form-group">
+                <label for="inputTopicTags">标签</label>
+                <input type="text" name="tag_list" class="form-control" id="inputTopicTags" placeholder="填写你认为该任务所需要的标签，多个标签用空格分隔">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-auto ml-md-auto">
+              <input type="submit" class="btn btn-secondary btn-width-lg" value="创建任务"></input>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="tt-topic-list tt-offset-top-30">
+      <div class="tt-list-search">
+        <div class="tt-title">典型任务示例</div>
+        <!-- tt-search -->
+        <div class="tt-search">
+          <form class="search-wrapper">
+            <div class="search-form">
+              <input type="text" class="tt-search__input" placeholder="搜索其他任务">
+              <button class="tt-search__btn" type="submit">
                 <svg class="tt-icon">
-                  <use xlink:href="#icon-pinned"></use>
+                  <use xlink:href="#icon-search"></use>
                 </svg>
-                {{ task.task_description }}
-                          </a></h6>
-            <div class="row align-items-center no-gutters">
-              <div class="col-11">
-                <ul class="tt-list-badge">
-                  <li class="show-mobile"><a href="#"><span class="tt-color01 tt-badge">{{ task.task_state }}</span></a></li>
-                  {% for tag in tags %}
-                  <li><a><span class="tt-badge">{{ tag }}</span></a></li>
-                  {% endfor%}
-                </ul>
+              </button>
+              <button class="tt-search__close">
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-cancel"></use>
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+        <!-- /tt-search -->
+      </div>
+      <div class="tt-list-header tt-border-bottom">
+        <div class="tt-col-value" style="width: 17%;">
+          <center>类型</center>
+        </div>
+        <div class="tt-col-category" style="width: 90%">简述</div>
+        <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务状态</div>
+        <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">需求人数</div>
+        <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">竞争人数</div>
+        <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">发布时间</div>
+        <div class="tt-col-value" style="width: 20%;padding:0%">预期耗时</div>
+      </div>
+
+
+
+      {% if tag_list %}
+      {% for task, color, tags in tag_list %}
+
+      <div class="tt-item">
+        <div class="tt-col-avatar">
+          <svg class="tt-icon">
+            <use xlink:href="#icon-ava-k"></use>
+          </svg>
+        </div>
+        <div class="tt-col-description">
+          <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
+              <!-- 跳转链接 -->>
+              <svg class="tt-icon">
+                <use xlink:href="#icon-pinned"></use>
+              </svg>
+              {{ task.task_description }}
+                        </a></h6>
+          <div class="row align-items-center no-gutters">
+            <div class="col-11">
+              <ul class="tt-list-badge">
+                <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_state }}</span></a></li>
+                {% for tag in tags %}
+                <li><a><span class="tt-badge">{{ tag }}</span></a></li>
+                {% endfor%}
+              </ul>
+            </div>
+            <div class="col-1 ml-auto show-mobile">
+              <div class="tt-value">{{ task.expected_time_consuming }}h</div>
               </div>
-              <div class="col-1 ml-auto show-mobile">
-                <div class="tt-value">{{ task.expected_time_consuming }}h</div>
+            </div>
+          </div>
+          <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
+          <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
+            <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
+              <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+                <div class="tt-col-value hide-mobile"> {{ task.expected_time_consuming }}h </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <!-- No task -->
+                {% endif %}
+
+                <div class="tt-row-btn">
+                  <button type="button" class="btn-icon js-topiclist-showmore">
+                    <svg class="tt-icon">
+                      <use xlink:href="#icon-load_lore_icon"></use>
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
-            <div class="tt-col-category"><span class="tt-color01 tt-badge">{{ task.task_state }}</span></div>
-            <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
-              <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
-                <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
-                  <div class="tt-col-value hide-mobile"> {{ task.expected_time_consuming }}h </div>
-                  </div>
-                  {% endfor %}
-                  {% else %}
-                  <!-- No task -->
-                  {% endif %}
-                  <div class="tt-row-btn">
-                    <button type="button" class="btn-icon js-topiclist-showmore">
-                      <svg class="tt-icon">
-                        <use xlink:href="#icon-load_lore_icon"></use>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-  </main>
-</body>
+</main>
 
-</html>
 {% endblock %}
