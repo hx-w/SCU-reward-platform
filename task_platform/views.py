@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 import os
 import hashlib
@@ -11,7 +12,6 @@ os.path.abspath('../')
 from login.models import User
 
 # Create your views here.
-
 
 @csrf_exempt
 def hash_code(s, salt='hx+ltq+wzy+hxj'):  # 加点盐
@@ -63,7 +63,7 @@ def index(request):
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
         tag_list.append(
-            (task,
+            (task, color, 
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
 
     if request.method == 'POST':
