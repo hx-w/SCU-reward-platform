@@ -62,6 +62,7 @@ def index(request):
 
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
+        color = "tt-color01 tt-badge"
         tag_list.append(
             (task, color, 
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
