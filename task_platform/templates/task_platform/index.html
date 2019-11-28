@@ -26,10 +26,16 @@
         </div>
         <div class="tt-col-description">
           <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-              <!-- 跳转链接 -->>
-              <svg class="tt-icon">
-                <use xlink:href="#icon-pinned"></use>
-              </svg>
+
+              {% if task.task_state == "已完成" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-verified"></use>
+                </svg>
+              {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-locked"></use>
+                </svg>
+              {% endif %}
               {{ task.task_description }}
                         </a></h6>
           <div class="row align-items-center no-gutters">
