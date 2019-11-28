@@ -1,7 +1,6 @@
 {% extends 'task_platform/base.html'%}
 {% load staticfiles %}
 {% block content %}
-
 <head>
   <meta charset="utf-8">
   <title>个人页面</title>
@@ -12,6 +11,7 @@
   <meta name="format-detection" content="telephone=no">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link href="{% static 'css/profile.css' %}" rel="stylesheet">
 </head>
 
 <main id="tt-pageContent" class="tt-offset-small">
@@ -49,7 +49,11 @@
             <a class="nav-link active" data-toggle="tab" href="#tt-tab-01" role="tab"><span>赏金模式</span></a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#tt-tab-02" role="tab"><span>猎人模式</span></a>
+            <a class="nav-link" data-toggle="tab" href="#tt-tab-02" role="tab">
+              <div class="box-container">
+                <div class="border-right"><span>猎人模式</span></div>
+              </div>
+             </a>
           </li>
           <li class="nav-item tt-hide-xs">
             <a class="nav-link" data-toggle="tab" href="#tt-tab-03" role="tab"><span>未开始任务</span></a>
