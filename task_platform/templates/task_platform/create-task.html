@@ -22,6 +22,7 @@
       </h1>
       <form class="form-default" method="POST">
         {% csrf_token %}
+        <input type="hidden" name="v" id="v" />
         <div class="form-group">
           <label for="inputTopicTitle">任务简述</label>
           <div class="tt-value-wrapper">
@@ -35,63 +36,23 @@
           <div class="tt-js-active-btn tt-wrapper-btnicon">
             <div class="row tt-w410-col-02">
               <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon">
+                <a href="#" class="tt-button-icon" style="a:visited {color:#00FF00;}" xx="v1">
                   <span class="tt-icon">
                     <svg>
                       <use xlink:href="#icon-discussion"></use>
                     </svg>
                   </span>
-                  <span class="tt-text">Discussion</span>
+                  <span class="tt-text">赏金模式</span>
                 </a>
               </div>
               <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon">
+                <a href="#" class="tt-button-icon" xx="v2">
                   <span class="tt-icon">
                     <svg>
                       <use xlink:href="#Question"></use>
                     </svg>
                   </span>
-                  <span class="tt-text">Question</span>
-                </a>
-              </div>
-              <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon">
-                  <span class="tt-icon">
-                    <svg>
-                      <use xlink:href="#Poll"></use>
-                    </svg>
-                  </span>
-                  <span class="tt-text">Poll</span>
-                </a>
-              </div>
-              <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon">
-                  <span class="tt-icon">
-                    <svg>
-                      <use xlink:href="#icon-gallery"></use>
-                    </svg>
-                  </span>
-                  <span class="tt-text">Gallery</span>
-                </a>
-              </div>
-              <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon">
-                  <span class="tt-icon">
-                    <svg>
-                      <use xlink:href="#Video"></use>
-                    </svg>
-                  </span>
-                  <span class="tt-text">Video</span>
-                </a>
-              </div>
-              <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon">
-                  <span class="tt-icon">
-                    <svg>
-                      <use xlink:href="#Others"></use>
-                    </svg>
-                  </span>
-                  <span class="tt-text">Other</span>
+                  <span class="tt-text">猎人模式</span>
                 </a>
               </div>
             </div>
@@ -117,6 +78,7 @@
               tabSpaces: 4,
             });
           </script>
+          <div style="margin:20px;">
           <div class="row">
             <div class="col-md-2">
               <div class="form-group">
@@ -138,12 +100,12 @@
                 <input type="text" name="tag_list" class="form-control" id="inputTopicTags" placeholder="填写你认为该任务所需要的标签，多个标签用空格分隔">
               </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-auto ml-md-auto">
+            <div class="col-auto ml-md-auto" style="margin-top:40px;">
               <input type="submit" class="btn btn-secondary btn-width-lg" value="创建任务"></input>
             </div>
           </div>
+          </div>
+            
         </div>
       </form>
     </div>
@@ -235,6 +197,7 @@
                 </div>
               </div>
             </div>
+            <script src="{% static "js/bundle.js" %}"></script>
 </main>
 
 {% endblock %}
