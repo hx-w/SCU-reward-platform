@@ -70,7 +70,7 @@
         <div class="tab-pane tt-indent-none show active" id="tt-tab-01" role="tabpanel">
           <div class="tt-topic-list">
             <div class="tt-list-header">
-              <div class="tt-col-value" style="width: 17%;"><center>类型</center></div>
+              <div class="tt-col-value" style="width: 17%;"><center>聊天室</center></div>
               <div class="tt-col-category" style="width: 90%">简述</div>
               <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务状态</div>
               <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">需求人数</div>
@@ -79,8 +79,8 @@
               <div class="tt-col-value" style="width: 20%;padding:0%">预期耗时</div>
             </div>
 
-            {% if tag_list %}
-            {% for task, color, tags in tag_list %}
+            {% if tag_list_1 %}
+            {% for task, color, tags in tag_list_1 %}
 
               <div class="tt-item">
                 <div class="tt-col-avatar">
@@ -123,6 +123,7 @@
               </div>
             {% endfor %}
             {% else %}
+            <p>暂无任务</p>
             <!-- 无任务 -->
             {% endif %}
             <div class="tt-row-btn">

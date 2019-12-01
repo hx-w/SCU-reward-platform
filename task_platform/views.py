@@ -285,7 +285,7 @@ def profile(request):
     if user.dept == 'None':
         dept = '暂无信息'
     money = user.money   
-    tag_list = []
+    tag_list_1 = []
     if username:
         user = User.objects.get(name=username)
         student_id = user.stu_id
@@ -302,7 +302,7 @@ def profile(request):
     latest_task_list = Task.objects.filter(publisher=username).order_by('-pub_time')
     for task in latest_task_list:
         color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
-        tag_list.append(
+        tag_list_1.append(
             (task, color,
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
     return render(request, 'task_platform/profile.html', locals())
