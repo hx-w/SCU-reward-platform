@@ -1632,7 +1632,9 @@ module.exports = function (element) {
 	if (ttJsActiveBtn.length){
 		ttJsActiveBtn.on('click', '.tt-button-icon', function(e){
 			$(this).closest(ttJsActiveBtn).find('.tt-button-icon').removeClass('active');
-			$(this).addClass('active');
+      $(this).addClass('active');
+      var tmp = $(this).attr("xx");
+      $("#v").val(tmp);
 			return false;
 		});
 	};
