@@ -7,6 +7,7 @@ from pathlib import Path
 from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from .models import Task, Task_tags, User_task
 os.path.abspath('../')
 from login.models import User
@@ -229,6 +230,8 @@ def create_task(request):
             settings(request)
         else:
             # 返回该任务详细信息页 /detail/tk Id
+            task_class = request.POST.get('v')
+            print('------------------', task_class)
             task_description = request.POST.get('task_description')
             task_detail = request.POST.get('task_detail')
             people_needed = request.POST.get('people_needed')
@@ -254,6 +257,7 @@ def create_task(request):
                 return render(request, 'task_platform/create-task.html', locals())
             # 没有检查 expected_time_consuming
             task = Task.objects.create()
+            task.task_class = task_class
             task.publisher = username
             task.task_description = task_description
             task.task_detail = task_detail
@@ -285,7 +289,7 @@ def profile(request):
     if user.dept == 'None':
         dept = '暂无信息'
     money = user.money   
-    tag_list_1 = []
+    tag_list_1, tag_list_2, tag_list_3, tag_list_4, tag_list_5 = [], [], [], [], []
     if username:
         user = User.objects.get(name=username)
         student_id = user.stu_id
@@ -294,17 +298,49 @@ def profile(request):
         if user.dept == 'None':
             dept = '暂无信息'
 
-    finder = {
+    stcolor_finder = {
         '未开始': '9', '进行中': '2',
         '中止': '3', '撤销': '3', 
         '超时': '3', '完成': '4'
     }
+    clcolor_finder = {
+        '赏金模式': '5', '猎人模式': '7'
+    }
     latest_task_list = Task.objects.filter(publisher=username).order_by('-pub_time')
     for task in latest_task_list.filter(task_class='赏金模式'):
-        color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
+        color = 'tt-color0{} tt-badge'.format(stcolor_finder[task.task_state]) 
         tag_list_1.append(
             (task, color,
-             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
+             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(task_class='猎人模式'):
+        color = 'tt-color0{} tt-badge'.format(stcolor_finder[task.task_state])
+        tag_list_2.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(task_state='未开始'):
+        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
+        tag_list_3.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(task_state='进行中'):
+        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
+        tag_list_4.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(Q(task_state='撤销')|Q(task_state='中止')|Q(task_state='超时')|Q(task_state='已完成')):
+        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
+        tag_list_5.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
     return render(request, 'task_platform/profile.html', locals())
 
 def taskchat(request):
