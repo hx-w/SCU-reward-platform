@@ -300,7 +300,7 @@ def profile(request):
         '超时': '3', '完成': '4'
     }
     latest_task_list = Task.objects.filter(publisher=username).order_by('-pub_time')
-    for task in latest_task_list:
+    for task in latest_task_list.filter(task_class='赏金模式'):
         color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
         tag_list_1.append(
             (task, color,
