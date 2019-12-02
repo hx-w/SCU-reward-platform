@@ -22,7 +22,7 @@
       </h1>
       <form class="form-default" method="POST">
         {% csrf_token %}
-        <input type="hidden" name="v" id="v" />
+        <input type="hidden" name="v" id="v" value='None' />
         <div class="form-group">
           <label for="inputTopicTitle">任务简述</label>
           <div class="tt-value-wrapper">
@@ -36,7 +36,7 @@
           <div class="tt-js-active-btn tt-wrapper-btnicon">
             <div class="row tt-w410-col-02">
               <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon" style="a:visited {color:#00FF00;}" xx="v1">
+                <a href="#" class="tt-button-icon" style="a:visited {color:#00FF00;}" xx="赏金模式">
                   <span class="tt-icon">
                     <svg>
                       <use xlink:href="#icon-discussion"></use>
@@ -46,7 +46,7 @@
                 </a>
               </div>
               <div class="col-4 col-lg-3 col-xl-2">
-                <a href="#" class="tt-button-icon" xx="v2">
+                <a href="#" class="tt-button-icon" xx="猎人模式">
                   <span class="tt-icon">
                     <svg>
                       <use xlink:href="#Question"></use>

@@ -17,6 +17,17 @@ class Task_tags(models.Model):
         verbose_name_plural = "任务标签"
 
 
+class Task_receive(models.Model):
+    task_id = models.IntegerField(default="0")
+    username = models.CharField(max_length=128, default="None")
+
+    def __str__(self):
+        return self.username
+    
+    class Meta:
+        verbose_name = "用户任务接受"
+        verbose_name_plural = "用户任务接受"
+
 class User_task(models.Model):
     task_id = models.IntegerField(default="0")
     username = models.CharField(max_length=128, default="None")
@@ -37,7 +48,6 @@ class Task(models.Model):
     '''任务'''
     state = (('未开始', 'waitting'), ('进行中', 'processing'), ('中止', 'abort'),
              ('撤销', 'revoke'), ('超时', 'timeout'), ('完成', 'completed'))
-
     publisher = models.CharField(max_length=128)
     receiver = models.CharField(max_length=128, default="", blank=True)
     pub_time = models.DateTimeField(auto_now_add=True)
@@ -48,6 +58,7 @@ class Task(models.Model):
     task_description = models.CharField(max_length=50, default="None")
     task_detail = RichTextUploadingField(default='None')
     task_state = models.CharField(max_length=32, choices=state, default='未开始')
+    task_class = models.CharField(max_length=48, default='赏金模式')
 
     def __str__(self):
         return self.task_description

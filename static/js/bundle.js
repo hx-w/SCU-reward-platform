@@ -1633,7 +1633,7 @@ module.exports = function (element) {
 		ttJsActiveBtn.on('click', '.tt-button-icon', function(e){
 			$(this).closest(ttJsActiveBtn).find('.tt-button-icon').removeClass('active');
       $(this).addClass('active');
-      var tmp = $(this).attr("xx");
+      var tmp = $(this).attr("xx")
       $("#v").val(tmp);
 			return false;
 		});

@@ -7,6 +7,7 @@ from pathlib import Path
 from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from .models import Task, Task_tags, User_task
 os.path.abspath('../')
 from login.models import User
@@ -149,6 +150,7 @@ def detail(request, task_id):
     pub_time = task.pub_time
     task_description = task.task_description
     task_detail = task.task_detail
+    task_state = task.task_state
     sort_choice_list = (
         '发布时间 最近', '发布时间 最远',
         '报价 最低', '报价 最高'
@@ -159,7 +161,7 @@ def detail(request, task_id):
         is_publisher = False
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
-    if request.method == 'GET':
+    if request.method == 'POST':
         accept_id = request.GET.get('accept', None)
         if accept_id:
             user_task_acc = User_task.objects.get(id=accept_id)
@@ -229,12 +231,14 @@ def create_task(request):
             settings(request)
         else:
             # 返回该任务详细信息页 /detail/tk Id
+            task_class = request.POST.get('v')
+            print('------------------', task_class)
             task_description = request.POST.get('task_description')
             task_detail = request.POST.get('task_detail')
             people_needed = request.POST.get('people_needed')
             expected_time_consuming = request.POST.get('expected_time_consuming')
             tag_list = request.POST.get('tag_list')
-            tags = tag_list.split(' ')
+            tags = tag_list.strip().split(' ')
             message = '任务创建成功'
             for tag in tags:
                 if len(tag) > 20:
@@ -254,6 +258,7 @@ def create_task(request):
                 return render(request, 'task_platform/create-task.html', locals())
             # 没有检查 expected_time_consuming
             task = Task.objects.create()
+            task.task_class = task_class
             task.publisher = username
             task.task_description = task_description
             task.task_detail = task_detail
@@ -285,7 +290,7 @@ def profile(request):
     if user.dept == 'None':
         dept = '暂无信息'
     money = user.money   
-    tag_list = []
+    tag_list_1, tag_list_2, tag_list_3, tag_list_4, tag_list_5 = [], [], [], [], []
     if username:
         user = User.objects.get(name=username)
         student_id = user.stu_id
@@ -294,17 +299,49 @@ def profile(request):
         if user.dept == 'None':
             dept = '暂无信息'
 
-    finder = {
+    stcolor_finder = {
         '未开始': '9', '进行中': '2',
         '中止': '3', '撤销': '3', 
         '超时': '3', '完成': '4'
     }
+    clcolor_finder = {
+        '赏金模式': '5', '猎人模式': '7'
+    }
     latest_task_list = Task.objects.filter(publisher=username).order_by('-pub_time')
-    for task in latest_task_list:
-        color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
-        tag_list.append(
+    for task in latest_task_list.filter(task_class='赏金模式'):
+        color = 'tt-color0{} tt-badge'.format(stcolor_finder[task.task_state]) 
+        tag_list_1.append(
             (task, color,
-             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
+             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(task_class='猎人模式'):
+        color = 'tt-color0{} tt-badge'.format(stcolor_finder[task.task_state])
+        tag_list_2.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(task_state='未开始'):
+        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
+        tag_list_3.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(task_state='进行中'):
+        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
+        tag_list_4.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
+
+    for task in latest_task_list.filter(Q(task_state='撤销')|Q(task_state='中止')|Q(task_state='超时')|Q(task_state='已完成')):
+        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
+        tag_list_5.append(
+            (task, color,
+            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
+        )
     return render(request, 'task_platform/profile.html', locals())
 
 def taskchat(request):
