@@ -17,6 +17,17 @@ class Task_tags(models.Model):
         verbose_name_plural = "任务标签"
 
 
+class Task_receive(models.Model):
+    task_id = models.IntegerField(default="0")
+    username = models.CharField(max_length=128, default="None")
+
+    def __str__(self):
+        return self.username
+    
+    class Meta:
+        verbose_name = "用户任务接受"
+        verbose_name_plural = "用户任务接受"
+
 class User_task(models.Model):
     task_id = models.IntegerField(default="0")
     username = models.CharField(max_length=128, default="None")

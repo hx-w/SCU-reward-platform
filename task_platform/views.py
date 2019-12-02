@@ -150,6 +150,7 @@ def detail(request, task_id):
     pub_time = task.pub_time
     task_description = task.task_description
     task_detail = task.task_detail
+    task_state = task.task_state
     sort_choice_list = (
         '发布时间 最近', '发布时间 最远',
         '报价 最低', '报价 最高'
@@ -160,7 +161,7 @@ def detail(request, task_id):
         is_publisher = False
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
-    if request.method == 'GET':
+    if request.method == 'POST':
         accept_id = request.GET.get('accept', None)
         if accept_id:
             user_task_acc = User_task.objects.get(id=accept_id)
@@ -237,7 +238,7 @@ def create_task(request):
             people_needed = request.POST.get('people_needed')
             expected_time_consuming = request.POST.get('expected_time_consuming')
             tag_list = request.POST.get('tag_list')
-            tags = tag_list.split(' ')
+            tags = tag_list.strip().split(' ')
             message = '任务创建成功'
             for tag in tags:
                 if len(tag) > 20:

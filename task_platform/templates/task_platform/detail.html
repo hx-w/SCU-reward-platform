@@ -37,60 +37,8 @@
           </div>
           </div>
         </div>
-        <div class="tt-item">
-          <div class="tt-info-box">
-            <h6 class="tt-title">Thread Status</h6>
-            <div class="tt-row-icon">
-              <div class="tt-item">
-                <a href="#" class="tt-icon-btn tt-position-bottom">
-                  <i class="tt-icon"><svg>
-                      <use xlink:href="#icon-reply"></use>
-                    </svg></i>
-                  <span class="tt-text">283</span>
-                </a>
-              </div>
-              <div class="tt-item">
-                <a href="#" class="tt-icon-btn tt-position-bottom">
-                  <i class="tt-icon"><svg>
-                      <use xlink:href="#icon-view"></use>
-                    </svg></i>
-                  <span class="tt-text">10.5k</span>
-                </a>
-              </div>
-              <div class="tt-item">
-                <a href="#" class="tt-icon-btn tt-position-bottom">
-                  <i class="tt-icon"><svg>
-                      <use xlink:href="#icon-user"></use>
-                    </svg></i>
-                  <span class="tt-text">168</span>
-                </a>
-              </div>
-              <div class="tt-item">
-                <a href="#" class="tt-icon-btn tt-position-bottom">
-                  <i class="tt-icon"><svg>
-                      <use xlink:href="#icon-like"></use>
-                    </svg></i>
-                  <span class="tt-text">2.4k</span>
-                </a>
-              </div>
-              <div class="tt-item">
-                <a href="#" class="tt-icon-btn tt-position-bottom">
-                  <i class="tt-icon"><svg>
-                      <use xlink:href="#icon-favorite"></use>
-                    </svg></i>
-                  <span class="tt-text">951</span>
-                </a>
-              </div>
-              <div class="tt-item">
-                <a href="#" class="tt-icon-btn tt-position-bottom">
-                  <i class="tt-icon"><svg>
-                      <use xlink:href="#icon-share"></use>
-                    </svg></i>
-                  <span class="tt-text">32</span>
-                </a>
-              </div>
-            </div>
-          </div>
+
+        {% if task_state == "未开始" and username == publisher %}
           <label>报价排序
             <select name="dropdown">
               {% for choice in sort_choice_list %}
@@ -98,93 +46,97 @@
                 {% endfor %}
             </select>
           </label>
-
-          <form class="form-default" method='GET'>
+          <!--接受报价-->
+          <form class="form-default" method='POST'>
             {% csrf_token %}
             {% if user_task_list %}
-            {% for sig in user_task_list %}
-            <div class="tt-item">
-              <div class="tt-single-topic">
-                <div class="tt-item-header pt-noborder">
-                  <div class="tt-item-info info-top">
-                    <div class="tt-avatar-icon">
-                      <i class="tt-icon"><svg>
-                          <use xlink:href="#icon-ava-t"></use>
-                        </svg></i>
+              {% for sig in user_task_list %}
+                <div class="tt-item">
+                  <div class="tt-single-topic">
+                    <div class="tt-item-header pt-noborder">
+                      <div class="tt-item-info info-top">
+                        <div class="tt-avatar-icon">
+                          <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
+                        </div>
+                        <div class="tt-avatar-title">
+                          <a href="#">{{ sig.submit_money }}</a>
+                        </div>
+                        <a href="#" class="tt-info-time">
+                          <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>
+                          {{ sig.pub_time }}
+                        </a>
+                      </div>
                     </div>
-                    <div class="tt-avatar-title">
-                      <a href="#">{{ sig.submit_money }}</a>
+                    <div class="tt-item-description">
+                      {{ sig.description }}
                     </div>
-                    <a href="#" class="tt-info-time">
-                      <i class="tt-icon">
-                        <svg>
-                          <use xlink:href="#icon-time"></use>
-                        </svg></i>
-                      {{ sig.pub_time }}
-                    </a>
+                      <button name="accept" type="submit" value={{ sig.id }}>接受</button>
                   </div>
                 </div>
-                <div class="tt-item-description">
-                  {{ sig.description }}
-                </div>
-                {% if is_publisher %}
-                  <button name="accept" type="submit" value={{ sig.id }}>接受</button>
-                {% endif %}
-                </div>
-              </div>
               {% endfor %}
-              {% endif %}
+            {% else %}
+            <label>暂无报价</label>
+            {% endif %}
           </form>
+
+        {% elif task_state == "未开始" and username != publisher %}
+          <div class='text'>如果你想接受这个任务，你需要提出自己的报价。注意：提交报价时你需要支付与你的报价相同金额的赏金币作为押金。</div>
+          <div class="tt-wrapper-inner">
+              <h4 class="tt-title-separator"><span>我是分隔线_（：3 」∠）_ </span></h4>
           </div>
-        <div class="tt-wrapper-inner">
-            <h4 class="tt-title-separator"><span>我是分隔线_（：3 」∠）_ </span></h4>
-        </div>
           {% if message %}
-          <div class="tt-topic-list">
             <div class="tt-item tt-item-popup">
-              <div class="tt-col-message">
-                {{ message }}
+              <div class="tt-col-message">{{ message }}</div>
+            </div>
+          {% endif %}
+          <form class="form-default" method="POST">
+            {% csrf_token %}
+            <div class="tt-wrapper-inner">
+              <div class="pt-editor form-default">
+                <h6 class="pt-title">提交你的报价</h6>
+                <div class="pt-row">
+                  <div class="col-left">
+                    <label>
+                      <span class="tt-text">报价</span>
+                    </label>
+                    <input type="text" class="form-control" name="money"></input>
+                  </div>
+                  <div class="col-right tt-hidden-mobile">
+                    <a href="#" class="btn btn-primary">返回顶部</a>
+                  </div>
                 </div>
-                <div class="tt-col-btn">
-                  <button type="button" class="btn-icon" name='cancel'>
-                    <svg class="tt-icon">
-                      <use xlink:href="#icon-cancel"></use>
-                    </svg>
-                  </button>
+                <div class="form-group">
+                  <textarea name="description" class="form-control" rows="5" placeholder="Lets get started"></textarea>
+                </div>
+                <div class="pt-row">
+                  <div class="col-left">
+                    <p>写出你想说的话，最多30字</p>
+                  </div>
+                  <div class="col-auto">
+                    <input type="submit" class="btn btn-secondary btn-width-lg" value="提交报价"></input>
+                  </div>
                 </div>
               </div>
-            </div>
-            {% endif %}
-            <form class="form-default" method="POST">
-              {% csrf_token %}
-              <div class="tt-wrapper-inner">
-                <div class="pt-editor form-default">
-                  <h6 class="pt-title">提交你的报价</h6>
-                  <div class="pt-row">
-                    <div class="col-left">
-                      <label>
-                        <span class="tt-text">报价</span>
-                      </label>
-                      <input type="text" class="form-control" name="money"></input>
-                    </div>
-                    <div class="col-right tt-hidden-mobile">
-                      <a href="#" class="btn btn-primary">返回顶部</a>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <textarea name="description" class="form-control" rows="5" placeholder="Lets get started"></textarea>
-                  </div>
-                  <div class="pt-row">
-                    <div class="col-left">
-                      <p>写出你想说的话，最多30字</p>
-                    </div>
-                    <div class="col-auto">
-                      <input type="submit" class="btn btn-secondary btn-width-lg" value="提交报价"></input>
-                    </div>
-                  </div>
-                </div>
-            </form>
-          </div>
-        </div>
+          </form>
+
+        {% elif task_state == "进行中" and username == publisher %}
+
+
+
+
+        {% elif task_state != "未开始" and task_state != "进行中"%}
+
+
+
+
+        {% else %} <!-- 任务接收者(们)确认完成 -->
+
+
+
+
+        {% endif %}
+      </div>
+    </div>
+  </div>
 </main>
 {% endblock %}
