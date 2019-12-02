@@ -1,5 +1,9 @@
 {% extends 'task_platform/base.html' %}
+{% load staticfiles %}
 {% block title %} 任务详情 {% endblock %}
+<head>
+<link href="{% static 'css/detail.css' %}" rel="stylesheet">
+</head>
 {% block content %}
 <main id="tt-pageContent">
   <div class="container">
@@ -98,7 +102,6 @@
                 {% endfor %}
             </select>
           </label>
-
           <form class="form-default" method='GET'>
             {% csrf_token %}
             {% if user_task_list %}
@@ -125,15 +128,21 @@
                   </div>
                 </div>
                 <div class="tt-item-description">
-                  {{ sig.description }}
+                  {{ sig.description }}   
                 </div>
                 {% if is_publisher %}
-                  <button name="accept" type="submit" value={{ sig.id }}>接受</button>
+                      <div class="checkbox-item">
+                        <input name="accept" id="item1" type="checkbox" value={{ sig.id }}/>
+                      </div>
+                      {% comment %} <button name="accept" type="submit" value={{ sig.id }}>接受</button> {% endcomment %}
                 {% endif %}
+                
+                
                 </div>
               </div>
               {% endfor %}
               {% endif %}
+              <center><input onclick="return confirm('确定要提交?')" type="submit" class="btn btn-secondary" style="background-color: #cd6521" value="开始任务" ></center>
           </form>
           </div>
         <div class="tt-wrapper-inner">
