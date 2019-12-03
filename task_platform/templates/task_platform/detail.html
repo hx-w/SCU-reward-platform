@@ -43,6 +43,10 @@
         </div>
 
         {% if task_state == "未开始" and username == publisher %}
+          <!-- 错误信息反馈 -->
+          {% if message %}
+            <label>{{ message }}</label>
+          {% endif %}
           <label>报价排序
             <select name="dropdown">
               {% for choice in sort_choice_list %}
@@ -75,7 +79,7 @@
                       {{ sig.description }}
                     </div>
                      <div class="checkbox-item">
-                        <input name="accept" id="item1" type="checkbox" value={{ sig.id }}/>
+                        <input name="accept" id="item1" type="checkbox" value={{ sig.username }}/>
                       </div>
                   </div>
                 </div>
@@ -126,12 +130,12 @@
               </div>
           </form>
 
-        {% elif task_state == "进行中" and username == publisher %}
+        {% elif task_state == "进行中" and username == publisher %}<!-- 发布者确认完成 -->
 
 
 
 
-        {% elif task_state != "未开始" and task_state != "进行中"%}
+        {% elif task_state != "未开始" and task_state != "进行中"%}<!-- 结束的任务 -->
 
 
 

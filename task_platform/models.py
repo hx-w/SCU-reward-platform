@@ -49,8 +49,9 @@ class Task(models.Model):
     state = (('未开始', 'waitting'), ('进行中', 'processing'), ('中止', 'abort'),
              ('撤销', 'revoke'), ('超时', 'timeout'), ('完成', 'completed'))
     publisher = models.CharField(max_length=128)
-    receiver = models.CharField(max_length=128, default="", blank=True)
     pub_time = models.DateTimeField(auto_now_add=True)
+    begin_time = models.DateTimeField(null=True, blank=True)
+    end_time = models.DateTimeField(null=True, blank=True)
     people_needed = models.IntegerField(default=1)
     people_now = models.IntegerField(default=0)
     expected_time_consuming = models.DecimalField(

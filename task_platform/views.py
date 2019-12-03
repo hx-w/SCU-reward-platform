@@ -4,11 +4,12 @@ import os
 import hashlib
 from decimal import Decimal
 from pathlib import Path
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-from .models import Task, Task_tags, User_task
+from .models import Task, Task_tags, User_task, Task_receive
 os.path.abspath('../')
 from login.models import User
 
@@ -172,9 +173,33 @@ def detail(request, task_id):
             return redirect('/')
 
     if request.method == 'POST':
-        if 'settings' in request.POST:
+        if 'settings' in request.POST: # 个人信息修改
             settings(request)
-        else:
+        elif 'accept' in request.POST: # 发布者接受报价
+            message = '任务已开始！'
+            rec_list = request.POST.getlist('accept')
+            if len(rec_list) > task.people_needed:
+                message = '接受的报价过多！'
+                return render(request, 'task_platform/detail.html', locals())
+            elif len(rec_list) == 0:
+                message = '请选择至少一项报价！'
+                return render(request, 'task_platform/detail.html', locals())
+            else:
+                # 支付逻辑实现
+                # rec_list 报价用户列表 (username)
+                rec_list = list(rec[:-1] for rec in rec_list)
+                # 设置task
+                task.begin_time = timezone.now()
+                task.task_state = '进行中'
+                task.save()
+                # 设置接受者
+                for rec in rec_list:
+                    task_rec = Task_receive.objects.create(task_id=task.id)
+                    task_rec.username = rec
+                    task_rec.save()
+
+                return redirect('/profile/')
+        else:   # 用户提交报价
             message = '提交成功'
             if publisher == username:
                 message = '任务发布者无法提交报价'
@@ -194,6 +219,8 @@ def detail(request, task_id):
             # user_task.submit_money = Decimal.from_float(float(money))
             user_task.submit_money = float(money)
             user_task.save()
+            task.people_now += 1
+            task.save()
     
     return render(request, 'task_platform/detail.html', locals())
 
