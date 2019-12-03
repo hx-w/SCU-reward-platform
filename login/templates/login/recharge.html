@@ -1,10 +1,26 @@
-{% block title %} 充值页 {% endblock %}
+{% extends 'task_platform/base.html' %}
+{% load staticfiles %}
 {% block content %}
-<body>
-    <form action="/alipay/pay/" method="POST">
-        {% csrf_token %}
-        <input type="text" class="form-control" name="money">
-        <input type="submit" value="去支付">
-    </form>
-</body>
+
+<head>
+  <meta charset="utf-8">
+  <title>充值页</title>
+  <meta name="keywords" content="HTML5 Template">
+  <meta name="description" content="Forum - Responsive HTML5 Template">
+  <meta name="author" content="Forum">
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<main id='tt-pageContent'>
+    <div class="container">
+        <form action="/alipay/pay/" method="POST">
+            {% csrf_token %}
+            <input type="text" class="form-control" name="money">
+            <input type="submit" value="去支付">
+        </form>
+    </div>
+</main>
 {% endblock %}

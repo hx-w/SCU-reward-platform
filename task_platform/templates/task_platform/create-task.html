@@ -17,9 +17,11 @@
 <main id="tt-pageContent">
   <div class="container">
     <div class="tt-wrapper-inner">
-      <h1 class="tt-title-border">
-        创建新任务
-      </h1>
+      <h1>创建新任务</h1>
+      <h4 class='tt-title-border'>
+        为了保证任务顺利完成，发布任务时需要发布者缴纳{{ DEPOSIT }}元押金，
+        任务结束时由平台自动退还。
+      </h4>
       <form class="form-default" method="POST">
         {% csrf_token %}
         <input type="hidden" name="v" id="v" value='None' />
