@@ -2,6 +2,7 @@
 import time
 import os
 import hashlib
+import random
 from decimal import Decimal
 from pathlib import Path
 from django.utils import timezone
@@ -91,13 +92,13 @@ def self_settings(request):
         message = ''
     return
 
-def check_deposit(username, money, _swicth=True):
+def check_deposit(username, money, swicth_=True):
     # makesure username in User
     user = User.objects.get(name=username)
     if money > user.money:
         return False
     else:
-        if _swicth:
+        if swicth_:
             user.money -= Decimal.from_float(money)
             user.save()
         return True
@@ -169,7 +170,9 @@ def detail(request, task_id):
     )
     is_publisher = True
     if username != publisher:
-        publisher = 'xxx'
+        publisher = '匿名用户：{}'.format(
+            random.choice(('金刚鹦鹉', '小牛', '小鹿', '北极熊', '天辉', '夜魇'))
+        )
         is_publisher = False
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
@@ -187,11 +190,17 @@ def detail(request, task_id):
                 message = '请选择至少一项报价！'
                 return render(request, 'task_platform/detail.html', locals())
             else:
-                # rec_list 报价用户列表 (username)
+                # 支付逻辑实现 and 未接受报价回退
                 rec_list = list(rec[:-1] for rec in rec_list)
-                # 支付逻辑实现
-                               
-                # 未接受报价回退
+                rec_money = dict(zip(rec_list, map(lambda rec: user_task_list.get(username=rec).submit_money, rec_list)))
+                if user.money < sum(rec_money.values()):
+                    redirect('/recharge/')
+                for money_ in rec_money.values():
+                    check_deposit(publisher, float(money_))
+                exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
+                exl_money = dict(exl_money_qs)
+                for rec, money_ in exl_money.items():
+                    check_deposit(rec, -float(money_))
 
                 # 设置task
                 task.begin_time = timezone.now()
