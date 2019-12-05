@@ -205,12 +205,13 @@ def detail(request, task_id):
                 rec_money = dict(zip(rec_list, map(lambda rec: user_task_list.get(username=rec).submit_money, rec_list)))
                 if user.money < sum(rec_money.values()):
                     redirect('/recharge/')
-                for money_ in rec_money.values():
-                    check_deposit(publisher, float(money_) * (1 + percentage))
-                exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
-                exl_money = dict(exl_money_qs)
-                for rec, money_ in exl_money.items():
-                    check_deposit(rec, -float(money_))
+                if task_class == '赏金模式':
+                    for money_ in rec_money.values():
+                        check_deposit(publisher, float(money_) * (1 + percentage))
+                        exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
+                        exl_money = dict(exl_money_qs)
+                    for rec, money_ in exl_money.items():
+                        check_deposit(rec, -float(money_))
 
                 # 设置task
                 task.begin_time = timezone.now()
