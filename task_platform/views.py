@@ -479,15 +479,16 @@ def profile(request):
                 elif task.task_state in ['中止', '超时']:
                     _settlement = -tot_money
                 elif task.task_state == '撤销':
-                    
-                    pass
+                    _settlement = -settings.DEPOSIT
+                    for rec in rec_task_list:
+                        if not rec.is_abort:
+                            tot_money -= float(rec.done_money) * (1 + settings.PERCENTAGE)
+                    _settlement -= tot_money
             else:
                 if task.task_state == '完成':
-                    pass
+                    _settlement = -float(rec_task_list.first().done_money) * (1 - settings.PERCENTAGE)
                 elif task.task_state in ['中止', '超时']:
-                    pass
-                elif task.task_state == '撤销':
-                    pass
+                    _settlement = -settings.DEPOSIT
         elif username in rec_task_id_list.values_list('username'):
             if task.task_class == '赏金模式':
                 if task.task_state == '完成':
@@ -501,19 +502,19 @@ def profile(request):
                     pass
                 elif task.task_state in ['中止', '超时']:
                     pass
-                elif task.task_state == '撤销':
-                    pass
-            pass
-        return _settlement
+        if type(_settlement) == str:
+            return _settlement
+        if _settlement >= 0:
+            return '+{}'.format(_settlement)
+        else:
+            return str(_settlement)
 
 
     for idx in range(5):
         tag_list = []
         for _task in eval('latest_task_list.filter({})'.format(tab_class[idx][0])):
             _color = 'tt-color0{} tt-badge'.format(stcolor_finder[eval(tab_class[idx][1])])
-            _settlement = '暂无'
-            if _task.task_state in ["超时", "撤销", "中止", "完成"]:
-                _settlement = '+1.12'
+            _settlement = calc_settlement(_task, username)
             tag_list.append(
                 (_task, _color, _settlement,
                 Task_tags.objects.filter(task_id=_task.id).order_by('sig_tag'))
