@@ -2,13 +2,16 @@
 import time
 import os
 import hashlib
+import random
 from decimal import Decimal
 from pathlib import Path
+from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-from .models import Task, Task_tags, User_task
+from django.conf import settings
+from .models import Task, Task_tags, User_task, Task_receive
 os.path.abspath('../')
 from login.models import User
 
@@ -49,7 +52,7 @@ def sceneImgUpload(request):
         raise Http404()
 
 
-def settings(request):
+def self_settings(request):
     username = request.session.get('user_name', None)
     user = User.objects.get(name=username)
     # POST
@@ -88,7 +91,18 @@ def settings(request):
         user.save()
         message = ''
     return
-        
+
+def check_deposit(username, money, swicth_=True):
+    # makesure username in User
+    user = User.objects.get(name=username)
+    if money > user.money:
+        return False
+    else:
+        if swicth_:
+            user.money -= Decimal.from_float(money)
+            user.save()
+        return True
+
 def index(request):
     # latest_task_list = Task.objects.order_by('-pub_time')[:10]
     username = request.session.get('user_name', None)
@@ -121,9 +135,8 @@ def index(request):
         new_password1, new_password2, new_dept, new_phone
         message
         '''
-        settings(request)
+        self_settings(request)
     return render(request, 'task_platform/index.html', locals())
-
 
 def detail(request, task_id):
     '''
@@ -157,24 +170,50 @@ def detail(request, task_id):
     )
     is_publisher = True
     if username != publisher:
-        publisher = 'xxx'
+        publisher = '匿名用户：{}'.format(
+            random.choice(('金刚鹦鹉', '小牛', '小鹿', '北极熊', '天辉', '夜魇'))
+        )
         is_publisher = False
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
-    if request.method == 'POST':
-        accept_id = request.GET.get('accept', None)
-        if accept_id:
-            user_task_acc = User_task.objects.get(id=accept_id)
-            task_acc = Task.objects.get(id=user_task_acc.task_id)
-            task_acc.receiver = user_task_acc.username
-            task_acc.task_state = '进行中'
-            task_acc.save()
-            return redirect('/')
 
     if request.method == 'POST':
-        if 'settings' in request.POST:
-            settings(request)
-        else:
+        if 'settings' in request.POST: # 个人信息修改
+            self_settings(request)
+        elif 'accept' in request.POST: # 发布者接受报价
+            message = '任务已开始！'
+            rec_list = request.POST.getlist('accept')
+            if len(rec_list) > task.people_needed:
+                message = '接受的报价过多！'
+                return render(request, 'task_platform/detail.html', locals())
+            elif len(rec_list) == 0:
+                message = '请选择至少一项报价！'
+                return render(request, 'task_platform/detail.html', locals())
+            else:
+                # 支付逻辑实现 and 未接受报价回退
+                rec_list = list(rec[:-1] for rec in rec_list)
+                rec_money = dict(zip(rec_list, map(lambda rec: user_task_list.get(username=rec).submit_money, rec_list)))
+                if user.money < sum(rec_money.values()):
+                    redirect('/recharge/')
+                for money_ in rec_money.values():
+                    check_deposit(publisher, float(money_))
+                exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
+                exl_money = dict(exl_money_qs)
+                for rec, money_ in exl_money.items():
+                    check_deposit(rec, -float(money_))
+
+                # 设置task
+                task.begin_time = timezone.now()
+                task.task_state = '进行中'
+                task.save()
+                # 设置接受者
+                for rec in rec_list:
+                    task_rec = Task_receive.objects.create(task_id=task.id)
+                    task_rec.username = rec
+                    task_rec.save()
+
+                return redirect('/profile/')
+        else:   # 用户提交报价
             message = '提交成功'
             if publisher == username:
                 message = '任务发布者无法提交报价'
@@ -188,12 +227,16 @@ def detail(request, task_id):
             
             description = request.POST.get('description')
             money = request.POST.get('money')
+            if not check_deposit(username, float(money)):
+                return redirect('/recharge/') # 余额不足
             user_task = User_task.objects.create(task_id=task_id)
             user_task.username = username
             user_task.description = description
             # user_task.submit_money = Decimal.from_float(float(money))
             user_task.submit_money = float(money)
             user_task.save()
+            task.people_now += 1
+            task.save()
     
     return render(request, 'task_platform/detail.html', locals())
 
@@ -204,6 +247,7 @@ def create_task(request):
     - task_detail        - tag_list
     - people_needed
     '''
+    DEPOSIT = settings.DEPOSIT
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
@@ -228,11 +272,13 @@ def create_task(request):
 
     if request.method == "POST":
         if 'settings' in request.POST:
-            settings(request)
+            self_settings(request)
         else:
+            # 判断金额是否充足
+            if not check_deposit(username, float(settings.DEPOSIT)):
+                return redirect('/recharge/') # 余额不足
             # 返回该任务详细信息页 /detail/tk Id
             task_class = request.POST.get('v')
-            print('------------------', task_class)
             task_description = request.POST.get('task_description')
             task_detail = request.POST.get('task_detail')
             people_needed = request.POST.get('people_needed')
@@ -342,6 +388,9 @@ def profile(request):
             (task, color,
             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
         )
+
+    if request.method == 'POST' and 'settings' in request.POST:
+        self_settings(request)
     return render(request, 'task_platform/profile.html', locals())
 
 def taskchat(request):

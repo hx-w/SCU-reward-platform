@@ -158,6 +158,8 @@ ALIPAY_DEBUG = True
 RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
 EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
 
+DEPOSIT = 5 # 5元押金
+
 # 双工通信
 ASGI_APPLICATION = 'mysite.routing.application'
 CHANNEL_LAYERS = {

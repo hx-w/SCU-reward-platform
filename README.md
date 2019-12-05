@@ -13,7 +13,7 @@
 - django-ckeditor (富文本编辑器)
 - pillow (缩略图)
 - channels==2.1.7`pip install -U channels`
-- channels_redis==2.3.3 `pip inatll -U channels`
+- channels_redis==2.3.3 `pip inatll -U channels_redis`
 
 `python -m django --version`判断是否安装成功
 

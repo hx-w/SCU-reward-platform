@@ -1,6 +1,13 @@
+# 本地配置文件
 .vscode/
+.jsbeautifyrc
+
+# python缓存文件
 __pycache__/
 *.pyc 
-.jsbeautifyrc
+
+# 模板
 build/
+
+# 数据库
 db.sqlite3
