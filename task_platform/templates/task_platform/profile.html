@@ -123,7 +123,13 @@
                 <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
                 <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
                 {% comment %} {% if username == task.publisher%} {% endcomment %}
-                <div class="tt-col-value   hide-mobile">发起</div>
+                <div class="tt-col-value   hide-mobile">
+                  {% if task.publisher == username %}
+                  发布
+                  {% else %}
+                  接收
+                  {% endif %}
+                </div>
                 {% comment %} {% else %} {% endcomment %}
                 {% comment %} <div class="tt-col-value   hide-mobile">接收</div> {% endcomment %}
                 {% comment %} {% endif %} {% endcomment %}
@@ -274,13 +280,6 @@
             <p>暂无任务</p>
             <!-- 无任务 -->
             {% endif %}
-            <div class="tt-row-btn">
-              <button type="button" class="btn-icon js-topiclist-showmore">
-                <svg class="tt-icon">
-                  <use xlink:href="#icon-load_lore_icon"></use>
-                </svg>
-              </button>
-            </div>
           </div>
         </div>
 

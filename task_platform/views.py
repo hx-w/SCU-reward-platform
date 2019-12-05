@@ -393,7 +393,7 @@ def profile(request):
     if user.dept == 'None':
         dept = '暂无信息'
     money = user.money   
-    tag_list_1, tag_list_2, tag_list_3, tag_list_4, tag_list_5 = [], [], [], [], []
+    task_list_list = []
     if username:
         user = User.objects.get(name=username)
         student_id = user.stu_id
@@ -401,50 +401,44 @@ def profile(request):
         dept = user.dept
         if user.dept == 'None':
             dept = '暂无信息'
-
+    # 颜色信息
     stcolor_finder = {
         '未开始': '9', '进行中': '2',
         '中止': '3', '撤销': '3', 
-        '超时': '3', '完成': '4'
-    }
-    clcolor_finder = {
+        '超时': '6', '完成': '4',
         '赏金模式': '5', '猎人模式': '7'
     }
-    latest_task_list = Task.objects.filter(publisher=username).order_by('-pub_time')
-    for task in latest_task_list.filter(task_class='赏金模式'):
-        color = 'tt-color0{} tt-badge'.format(stcolor_finder[task.task_state]) 
-        tag_list_1.append(
-            (task, color,
-             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
-        )
+    rec_task_id_list = []
+    try:
+        rec_task_id_list = Task_receive.objects.filter(username=username).values_list('task_id')
+    except:
+        pass
+    latest_task_list = Task.objects.filter(
+        Q(publisher=username) | Q(id__in=rec_task_id_list)
+    ).order_by('-pub_time')
 
-    for task in latest_task_list.filter(task_class='猎人模式'):
-        color = 'tt-color0{} tt-badge'.format(stcolor_finder[task.task_state])
-        tag_list_2.append(
-            (task, color,
-            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
-        )
+    tab_class = [
+        ("task_class='赏金模式'", "_task.task_state"),
+        ("task_class='猎人模式'", "_task.task_state"),
+        ("task_state='未开始'", "_task.task_class"),
+        ("task_state='进行中'", "_task.task_class"),
+        ("Q(task_state='撤销')|Q(task_state='中止')|Q(task_state='超时')|Q(task_state='完成')",
+        "_task.task_class")
+    ]
 
-    for task in latest_task_list.filter(task_state='未开始'):
-        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
-        tag_list_3.append(
-            (task, color,
-            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
-        )
+    for idx in range(5):
+        tag_list = []
+        for _task in eval('latest_task_list.filter({})'.format(tab_class[idx][0])):
+            _color = 'tt-color0{} tt-badge'.format(stcolor_finder[eval(tab_class[idx][1])])
+            tag_list.append(
+                (_task, _color, Task_tags.objects.filter(task_id=_task.id).order_by('sig_tag'))
+            )
+        task_list_list.append(tag_list)
 
-    for task in latest_task_list.filter(task_state='进行中'):
-        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
-        tag_list_4.append(
-            (task, color,
-            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
-        )
-
-    for task in latest_task_list.filter(Q(task_state='撤销')|Q(task_state='中止')|Q(task_state='超时')|Q(task_state='完成')):
-        color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
-        tag_list_5.append(
-            (task, color,
-            Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
-        )
+    tag_list_1, tag_list_2, tag_list_3, tag_list_4, tag_list_5 = (
+        task_list_list[0], task_list_list[1], task_list_list[2],
+        task_list_list[3], task_list_list[4]
+    )
 
     if request.method == 'POST' and 'settings' in request.POST:
         self_settings(request)
