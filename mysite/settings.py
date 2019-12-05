@@ -159,6 +159,10 @@ EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
 PERCENTAGE = 0.05
 DEPOSIT = 5 # 5元押金
 
+NIKENAMES = [
+    '幻影刺客', '巨魔战将', '狙击手', '龙骑士', '混沌骑士', '魅惑魔女', '敌法师', '凤凰', '艾欧', '风行者'
+]
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 

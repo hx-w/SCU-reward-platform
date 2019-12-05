@@ -34,14 +34,11 @@ def get_room_id(task):
 def check_chatroom_exist():
     alltask = Task.objects.all()
     for task in alltask:
-        try:
-            roominfo = Chatinfo.objects.filter(task_id=task.id)
-        except:
-            new_chatinfo = Chatinfo.objects.create(task_id=task.id)
-            new_chatinfo.room_id = get_room_id(task)
-            new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
-            new_chatinfo.sender = 'Admin'
-            new_chatinfo.save()
+        new_chatinfo = Chatinfo.objects.create(task_id=task.id)
+        new_chatinfo.room_id = get_room_id(task)
+        new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
+        new_chatinfo.sender = 'Admin'
+        new_chatinfo.save()
 
 @csrf_exempt
 def sceneImgUpload(request):
@@ -470,11 +467,7 @@ def profile(request):
         '超时': '6', '完成': '4',
         '赏金模式': '5', '猎人模式': '7'
     }
-    rec_task_id_list = []
-    try:
-        rec_task_id_list = Task_receive.objects.filter(username=username).values_list('task_id')
-    except:
-        pass
+    rec_task_id_list = Task_receive.objects.filter(username=username).values_list('task_id')
     latest_task_list = Task.objects.filter(
         Q(publisher=username) | Q(id__in=rec_task_id_list)
     ).order_by('-pub_time')
@@ -558,12 +551,42 @@ def profile(request):
 
 
 def chatroom(request, room_id):
-    chatinfo_list = []
+    chatinfo_list = Chatinfo.objects.filter(room_id=room_id)
+    if chatinfo_list.count() == 0:
+        print('000000000000000000000000000')
+        return redirect('/profile/')
+    username = request.session.get('user_name', None)
+    if not username:
+        return redirect('/login/')
+    task = Task.objects.get(id=chatinfo_list.first().task_id)
+    nikename = '发布者:{}(你自己)'.format(username)
+    rec_list = Task_receive.objects.filter(task_id=task.id)
+    # 检查 username 是否有资格访问该聊天室
+    if not (username == task.publisher or username in rec_list.values_list('username')):
+        return redirect('/profile/')
+    # 赶快把50个匿名补全(settings.NIKENAMES) 之后把下面的try except删掉
     try:
-        chatinfo_list = Chatinfo.objects.filter(room_id=room_id)
+        for idx in range(len(rec_list.values_list('username'))):
+            nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
+            break
     except:
-        return redirect('/index/')
+        pass
     
+    '''
+    左侧的任务聊天框列表，目前只展示进行中的任务
+    '''
+    rec_task_id_list = Task_receive.objects.filter(username=username,).values_list('task_id')
+    latest_task_list = Task.objects.filter(
+        (Q(publisher=username) | Q(id__in=rec_task_id_list)) & ~Q(task_state='未开始')
+    ).order_by('-task_state') # 进行中 任务在前面
+    task_chatinfo_list = []
+    for _task in latest_task_list:
+        _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
+        _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
+        _latest_send_time = _latest_send_time.strftime('%m-%d %H:%M:%S')
+        task_chatinfo_list.append((get_room_id(_task),_task.task_description, _latest_message, _latest_send_time))
+    
+
     return render(request, 'task_platform/chatroom.html', locals())
 
 def guide(request):
