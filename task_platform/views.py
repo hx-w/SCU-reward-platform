@@ -177,6 +177,14 @@ def detail(request, task_id):
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
     percentage = settings.PERCENTAGE
+    # 当前用户是否是接受者的一部分
+    is_receiver = False
+    try:
+        Task_receive.objects.get(task_id=task.id, username=username)
+        is_receiver = True
+    except:
+        is_receiver = False
+
     if request.method == 'POST':
         if 'settings' in request.POST: # 个人信息修改
             self_settings(request)
