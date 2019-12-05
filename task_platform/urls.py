@@ -10,7 +10,7 @@ urlpatterns = [
     path('upload/', views.sceneImgUpload, name='uploadimg'),
     path('upload/&responseType=json', views.sceneImgUpload),
     path('profile/', views.profile, name='profile'),
-    path('chatroom/', views.chatroom, name='chatroom'),
+    path('chatroom/<str:room_id>', views.chatroom, name='chatroom'),
     path('guide/', views.guide, name='guide'),
     path('about/', views.about, name='about'),
 ]

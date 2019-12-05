@@ -24,7 +24,7 @@
         {% endif %}
 
         <div class="tt-col-avatar">
-          <a href="/chatroom/">
+          <a href="#">
                   <svg class="tt-icon">
                     <use xlink:href="#icon-ava-c"></use>
                   </svg>
@@ -85,11 +85,11 @@
             </div>
 
             {% if tag_list_1 %}
-            {% for task, color, settlement, tags in tag_list_1 %}
+            {% for task, color, settlement, room_id, tags in tag_list_1 %}
 
               <div class="tt-item">
                 <div class="tt-col-avatar">
-                  <a href="/chatroom/">
+                  <a href="/chatroom/{{ room_id }}">
                   <svg class="tt-icon">
                     <use xlink:href="#icon-ava-c"></use>
                   </svg>
@@ -155,11 +155,11 @@
             </div>
 
             {% if tag_list_2 %}
-            {% for task, color, settlement, tags in tag_list_2 %}
+            {% for task, color, settlement, room_id, tags in tag_list_2 %}
 
               <div class="tt-item">
                 <div class="tt-col-avatar">
-                  <a href="/chatroom/">
+                  <a href="/chatroom/{{ room_id }}">
                   <svg class="tt-icon">
                     <use xlink:href="#icon-ava-c"></use>
                   </svg>
@@ -226,11 +226,11 @@
             </div>
 
             {% if tag_list_3 %}
-            {% for task, color, settlement, tags in tag_list_3 %}
+            {% for task, color, settlement, room_id, tags in tag_list_3 %}
 
               <div class="tt-item">
                 <div class="tt-col-avatar">
-                  <a href="/chatroom/">
+                  <a href="/chatroom/{{ room_id }}">
                   <svg class="tt-icon">
                     <use xlink:href="#icon-ava-c"></use>
                   </svg>
@@ -298,11 +298,11 @@
             </div>
 
             {% if tag_list_4 %}
-            {% for task, color, settlement, tags in tag_list_4 %}
+            {% for task, color, settlement, room_id, tags in tag_list_4 %}
 
               <div class="tt-item">
                 <div class="tt-col-avatar">
-                <a href="/chatroom/">
+                <a href="/chatroom/{{ room_id }}">
                   <svg class="tt-icon">
                     <use xlink:href="#icon-ava-c"></use>
                   </svg>
@@ -371,11 +371,11 @@
             </div>
 
             {% if tag_list_5 %}
-            {% for task, color, settlement, tags in tag_list_5 %}
+            {% for task, color, settlement, room_id, tags in tag_list_5 %}
 
               <div class="tt-item">
                 <div class="tt-col-avatar">
-                  <a href="/chatroom/">
+                  <a href="/chatroom/{{ room_id }}">
                   <svg class="tt-icon">
                     <use xlink:href="#icon-ava-c"></use>
                   </svg>

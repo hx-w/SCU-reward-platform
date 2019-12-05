@@ -43,6 +43,20 @@ class User_task(models.Model):
         verbose_name = "用户任务报价"
         verbose_name_plural = "用户任务报价"
 
+class Chatinfo(models.Model):
+    room_id = models.CharField(max_length=32, null=True, blank=True)
+    task_id = models.IntegerField(null=True, blank=True)
+    message = RichTextUploadingField(null=True, blank=True)
+    sender = models.CharField(max_length=128, null=True, blank=True)
+    send_time = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return room_id
+    
+    class Meta:
+        ordering = ['send_time']
+        verbose_name = '聊天信息'
+        verbose_name_plural = '聊天信息'
 
 class Task(models.Model):
     '''任务'''

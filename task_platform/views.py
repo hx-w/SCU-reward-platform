@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.conf import settings
-from .models import Task, Task_tags, User_task, Task_receive
+from .models import Task, Task_tags, User_task, Task_receive, Chatinfo
 os.path.abspath('../')
 from login.models import User
 
@@ -24,6 +24,24 @@ def hash_code(s, salt='hx+ltq+wzy+hxj'):  # 加点盐
     h.update((s + salt).encode())  # update方法只接收bytes类型
     return h.hexdigest()
 
+@csrf_exempt
+def get_room_id(task):
+    md5 = hashlib.md5()
+    md5.update('{}{}'.format(task.id, task.publisher).encode())
+    return md5.hexdigest()
+
+@csrf_exempt
+def check_chatroom_exist():
+    alltask = Task.objects.all()
+    for task in alltask:
+        try:
+            roominfo = Chatinfo.objects.filter(task_id=task.id)
+        except:
+            new_chatinfo = Chatinfo.objects.create(task_id=task.id)
+            new_chatinfo.room_id = get_room_id(task)
+            new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
+            new_chatinfo.sender = 'Admin'
+            new_chatinfo.save()
 
 @csrf_exempt
 def sceneImgUpload(request):
@@ -105,7 +123,8 @@ def check_deposit(username, money, swicth_=True):
         return True
 
 def index(request):
-    # latest_task_list = Task.objects.order_by('-pub_time')[:10]
+    # 不要取消下面这行注释，除非你知道自己在干什么
+    # check_chatroom_exist() 
     username = request.session.get('user_name', None)
     tag_list = []
     if username:
@@ -236,6 +255,12 @@ def detail(request, task_id):
                     task_rec.username = rec
                     task_rec.done_money = money_
                     task_rec.save()
+                # 创建聊天室
+                new_chatinfo = Chatinfo.objects.create(task_id=task.id)
+                neW_chatinfo.room_id = get_room_id(task)
+                new_chatinfo.sender = 'Admin'
+                new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
+                new_chatinfo.save()
 
                 return redirect('/profile/')
         elif 'submit_money_' in request.POST:   # 用户提交报价
@@ -515,8 +540,9 @@ def profile(request):
         for _task in eval('latest_task_list.filter({})'.format(tab_class[idx][0])):
             _color = 'tt-color0{} tt-badge'.format(stcolor_finder[eval(tab_class[idx][1])])
             _settlement = calc_settlement(_task, username)
+            _room_id = get_room_id(_task)
             tag_list.append(
-                (_task, _color, _settlement,
+                (_task, _color, _settlement, _room_id,
                 Task_tags.objects.filter(task_id=_task.id).order_by('sig_tag'))
             )
         task_list_list.append(tag_list)
@@ -531,8 +557,13 @@ def profile(request):
     return render(request, 'task_platform/profile.html', locals())
 
 
-def chatroom(request):
-
+def chatroom(request, room_id):
+    chatinfo_list = []
+    try:
+        chatinfo_list = Chatinfo.objects.filter(room_id=room_id)
+    except:
+        return redirect('/index/')
+    
     return render(request, 'task_platform/chatroom.html', locals())
 
 def guide(request):
