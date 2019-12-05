@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'captcha',
     'ckeditor',
     'ckeditor_uploader',
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -159,17 +158,6 @@ RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
 EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
 PERCENTAGE = 0.05
 DEPOSIT = 5 # 5元押金
-
-# 双工通信
-ASGI_APPLICATION = 'mysite.routing.application'
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('localhost', 6379)],
-        },
-    },
-}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

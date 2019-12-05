@@ -530,10 +530,6 @@ def profile(request):
         self_settings(request)
     return render(request, 'task_platform/profile.html', locals())
 
-def taskchat(request):
-    
-    return render(request, 'task_platform/taskchat.html', locals())
-
 
 def chatroom(request):
 
