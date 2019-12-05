@@ -176,7 +176,7 @@ def detail(request, task_id):
         is_publisher = False
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
-
+    percentage = settings.PERCENTAGE
     if request.method == 'POST':
         if 'settings' in request.POST: # 个人信息修改
             self_settings(request)
@@ -196,7 +196,7 @@ def detail(request, task_id):
                 if user.money < sum(rec_money.values()):
                     redirect('/recharge/')
                 for money_ in rec_money.values():
-                    check_deposit(publisher, float(money_))
+                    check_deposit(publisher, float(money_) * (1 + percentage))
                 exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
                 exl_money = dict(exl_money_qs)
                 for rec, money_ in exl_money.items():
@@ -206,14 +206,15 @@ def detail(request, task_id):
                 task.begin_time = timezone.now()
                 task.task_state = '进行中'
                 task.save()
-                # 设置接受者
-                for rec in rec_list:
+                # 设置接受
+                for rec, money_ in rec_money.items():
                     task_rec = Task_receive.objects.create(task_id=task.id)
                     task_rec.username = rec
+                    task_rec.done_money = money_
                     task_rec.save()
 
                 return redirect('/profile/')
-        else:   # 用户提交报价
+        elif 'submit_money_' in request.POST:   # 用户提交报价
             message = '提交成功'
             if publisher == username:
                 message = '任务发布者无法提交报价'
@@ -237,7 +238,55 @@ def detail(request, task_id):
             user_task.save()
             task.people_now += 1
             task.save()
-    
+        elif 'revoke_btn' in request.POST: # 发布者撤销
+            '''
+            - 发布者押金不退, 平均值退给接受者
+            - 发布者支付金额全退
+            - 接受者押金全退
+            '''
+            task_rec = Task_receive.objects.filter(task_id=task.id)
+            tot_money, avg_deposit = 0.0, settings.DEPOSIT / task_rec.count() 
+            for rec in task_rec:
+                tot_money += float(rec.done_money)
+                check_deposit(rec.username, -(float(rec.done_money) + avg_deposit)) # 回退接收者
+            check_deposit(username, -float(tot_money * (1 + percentage))) # 回退发布者
+            task.task_state = '撤销'
+            task.end_time = timezone.now()
+            task.save()
+            return redirect('/profile/')
+        elif 'abort_btn' in request.POST: # 接受者 中止
+            '''
+            - 发布者支付金额全退
+            - 接受者押金不退，退给发布者
+            - 所有接受者中止，任务结束, 发布者押金回退
+            '''
+            sig_rec = Task_receive.objects.get(task_id=task.id, username=username)
+            sig_rec.is_abort = True
+            sig_rec.save()
+            check_deposit(task.publisher, -float(sig_rec.done_money) * (1 + percentage)) # 回退发布者
+            check_deposit(task.publisher, -float(sig_rec.done_money)) # 回退发布者
+            task_rec = Task_receive.objects.filter(task_id=task.id)
+            if not False in task_rec.values_list('is_abort'):
+                # 任务全部终止
+                check_deposit(task.publisher, -float(settings.DEPOSIT)) # 回退押金
+                task.task_state = '中止'
+                task.end_time = timezone.now()
+                task.save()
+            return redirect('/profile/')
+        elif 'complete_btn' in request.POST:
+            '''
+            - 发布者押金回退
+            - 接受者押金回退，接受者赏金
+            '''
+            task_rec = Task_receive.objects.filter(task_id=task.id)
+            check_deposit(username, -settings.DEPOSIT) # 回退押金
+            for rec in task_rec:
+                check_deposit(rec.username, -2 * float(rec.done_money))
+            task.task_state = '完成'
+            task.end_time = timezone.now()
+            task.save()
+            return redirect('/profile/')
+
     return render(request, 'task_platform/detail.html', locals())
 
 
@@ -382,7 +431,7 @@ def profile(request):
             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag'))
         )
 
-    for task in latest_task_list.filter(Q(task_state='撤销')|Q(task_state='中止')|Q(task_state='超时')|Q(task_state='已完成')):
+    for task in latest_task_list.filter(Q(task_state='撤销')|Q(task_state='中止')|Q(task_state='超时')|Q(task_state='完成')):
         color = 'tt-color0{} tt-badge'.format(clcolor_finder[task.task_class])
         tag_list_5.append(
             (task, color,

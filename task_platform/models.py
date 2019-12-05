@@ -20,7 +20,8 @@ class Task_tags(models.Model):
 class Task_receive(models.Model):
     task_id = models.IntegerField(default="0")
     username = models.CharField(max_length=128, default="None")
-
+    done_money = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    is_abort = models.BooleanField(default=False)
     def __str__(self):
         return self.username
     
