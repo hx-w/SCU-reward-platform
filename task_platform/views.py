@@ -5,6 +5,7 @@ import hashlib
 import random
 from decimal import Decimal
 from pathlib import Path
+from datetime import timedelta
 from django.utils import timezone
 from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
 from django.http import JsonResponse
@@ -187,6 +188,18 @@ def detail(request, task_id):
         is_receiver = True
     except:
         is_receiver = False
+
+    # 判断超时
+    def is_overtime(task):
+        return (
+            task.task_state == '进行中'
+            and timezone.now() > task.begin_time + timedelta(
+                0, # 天
+                float(task.expected_time_consuming) * 3600 # 秒
+            )
+        )
+
+
     if request.method == 'POST':
         if 'settings' in request.POST: # 个人信息修改
             self_settings(request)
@@ -265,24 +278,34 @@ def detail(request, task_id):
             task.end_time = timezone.now()
             task.save()
             return redirect('/profile/')
-        elif 'abort_btn' in request.POST: # 接受者 中止
+        elif 'abort_btn' in request.POST or is_overtime(task): # 接受者 中止
             '''
             - 发布者支付金额全退
             - 接受者押金不退，退给发布者
             - 所有接受者中止，任务结束, 发布者押金回退
             '''
-            sig_rec = Task_receive.objects.get(task_id=task.id, username=username)
-            sig_rec.is_abort = True
-            sig_rec.save()
-            check_deposit(task.publisher, -float(sig_rec.done_money) * (1 + percentage)) # 回退发布者
-            check_deposit(task.publisher, -float(sig_rec.done_money)) # 回退发布者
-            task_rec = Task_receive.objects.filter(task_id=task.id)
-            if not False in task_rec.values_list('is_abort'):
-                # 任务全部终止
-                check_deposit(task.publisher, -float(settings.DEPOSIT)) # 回退押金
+            sig_rec = Task_receive.objects.filter(task_id=task.id)
+            if task_class == '赏金模式':
+                sig_rec = sig_rec.get(username=username)
+                sig_rec.is_abort = True
+                sig_rec.save()
+                check_deposit(task.publisher, -float(sig_rec.done_money) * (1 + percentage)) # 回退发布者
+                check_deposit(task.publisher, -float(sig_rec.done_money)) # 回退发布者
+                task_rec = Task_receive.objects.filter(task_id=task.id)
+                if not False in task_rec.values_list('is_abort'):
+                    # 任务全部终止
+                    check_deposit(task.publisher, -float(settings.DEPOSIT)) # 回退押金
+                    task.task_state = '中止'
+                    task.end_time = timezone.now()
+                    task.save()
+            elif task_class == '猎人模式':
+                # 退给接受者发布者的押金，发布者支出回退
+                sig_rec = sig_rec.first()
+                check_deposit(sig_rec.username, -float(settings.DEPOSIT)-float(sig_rec.done_money))
                 task.task_state = '中止'
                 task.end_time = timezone.now()
                 task.save()
+
             return redirect('/profile/')
         elif 'complete_btn' in request.POST:
             '''
@@ -290,9 +313,13 @@ def detail(request, task_id):
             - 接受者押金回退，接受者赏金
             '''
             task_rec = Task_receive.objects.filter(task_id=task.id)
-            check_deposit(username, -settings.DEPOSIT) # 回退押金
-            for rec in task_rec:
-                check_deposit(rec.username, -2 * float(rec.done_money))
+            check_deposit(task.publisher, -settings.DEPOSIT) # 回退押金
+            if task_class == '赏金模式':
+                for rec in task_rec:
+                    check_deposit(rec.username, -2 * float(rec.done_money))
+            elif task_class == '猎人模式':
+                task_rec = task_rec.first()
+                check_deposit(task.publisher, -float(task_rec.done_money) * (1 - percentage))
             task.task_state = '完成'
             task.end_time = timezone.now()
             task.save()
@@ -429,12 +456,60 @@ def profile(request):
         "_task.task_class")
     ]
 
+    def calc_settlement(task, username):
+        _settlement = '暂无'
+        rec_task_list = Task_receive.objects.filter(task_id=task.id)
+        if task.publisher == username:
+            if task.task_class == '赏金模式':
+                tot_money = 0
+                for rec in rec_task_list:
+                    if rec.is_abort:
+                        tot_money -= float(rec.done_money) * (2 + settings.PERCENTAGE)
+                    else:
+                        tot_money += float(rec.done_money) * (1 + settings.PERCENTAGE)
+                if task.task_state == '完成':
+                    _settlement = -tot_money
+                elif task.task_state in ['中止', '超时']:
+                    _settlement = -tot_money
+                elif task.task_state == '撤销':
+                    
+                    pass
+            else:
+                if task.task_state == '完成':
+                    pass
+                elif task.task_state in ['中止', '超时']:
+                    pass
+                elif task.task_state == '撤销':
+                    pass
+        elif username in rec_task_id_list.values_list('username'):
+            if task.task_class == '赏金模式':
+                if task.task_state == '完成':
+                    pass
+                elif task.task_state in ['中止', '超时']:
+                    pass
+                elif task.task_state == '撤销':
+                    pass
+            else:
+                if task.task_state == '完成':
+                    pass
+                elif task.task_state in ['中止', '超时']:
+                    pass
+                elif task.task_state == '撤销':
+                    pass
+            pass
+        return _settlement
+
+
     for idx in range(5):
         tag_list = []
         for _task in eval('latest_task_list.filter({})'.format(tab_class[idx][0])):
             _color = 'tt-color0{} tt-badge'.format(stcolor_finder[eval(tab_class[idx][1])])
+            _settlement = '暂无'
+            if _task.task_state in ["超时", "撤销", "中止", "完成"]:
+                _settlement = '+1.12'
             tag_list.append(
-                (_task, _color, Task_tags.objects.filter(task_id=_task.id).order_by('sig_tag'))
+                (_task, _color, _settlement,
+                Task_tags.objects.filter(task_id=_task.id).order_by('sig_tag'))
             )
         task_list_list.append(tag_list)
 
