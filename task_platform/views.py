@@ -278,35 +278,6 @@ def detail(request, task_id):
             task.end_time = timezone.now()
             task.save()
             return redirect('/profile/')
-        elif 'abort_btn' in request.POST or is_overtime(task): # 接受者 中止
-            '''
-            - 发布者支付金额全退
-            - 接受者押金不退，退给发布者
-            - 所有接受者中止，任务结束, 发布者押金回退
-            '''
-            sig_rec = Task_receive.objects.filter(task_id=task.id)
-            if task_class == '赏金模式':
-                sig_rec = sig_rec.get(username=username)
-                sig_rec.is_abort = True
-                sig_rec.save()
-                check_deposit(task.publisher, -float(sig_rec.done_money) * (1 + percentage)) # 回退发布者
-                check_deposit(task.publisher, -float(sig_rec.done_money)) # 回退发布者
-                task_rec = Task_receive.objects.filter(task_id=task.id)
-                if not False in task_rec.values_list('is_abort'):
-                    # 任务全部终止
-                    check_deposit(task.publisher, -float(settings.DEPOSIT)) # 回退押金
-                    task.task_state = '中止'
-                    task.end_time = timezone.now()
-                    task.save()
-            elif task_class == '猎人模式':
-                # 退给接受者发布者的押金，发布者支出回退
-                sig_rec = sig_rec.first()
-                check_deposit(sig_rec.username, -float(settings.DEPOSIT)-float(sig_rec.done_money))
-                task.task_state = '中止'
-                task.end_time = timezone.now()
-                task.save()
-
-            return redirect('/profile/')
         elif 'complete_btn' in request.POST:
             '''
             - 发布者押金回退
@@ -324,6 +295,42 @@ def detail(request, task_id):
             task.end_time = timezone.now()
             task.save()
             return redirect('/profile/')
+
+    if (request.method == 'POST' and 'abort_btn' in request.POST) or is_overtime(task): # 接受者 中止
+        '''
+        - 发布者支付金额全退
+        - 接受者押金不退，退给发布者
+        - 所有接受者中止，任务结束, 发布者押金回退
+        '''
+        sig_rec = Task_receive.objects.filter(task_id=task.id)
+        if task_class == '赏金模式':
+            sig_rec = sig_rec.get(username=username)
+            sig_rec.is_abort = True
+            sig_rec.save()
+            check_deposit(task.publisher, -float(sig_rec.done_money) * (1 + percentage)) # 回退发布者
+            check_deposit(task.publisher, -float(sig_rec.done_money)) # 回退发布者
+            task_rec = Task_receive.objects.filter(task_id=task.id)
+            if not False in task_rec.values_list('is_abort'):
+                # 任务全部终止
+                check_deposit(task.publisher, -float(settings.DEPOSIT)) # 回退押金
+                if is_overtime(task):
+                    task.task_state = '超时'
+                else:
+                    task.task_state = '中止'
+                task.end_time = timezone.now()
+                task.save()
+        elif task_class == '猎人模式':
+            # 退给接受者发布者的押金，发布者支出回退
+            sig_rec = sig_rec.first()
+            check_deposit(sig_rec.username, -float(settings.DEPOSIT)-float(sig_rec.done_money))
+            if is_overtime(task):
+                task.task_state = '超时'
+            else:
+                task.task_state = '中止'
+            task.end_time = timezone.now()
+            task.save()
+
+        return redirect('/profile/')
 
     return render(request, 'task_platform/detail.html', locals())
 
