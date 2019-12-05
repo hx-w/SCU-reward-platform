@@ -41,7 +41,7 @@
                 <a href="#" class="tt-button-icon" style="a:visited {color:#00FF00;}" xx="赏金模式">
                   <span class="tt-icon">
                     <svg>
-                      <use xlink:href="#icon-discussion"></use>
+                      <use xlink:href="#bounty"></use>
                     </svg>
                   </span>
                   <span class="tt-text">赏金模式</span>
@@ -51,7 +51,7 @@
                 <a href="#" class="tt-button-icon" xx="猎人模式">
                   <span class="tt-icon">
                     <svg>
-                      <use xlink:href="#Question"></use>
+                      <use xlink:href="#hunter"></use>
                     </svg>
                   </span>
                   <span class="tt-text">猎人模式</span>
@@ -59,7 +59,9 @@
               </div>
               <div style="margin-right:90px;margin-left:90px;margin-top:30px;   display: flex;
                                 align-items: center;">
-                  <span id="tips" class="tt-text"style="font-size:22px;display:block;"></span>  
+                  <center>
+                  <span id="tips" class="tt-text"style="font-size:22px;location:absolute;display:block;"></span>  
+                  </center>
               </div>
             </div>
           </div>
@@ -87,10 +89,12 @@
           <div style="margin:20px;">
           <div class="row">
             <div class="col-md-2">
-              <div class="form-group">
+              <div class="form-group" >
                 <label for="inputTopicTitle">所需人数</label>
-                <div style="display: -webkit-flex;display: inline-flex;align-items:center; ">
+                <div style="display: -webkit-flex;display: inline ;align-items:center;">
+                <span id="表">
                 <input name="people_needed" class="form-control" placeholder="最多50人" style="width:100px;">
+                </span>
                 <b style=" color:#000000;font-weight:400;margin-left:10px;">   人</b>
                 </input>
                 </div>

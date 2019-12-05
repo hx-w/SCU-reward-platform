@@ -11,4 +11,7 @@ urlpatterns = [
     path('upload/&responseType=json', views.sceneImgUpload),
     path('taskchat/', views.taskchat, name='chat-urls'),
     path('profile/', views.profile, name='profile'),
+    path('chatroom/', views.chatroom, name='chatroom'),
+    path('guide/', views.guide, name='guide'),
+    path('about/', views.about, name='about'),
 ]

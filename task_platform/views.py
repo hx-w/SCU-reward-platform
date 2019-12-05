@@ -534,3 +534,15 @@ def taskchat(request):
     
     return render(request, 'task_platform/taskchat.html', locals())
 
+
+def chatroom(request):
+
+    return render(request, 'task_platform/chatroom.html', locals())
+
+def guide(request):
+
+    return render(request, 'task_platform/guide.html', locals())
+
+def about(request):
+
+    return render(request, 'task_platform/about.html', locals())

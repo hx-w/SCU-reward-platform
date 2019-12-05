@@ -20,9 +20,15 @@
 
       <div class="tt-item">
         <div class="tt-col-avatar">
+          {% if task.task_class == "赏金模式" %}
           <svg class="tt-icon">
             <use xlink:href="#bounty"></use>
           </svg>
+          {% else %}
+          <svg class="tt-icon">
+            <use xlink:href="#hunter"></use>
+          </svg>
+          {% endif %}
         </div>
         <div class="tt-col-description">
           <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
