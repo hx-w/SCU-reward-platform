@@ -553,7 +553,6 @@ def profile(request):
 def chatroom(request, room_id):
     chatinfo_list = Chatinfo.objects.filter(room_id=room_id)
     if chatinfo_list.count() == 0:
-        print('000000000000000000000000000')
         return redirect('/profile/')
     username = request.session.get('user_name', None)
     if not username:
@@ -562,7 +561,7 @@ def chatroom(request, room_id):
     nikename = '发布者:{}(你自己)'.format(username)
     rec_list = Task_receive.objects.filter(task_id=task.id)
     # 检查 username 是否有资格访问该聊天室
-    if not (username == task.publisher or username in rec_list.values_list('username')):
+    if not (username == task.publisher or rec_list.filter(username=username).count()):
         return redirect('/profile/')
     # 赶快把50个匿名补全(settings.NIKENAMES) 之后把下面的try except删掉
     try:
