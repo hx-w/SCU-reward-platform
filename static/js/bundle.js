@@ -1635,6 +1635,13 @@ module.exports = function (element) {
       $(this).addClass('active');
       var tmp = $(this).attr("xx")
       $("#v").val(tmp);
+      if (tmp == "赏金模式")
+      {
+        document.getElementById("tips").innerHTML = "赏金模式，发布任务并支付赏金";
+      }
+      else {
+        document.getElementById("tips").innerHTML = "猎人模式，发布自己能做的任务并收取一定报酬";
+      }
 			return false;
 		});
 	};

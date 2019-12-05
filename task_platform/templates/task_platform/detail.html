@@ -130,12 +130,34 @@
               </div>
           </form>
 
-        {% elif task_state == "进行中" and username == publisher %}<!-- 发布者确认完成 -->
+        {% elif task_state == "进行中" and username == publisher %}
+          <form class="form-default" method="POST">
+            {% csrf_token %}
+            <div class="tt-wrapper-inner">
+              <div class="pt-editor form-default">
+                <div class="pt-row"style="text-align:center">
+                  {% comment %} <div class="col-auto"> {% endcomment %}
+                    <input type="submit" style="margin-left:25%; background-color:rgb(173, 84, 10);" class="btn btn-secondary btn-width-lg" value="撤销任务"></input>
+                  {% comment %} </div> {% endcomment %}
+                  {% comment %} <div class="col-auto"> {% endcomment %}
+                    <input type="submit" style="margin-right:25%;background-color:rgb(26, 121, 2);" class="btn btn-secondary btn-width-lg" value="完成任务"></input>
+                  {% comment %} </div> {% endcomment %}
+                </div>
+              </div>
+          </form>
 
+        {% elif task_state == "进行中" and username != publisher %}
+          <form class="form-default" method="POST">
+            {% csrf_token %}
+            <div class="tt-wrapper-inner">
+              <div class="pt-editor form-default">
+                <div class="pt-row" style="text-align:center">
+                    <input type="submit" style="margin-left:45%;background-color:rgba(255, 24, 24, 0.973);" class="btn btn-secondary btn-width-lg" value="终止任务"></input>
+                </div>
+              </div>
+          </form>
+        {% elif task_state != "未开始" and task_state != "进行中"%}
 
-
-
-        {% elif task_state != "未开始" and task_state != "进行中"%}<!-- 结束的任务 -->
 
 
 

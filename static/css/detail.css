@@ -31,6 +31,27 @@
 	display: block;
 	line-height: 20px;
 	text-align: center;
-	background-color: #1890FF;
+	background-color: rgb(10, 94, 173);
     color: #ffffff;
+}
+.navbar {
+    width: 100%;
+    margin-left: auto ;
+    margin-right: auto ;
+    background-color: #ABCDEF;
+}
+.navbar ul {
+    list-style-type: none; /*to remove bullets*/
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    width: 90%;
+    overflow: hidden;
+}
+.navbar li{
+    float: left;
+    padding: 2px;
+    width: 150px;
+    margin-left: auto ;
+    margin-right: auto ;
 }
