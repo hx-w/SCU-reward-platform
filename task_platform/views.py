@@ -179,6 +179,8 @@ def detail(request, task_id):
         is_publisher = False
     message = ''
     user_task_list = User_task.objects.filter(task_id=task_id)
+    percentage = settings.PERCENTAGE
+    # 当前用户是否是接受者的一部分
     is_receiver = False
     try:
         Task_receive.objects.get(task_id=task.id, username=username)
