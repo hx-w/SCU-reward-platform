@@ -18,6 +18,11 @@
   <div class="tt-wrapper-section">
     <div class="container">
       <div class="tt-user-header">
+
+        {% if message %}
+        <label>{{ message }}</label>
+        {% endif %}
+
         <div class="tt-col-avatar">
           <div class="tt-icon">
             <svg class="tt-icon">
@@ -90,7 +95,7 @@
                 </div>
                 <div class="tt-col-description">
                   <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-                      {% if task.task_state == "已完成" %}
+                      {% if task.task_state == "完成" %}
                         <svg class="tt-icon">
                           <use xlink:href="#icon-verified"></use>
                         </svg>
@@ -163,7 +168,7 @@
                 </div>
                 <div class="tt-col-description">
                   <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-                      {% if task.task_state == "已完成" %}
+                      {% if task.task_state == "完成" %}
                         <svg class="tt-icon">
                           <use xlink:href="#icon-verified"></use>
                         </svg>
@@ -233,7 +238,7 @@
                 </div>
                 <div class="tt-col-description">
                   <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-                      {% if task.task_state == "已完成" %}
+                      {% if task.task_state == "完成" %}
                         <svg class="tt-icon">
                           <use xlink:href="#icon-verified"></use>
                         </svg>
@@ -304,15 +309,15 @@
                 </div>
                 <div class="tt-col-description">
                   <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-                      {% if task.task_state == "已完成" %}
-                        <svg class="tt-icon">
-                          <use xlink:href="#icon-verified"></use>
-                        </svg>
-                      {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
-                        <svg class="tt-icon">
-                          <use xlink:href="#icon-locked"></use>
-                        </svg>
-                      {% endif %}
+              {% if task.task_state == "完成" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-verified"></use>
+                </svg>
+              {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-locked"></use>
+                </svg>
+              {% endif %}
                       {{ task.task_description }}
                     </a></h6>
                   <div class="row align-items-center no-gutters">
@@ -376,7 +381,7 @@
                 </div>
                 <div class="tt-col-description">
                   <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-                      {% if task.task_state == "已完成" %}
+                      {% if task.task_state == "完成" %}
                         <svg class="tt-icon">
                           <use xlink:href="#icon-verified"></use>
                         </svg>

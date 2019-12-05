@@ -67,7 +67,7 @@
                           <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
                         </div>
                         <div class="tt-avatar-title">
-                          <a href="#">{{ sig.submit_money }}</a>
+                          <a href="#">{{ sig.submit_money }} * (1 + {{ percentage }} )</a>
                         </div>
                         <a href="#" class="tt-info-time">
                           <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>
@@ -124,7 +124,7 @@
                     <p>写出你想说的话，最多30字</p>
                   </div>
                   <div class="col-auto">
-                    <input type="submit" class="btn btn-secondary btn-width-lg" value="提交报价"></input>
+                    <input type="submit" name="submit_money_" class="btn btn-secondary btn-width-lg" value="提交报价"></input>
                   </div>
                 </div>
               </div>
@@ -137,10 +137,10 @@
               <div class="pt-editor form-default">
                 <div class="pt-row"style="text-align:center">
                   {% comment %} <div class="col-auto"> {% endcomment %}
-                    <input type="submit" style="margin-left:25%; background-color:rgb(173, 84, 10);" class="btn btn-secondary btn-width-lg" value="撤销任务"></input>
+                    <input type="submit" name="revoke_btn" style="margin-left:25%; background-color:rgb(173, 84, 10);" class="btn btn-secondary btn-width-lg" value="撤销任务"></input>
                   {% comment %} </div> {% endcomment %}
                   {% comment %} <div class="col-auto"> {% endcomment %}
-                    <input type="submit" style="margin-right:25%;background-color:rgb(26, 121, 2);" class="btn btn-secondary btn-width-lg" value="完成任务"></input>
+                    <input type="submit" name="complete_btn" style="margin-right:25%;background-color:rgb(26, 121, 2);" class="btn btn-secondary btn-width-lg" value="完成任务"></input>
                   {% comment %} </div> {% endcomment %}
                 </div>
               </div>
@@ -152,7 +152,7 @@
             <div class="tt-wrapper-inner">
               <div class="pt-editor form-default">
                 <div class="pt-row" style="text-align:center">
-                    <input type="submit" style="margin-left:45%;background-color:rgba(255, 24, 24, 0.973);" class="btn btn-secondary btn-width-lg" value="终止任务"></input>
+                    <input type="submit" name="abort_btn" style="margin-left:45%;background-color:rgba(255, 24, 24, 0.973);" class="btn btn-secondary btn-width-lg" value="终止任务"></input>
                 </div>
               </div>
           </form>
