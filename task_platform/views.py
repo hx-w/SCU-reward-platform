@@ -164,6 +164,9 @@ def detail(request, task_id):
     task_description = task.task_description
     task_detail = task.task_detail
     task_state = task.task_state
+    task_class = task.task_class
+
+
     sort_choice_list = (
         '发布时间 最近', '发布时间 最远',
         '报价 最低', '报价 最高'
@@ -184,7 +187,6 @@ def detail(request, task_id):
         is_receiver = True
     except:
         is_receiver = False
-
     if request.method == 'POST':
         if 'settings' in request.POST: # 个人信息修改
             self_settings(request)
