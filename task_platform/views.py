@@ -198,12 +198,7 @@ def detail(request, task_id):
     user_task_list = User_task.objects.filter(task_id=task_id)
     percentage = settings.PERCENTAGE
     # 当前用户是否是接受者的一部分
-    is_receiver = False
-    try:
-        Task_receive.objects.get(task_id=task.id, username=username)
-        is_receiver = True
-    except:
-        is_receiver = False
+    is_receiver = (Task_receive.objects.filter(task_id=task.id, username=username).count() != 0)
 
     # 判断超时
     def is_overtime(task):
@@ -254,7 +249,7 @@ def detail(request, task_id):
                     task_rec.save()
                 # 创建聊天室
                 new_chatinfo = Chatinfo.objects.create(task_id=task.id)
-                neW_chatinfo.room_id = get_room_id(task)
+                new_chatinfo.room_id = get_room_id(task)
                 new_chatinfo.sender = 'Admin'
                 new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
                 new_chatinfo.save()
@@ -551,7 +546,7 @@ def profile(request):
 
 
 def chatroom(request, room_id):
-    chatinfo_list = Chatinfo.objects.filter(room_id=room_id)
+    chatinfo_list = Chatinfo.objects.filter(room_id=room_id).order_by('send_time')
     if chatinfo_list.count() == 0:
         return redirect('/profile/')
     username = request.session.get('user_name', None)
@@ -560,14 +555,21 @@ def chatroom(request, room_id):
     task = Task.objects.get(id=chatinfo_list.first().task_id)
     nikename = '发布者:{}(你自己)'.format(username)
     rec_list = Task_receive.objects.filter(task_id=task.id)
+    user = User.objects.get(name=username)
+    student_id = user.stu_id
+    phone = user.phone
+    dept = user.dept
+    if user.dept == 'None':
+        dept = '暂无信息'
     # 检查 username 是否有资格访问该聊天室
     if not (username == task.publisher or rec_list.filter(username=username).count()):
         return redirect('/profile/')
     # 赶快把50个匿名补全(settings.NIKENAMES) 之后把下面的try except删掉
     try:
         for idx in range(len(rec_list.values_list('username'))):
-            nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
-            break
+            if rec_list[idx].username == username:
+                nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
+                break
     except:
         pass
     
@@ -584,7 +586,47 @@ def chatroom(request, room_id):
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
         _latest_send_time = _latest_send_time.strftime('%m-%d %H:%M:%S')
         task_chatinfo_list.append((get_room_id(_task),_task.task_description, _latest_message, _latest_send_time))
-    
+    '''
+    右侧聊天框
+    '''
+    task_description = task.task_description
+    tot_people_num = 1 + Task_receive.objects.filter(task_id=task.id).count()
+    message_list = []
+    begin_day = int(chatinfo_list.first().send_time.strftime('%d'))
+    for message in chatinfo_list:
+        _underline_flag = False
+        _send_time = message.send_time.strftime('%H:%M:%S')
+        _NIKENAME = 'None'
+        _message = message.message
+        _underline_info = 'None'
+
+        _today = int(message.send_time.strftime('%d'))
+
+        if message.sender == username:
+            _NIKENAME = '发布者:天辉'
+        elif message.sender == 'Admin':
+            _NIKENAME = '管理员'
+        else:
+            for idx in range(len(rec_list.values_list('username'))):
+                if rec_list[idx].username == username:
+                    nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
+                    break
+
+        if begin_day != _today:
+            _underline_info = message.send_time.strftime('%m/%d/%Y')
+        message_list.append(
+            (_underline_flag, _underline_info, _NIKENAME, _message, _send_time)
+        )
+    if request.method == 'POST':
+        if 'settings' in request.POST:
+            self_settings(request)
+        elif 'send' in request.POST:
+            new_message = request.POST.get('new_message')
+            new_chatinfo = Chatinfo.objects.create(room_id=room_id, task_id=task.id)
+            new_chatinfo.message = new_message
+            new_chatinfo.sender = username
+            new_chatinfo.save()
+            return redirect('/chatroom/{}'.format(room_id))
 
     return render(request, 'task_platform/chatroom.html', locals())
 

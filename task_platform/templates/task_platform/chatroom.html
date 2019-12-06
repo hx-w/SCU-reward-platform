@@ -56,7 +56,7 @@
                     </div>
                     <div class="tt-col-description">
                         <h4 class="tt-title"><span>{{ task_description }}</span> <span class="time">{{ latest_send_time }}</span></h4>
-                        <div class="tt-message tt-select">{{ latest_message }}</div>
+                        <div class="tt-message tt-select">{{ latest_message | safe }}</div>
                     </div>
                     </a>
                 
@@ -75,10 +75,10 @@
                 </i>
               </a>
               <h2 class="tt-title">
-                Kevin
+                {{ task_description }}
               </h2>
               <div class="tt-description">
-                Last seen 3h ago
+                共{{ tot_people_num }}人在聊天室中
               </div>
               <a href="#" class="tt-icon-link">
                 <i class="tt-icon">
@@ -89,149 +89,55 @@
               </a>
             </div>
             <div class="tt-list-time-topic">
-              <div class="tt-item-title">
-                <span>12/26/2017</span>
-              </div>
+              {% for underline_flag, underline_info, nikename, message, send_time in message_list %}
+
+              {% if underline_flag %}
+                <!-- 时间分割线 -->
+                <div class="tt-item-title">
+                  <span>{{ underline_info }}</span>
+                </div> 
+              {% endif %}
               <div class="tt-item">
-                <div class="tt-col-avatar">
-                  <svg class="tt-icon">
-                    <use xlink:href="#icon-ava-k"></use>
-                  </svg>
-                </div>
                 <div class="tt-col-description">
-                  <h4 class="tt-title"><a href="#">Kevin</a> <span class="time">3:12 AM</span></h4>
-                  <p>How is it going man? Did you see my new forum <a href="#" class="tt-underline-02">post?</a></p>
+                  <h4 class="tt-title"><a href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
+                  <p>{{ message | safe }}</p>
                 </div>
               </div>
-              <div class="tt-item">
-                <div class="tt-col-avatar">
-                  <svg class="tt-icon">
-                    <use xlink:href="#icon-ava-a"></use>
-                  </svg>
-                </div>
-                <div class="tt-col-description">
-                  <h4 class="tt-title"><a href="#">azyrusmax</a> <span class="time">3:16 AM</span></h4>
-                  <p>Hey, going good, what about you? yes I saw your post, great stuff man <a href="#" class="tt-underline-02">post?</a></p>
-                </div>
-              </div>
-              <div class="tt-item-title"><span>12/27/2017</span></div>
-              <div class="tt-item">
-                <div class="tt-col-avatar">
-                  <svg class="tt-icon">
-                    <use xlink:href="#icon-ava-k"></use>
-                  </svg>
-                </div>
-                <div class="tt-col-description">
-                  <h4 class="tt-title"><a href="#">Kevin</a> <span class="time">10:49 AM</span></h4>
-                  <p>I’m doing good too, how’s business going?</p>
-                </div>
-              </div>
-              <div class="tt-item">
-                <div class="tt-col-avatar">
-                  <svg class="tt-icon">
-                    <use xlink:href="#icon-ava-a"></use>
-                  </svg>
-                </div>
-                <div class="tt-col-description">
-                  <h4 class="tt-title"><a href="#">Kevin</a> <span class="time">10:49 AM</span></h4>
-                  <p>Business is good, but going a bit slow than usual.</p>
-                </div>
-              </div>
-              <div class="tt-item">
-                <div class="tt-col-avatar">
-                  <svg class="tt-icon">
-                    <use xlink:href="#icon-ava-k"></use>
-                  </svg>
-                </div>
-                <div class="tt-col-description">
-                  <h4 class="tt-title"><a href="#">Kevin</a> <span class="time">10:49 AM</span></h4>
-                  <p>that happens during december, it will be fixed soon..</p>
-                </div>
-              </div>
+
+              {% endfor %}
             </div>
             <div class="tt-wrapper-inner">
-              <div class="pt-editor form-default">
-                <div class="pt-row">
-                  <div class="col-left">
-                    <ul class="pt-edit-btn">
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-quote"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-bold"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-italic"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-share_topic"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-blockquote"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-performatted"></use>
-                          </svg>
-                        </button></li>
-                      <li class="hr"></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-upload_files"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-bullet_list"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-heading"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-horizontal_line"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-emoticon"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-settings"></use>
-                          </svg>
-                        </button></li>
-                      <li><button type="button" class="btn-icon">
-                          <svg class="tt-icon">
-                            <use xlink:href="#icon-color_picker"></use>
-                          </svg>
-                        </button></li>
-                    </ul>
-                  </div>
-                </div>
+              
+              <form class="pt-editor form-default" method='POST'>
+                {% csrf_token %}
                 <div class="form-group">
-                  <textarea name="message" class="form-control" rows="5" placeholder="Write your message here"></textarea>
+                  <h6 class="pt-title">聊天框</h6> 
+                  <script src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+                  <script src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+                  <textarea name="new_message" class="form-control" rows="5" placeholder="Write your message here"></textarea>
+                  <script>
+                    CKEDITOR.replace('new_message', {
+                      uiColor: '#9AB8F3',
+                      toolbar: [
+                        ['Smiley'],
+                        ['Bold', 'Italic', 'Underline', 'RemoveFormat', 'Blockquote'],
+                        ['TextColor', 'BGColor'],
+                        ['Image', 'Table', 'Link', 'Unlink'],
+                        ['NumberedList', 'BulletedList'],
+                        ['Maximize']
+                      ],
+                      skin: 'moono-lisa',
+                      tabSpaces: 4,
+                    });
+                  </script>
                 </div>
                 <div class="pt-row">
                   <div class="col-auto ml-auto">
-                    <a href="#" class="btn btn-secondary btn-custom">Send</a>
+                    <input type="submit" name="send" class="btn btn-secondary btn-custom" value="发送"></input>
                   </div>
                 </div>
-              </div>
+              </form>
+
             </div>
           </div>
         </div>
