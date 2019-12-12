@@ -13,4 +13,5 @@ urlpatterns = [
     path('chatroom/<str:room_id>', views.chatroom, name='chatroom'),
     path('guide/', views.guide, name='guide'),
     path('about/', views.about, name='about'),
+    path('image/<str:img_id>', views.image_sight, name='image'),
 ]
