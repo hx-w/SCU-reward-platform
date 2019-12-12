@@ -588,16 +588,16 @@ def chatroom(request, room_id):
         _latest_send_time = _latest_send_time.strftime('%m-%d %H:%M:%S')
         # 对于信息进行缩略处理 图片压缩
         _latest_message = re.sub('<img .* />', '[图片]', _latest_message)
-        task_chatinfo_list.append((get_room_id(_task),_task.task_description, _latest_message, _latest_send_time))
+        task_chatinfo_list.append((get_room_id(_task), _task.task_description, _latest_message, _latest_send_time))
     # 对信息框排序
-    
+    task_chatinfo_list = sorted(task_chatinfo_list, key=lambda x: x[3])
     '''
     右侧聊天框
     '''
     task_description = task.task_description
     tot_people_num = 1 + Task_receive.objects.filter(task_id=task.id).count()
     message_list = []
-    begin_day = int(chatinfo_list.first().send_time.strftime('%d'))
+    begin_day = chatinfo_list.first().send_time.strftime('%Y-%m-%d')
     for message in chatinfo_list:
         _underline_flag = False
         _send_time = message.send_time.strftime('%H:%M:%S')
@@ -605,7 +605,7 @@ def chatroom(request, room_id):
         _message = message.message
         _underline_info = 'None'
 
-        _today = int(message.send_time.strftime('%d'))
+        _today = message.send_time.strftime('%Y-%m-%d')
 
         if message.sender == username:
             _NIKENAME = '发布者:天辉'
@@ -618,7 +618,9 @@ def chatroom(request, room_id):
                     break
 
         if begin_day != _today:
+            _underline_flag = True
             _underline_info = message.send_time.strftime('%m/%d/%Y')
+            begin_day = _today
         message_list.append(
             (_underline_flag, _underline_info, _NIKENAME, _message, _send_time)
         )
