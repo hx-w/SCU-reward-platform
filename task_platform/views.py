@@ -4,6 +4,7 @@ import os
 import hashlib
 import random
 import re
+import base64
 from decimal import Decimal
 from pathlib import Path
 from datetime import timedelta
@@ -554,7 +555,7 @@ def chatroom(request, room_id):
     if not username:
         return redirect('/login/')
     task = Task.objects.get(id=chatinfo_list.first().task_id)
-    nikename = '发布者:{}(你自己)'.format(username)
+    nikename = '发布者:{}(你自己)'.format('天辉')
     rec_list = Task_receive.objects.filter(task_id=task.id)
     user = User.objects.get(name=username)
     student_id = user.stu_id
@@ -608,7 +609,7 @@ def chatroom(request, room_id):
         _today = message.send_time.strftime('%Y-%m-%d')
 
         if message.sender == username:
-            _NIKENAME = '发布者:天辉'
+            _NIKENAME = nikename
         elif message.sender == 'Admin':
             _NIKENAME = '管理员'
         else:
@@ -616,7 +617,8 @@ def chatroom(request, room_id):
                 if rec_list[idx].username == username:
                     nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
                     break
-
+        # 信息加链接跳转
+        print (_message)
         if begin_day != _today:
             _underline_flag = True
             _underline_info = message.send_time.strftime('%m/%d/%Y')
@@ -636,6 +638,10 @@ def chatroom(request, room_id):
             return redirect('/chatroom/{}'.format(room_id))
 
     return render(request, 'task_platform/chatroom.html', locals())
+
+def image_sight(request, img_id):
+    img_path = base64.decodestring(img_id)
+    return render(request, 'task_platform/image_sight.html', locals())
 
 def guide(request):
 
