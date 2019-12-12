@@ -49,7 +49,7 @@ class Chatinfo(models.Model):
     task_id = models.IntegerField(null=True, blank=True)
     message = RichTextUploadingField(null=True, blank=True)
     sender = models.CharField(max_length=128, null=True, blank=True)
-    send_time = models.DateTimeField(default=timezone.now())
+    send_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.room_id
