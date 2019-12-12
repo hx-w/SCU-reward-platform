@@ -69,7 +69,6 @@ def sceneImgUpload(request):
     else:
         raise Http404()
 
-
 def self_settings(request):
     username = request.session.get('user_name', None)
     user = User.objects.get(name=username)
@@ -605,11 +604,13 @@ def chatroom(request, room_id):
         _NIKENAME = 'None'
         _message = message.message
         _underline_info = 'None'
+        _yourself = False
 
         _today = message.send_time.strftime('%Y-%m-%d')
 
         if message.sender == username:
             _NIKENAME = nikename
+            _yourself = True
         elif message.sender == 'Admin':
             _NIKENAME = '管理员'
         else:
@@ -618,13 +619,18 @@ def chatroom(request, room_id):
                     nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
                     break
         # 信息加链接跳转
-        print (_message)
+        img_path_res = re.search('<img src=\"(.*?)\"(.+?)/>', _message)
+        if img_path_res:
+            img_id = base64.b64encode(img_path_res.group(1).encode(encoding='utf-8')).decode('utf-8')
+            _message = re.sub(
+                '<img .*?/>', '<a href=/image/{}>{}</a>'.format(img_id, img_path_res.group()), _message
+            )
         if begin_day != _today:
             _underline_flag = True
             _underline_info = message.send_time.strftime('%m/%d/%Y')
             begin_day = _today
         message_list.append(
-            (_underline_flag, _underline_info, _NIKENAME, _message, _send_time)
+            (_underline_flag, _underline_info, _NIKENAME, _message, _send_time, _yourself)
         )
     if request.method == 'POST':
         if 'settings' in request.POST:
@@ -640,7 +646,9 @@ def chatroom(request, room_id):
     return render(request, 'task_platform/chatroom.html', locals())
 
 def image_sight(request, img_id):
-    img_path = base64.decodestring(img_id)
+    img_path = base64.b64decode(img_id).decode('utf-8')
+    #img_path = base64.b64decode(img_id).decode('ascii', 'ignore')
+    print (img_path)
     return render(request, 'task_platform/image_sight.html', locals())
 
 def guide(request):
