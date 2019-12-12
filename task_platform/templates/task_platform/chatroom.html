@@ -84,7 +84,7 @@
                 </i>
               </a>
             </div>
-            <div id="scroll_div" class="tt-list-time-topic" style="height:250;overflow:auto;  ">
+            <div id="scroll_div" class="tt-list-time-topic" style="height:380;overflow:auto;  ">
               {% for underline_flag, underline_info, nikename, message, send_time, yourself in message_list %}
     
               {% if underline_flag %}
@@ -93,17 +93,26 @@
                   <span>{{ underline_info }}</span>
                 </div> 
               {% endif %}
+              {% if yourself %}
+              <div class="tt-item" id="chattable" style="margin-top:0px;margin-bottom:15px;margin-right:25px; text-align:right;justify-content:flex-end">
+                <div class="tt-col-description" style="padding:0 0 0 0px;">
+                  <h4 class="tt-title" style="" ><a id="chatusername" href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
+                  <span style="margin:0px">{{ message | safe }}</span>
+                </div>
+              </div>
+              {% else %}
               <div class="tt-item" id="chattable" style="margin-bottom:15px;">
                 <div class="tt-col-description" style="padding:0 0 0 0px;">
                   <h4 class="tt-title" style="" ><a id="chatusername" href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
                   <span style="margin:0px">{{ message | safe }}</span>
                 </div>
               </div>
+              {% endif %}
               {% endfor %}
             </div>
             <div class="tt-wrapper-inner">
               
-              <form class="pt-editor form-default" method='POST'>
+              <form class="pt-editor form-default" style="padding-top:10px;"method='POST'>
                 {% csrf_token %}
                 <div class="form-group">
                   <h6 class="pt-title">聊天框</h6> 
@@ -144,11 +153,6 @@
   <script type="text/javascript">
   $(document).ready(function(){
   $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
-  if($("#chatusername").innertext.indexOf("你自己"))
-  {
-    alert("hello");
-    $("#chattable").setAttribute('style', 'margin-bottom:15px; text-align:right;justify-content:flex-end');
-  }
   });
   
 
