@@ -93,13 +93,12 @@
                   <span>{{ underline_info }}</span>
                 </div> 
               {% endif %}
-              <div class="tt-item">
-                <div class="tt-col-description">
-                  <h4 class="tt-title"><a href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
-                  <p>{{ message | safe }}</p>
+              <div class="tt-item" id="chattable" style="margin-bottom:15px;">
+                <div class="tt-col-description" style="padding:0 0 0 0px;">
+                  <h4 class="tt-title" style="" ><a id="chatusername" href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
+                  <span style="margin:0px">{{ message | safe }}</span>
                 </div>
               </div>
-
               {% endfor %}
             </div>
             <div class="tt-wrapper-inner">
@@ -124,7 +123,7 @@
                       ],
                       skin: 'moono-lisa',
                       tabSpaces: 4,
-                      height: 150
+                      height: 150,
                     });
                   </script>
                 </div>
@@ -145,7 +144,14 @@
   <script type="text/javascript">
   $(document).ready(function(){
   $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
+  if($("#chatusername").innertext.indexOf("你自己"))
+  {
+    alert("hello");
+    $("#chattable").setAttribute('style', 'margin-bottom:15px; text-align:right;justify-content:flex-end');
+  }
   });
+  
+
   </script>
 </body>
 {% endblock %}
