@@ -3,6 +3,7 @@ import time
 import os
 import hashlib
 import random
+import re
 from decimal import Decimal
 from pathlib import Path
 from datetime import timedelta
@@ -585,6 +586,8 @@ def chatroom(request, room_id):
         _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
         _latest_send_time = _latest_send_time.strftime('%m-%d %H:%M:%S')
+        # 对于信息进行缩略处理 图片压缩
+        _latest_message = re.sub('<img .* />', '[图片]', _latest_message)
         task_chatinfo_list.append((get_room_id(_task),_task.task_description, _latest_message, _latest_send_time))
     '''
     右侧聊天框
