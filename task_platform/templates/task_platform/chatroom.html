@@ -12,6 +12,7 @@
   <meta name="format-detection" content="telephone=no">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
 </head>
 <body>
   <main id="tt-pageContent" class="tt-offset-small">
@@ -44,7 +45,7 @@
                 </a>
               </div>
 
-              <div class="tt-list-avatar js-init-scroll">
+              <div class="tt-list-avatar js-init-scroll" style="height:300px;overflow:auto;"  >
                 
                 {% for room_id, task_description, latest_message, latest_send_time in task_chatinfo_list %}
 
@@ -88,7 +89,7 @@
                 </i>
               </a>
             </div>
-            <div class="tt-list-time-topic">
+            <div id="scroll_div" class="tt-list-time-topic" style="height:300px;overflow:auto;  ">
               {% for underline_flag, underline_info, nikename, message, send_time in message_list %}
 
               {% if underline_flag %}
@@ -144,5 +145,11 @@
       </div>
     </div>
   </main>
+  {% comment %} 一下js代码想保证id为“scroll_div”的垂直滚动条每次刷新保持在最底部 {% endcomment %}
+  <script type="text/javascript">
+  $(document).ready(function(){
+  $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
+  });
+  </script>
 </body>
 {% endblock %}
