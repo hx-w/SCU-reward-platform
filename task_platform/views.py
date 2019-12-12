@@ -589,6 +589,8 @@ def chatroom(request, room_id):
         # 对于信息进行缩略处理 图片压缩
         _latest_message = re.sub('<img .* />', '[图片]', _latest_message)
         task_chatinfo_list.append((get_room_id(_task),_task.task_description, _latest_message, _latest_send_time))
+    # 对信息框排序
+    
     '''
     右侧聊天框
     '''
