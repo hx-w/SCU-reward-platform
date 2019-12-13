@@ -613,10 +613,12 @@ def chatroom(request, room_id):
             _yourself = True
         elif message.sender == 'Admin':
             _NIKENAME = '管理员'
+        elif message.sender == task.publisher:
+            _NIKENAME = '发布者:天辉'
         else:
             for idx in range(len(rec_list.values_list('username'))):
-                if rec_list[idx].username == username:
-                    nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
+                if rec_list[idx].username == message.sender:
+                    nikename = "接收者:{}".format(settings.NIKENAMES[idx])
                     break
         # 信息加链接跳转
         img_path_res = re.search('<img src=\"(.*?)\"(.+?)/>', _message)
