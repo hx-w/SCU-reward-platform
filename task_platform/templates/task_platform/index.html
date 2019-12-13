@@ -71,5 +71,16 @@
 
               </div>
             </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/2.0.0/trianglify.min.js"></script>
+<script>
+	var pattern = Trianglify({
+		width: window.innerWidth,
+		height: window.innerHeight
+	});
+	document.body.style.backgroundSize = "cover"; 
+ 
+document.body.style.backgroundImage = "url(" + pattern.png() + ")";
+</script>
+{% comment %} <script type="text/javascript">var now=(new Date).getTime();15761664e5<now&&now<1576252799e3&&(document.querySelector("html").style.filter="grayscale(100%)")</script> {% endcomment %}
 </main>
 {% endblock %}
