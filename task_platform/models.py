@@ -59,6 +59,20 @@ class Chatinfo(models.Model):
         verbose_name = '聊天信息'
         verbose_name_plural = '聊天信息'
 
+class ChatVision(models.Model):
+    room_id = models.CharField(max_length=32, null=True, blank=True)
+    username = models.CharField(max_length=128)
+    has_seen = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.username
+    
+    class Meta:
+        ordering = ['has_seen']
+        verbose_name = '消息查看'
+        verbose_name_plural = '消息查看'
+
+
 class Task(models.Model):
     '''任务'''
     state = (('未开始', 'waitting'), ('进行中', 'processing'), ('中止', 'abort'),

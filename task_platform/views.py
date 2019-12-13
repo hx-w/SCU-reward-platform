@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.conf import settings
-from .models import Task, Task_tags, User_task, Task_receive, Chatinfo
+from .models import Task, Task_tags, User_task, Task_receive, Chatinfo, ChatVision
 os.path.abspath('../')
 from login.models import User
 
@@ -31,6 +31,19 @@ def get_room_id(task):
     md5 = hashlib.md5()
     md5.update('{}{}'.format(task.id, task.publisher).encode())
     return md5.hexdigest()
+
+@csrf_exempt
+def get_notice_room_id(username):
+    md5 = hashlib.md5()
+    md5.update(username.encode())
+    return md5.hexdigest()
+
+@csrf_exempt
+def send_notice(username, message):
+    notice = ChatVision.objects.create(room_id=get_notice_room_id(username))
+    notice.sender = 'Admin'
+    notice.message = message
+    notice.save()
 
 @csrf_exempt
 def check_chatroom_exist():
@@ -251,9 +264,10 @@ def detail(request, task_id):
                 # 创建聊天室
                 new_chatinfo = Chatinfo.objects.create(task_id=task.id)
                 new_chatinfo.room_id = get_room_id(task)
-                new_chatinfo.sender = 'Admin'
-                new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
                 new_chatinfo.save()
+                notice = Chatinfo.objects.create(room_id=get_notice_room_id(username))
+                notice.sender = 'Admin'
+                new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
 
                 return redirect('/profile/')
         elif 'submit_money_' in request.POST:   # 用户提交报价
