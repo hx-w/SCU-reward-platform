@@ -15,6 +15,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.conf import settings
 from .models import Task, Task_tags, User_task, Task_receive, Chatinfo, ChatVision
+from task_platform.admin_sender import Admin_Sender
 os.path.abspath('../')
 from login.models import User
 
@@ -245,7 +246,6 @@ def detail(request, task_id):
             )
         )
 
-
     if request.method == 'POST':
         if 'settings' in request.POST: # 个人信息修改
             self_settings(request)
@@ -265,10 +265,12 @@ def detail(request, task_id):
                 if user.money < sum(rec_money.values()):
                     redirect('/recharge/')
                 if task_class == '赏金模式':
-                    for money_ in rec_money.values():
+                    for rec, money_ in rec_money.items():
                         check_deposit(publisher, float(money_) * (1 + percentage))
-                        exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
-                        exl_money = dict(exl_money_qs)
+                        # 发送消息
+                        send_notice(rec, '您的报价已被接受，')
+                    exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
+                    exl_money = dict(exl_money_qs)
                     for rec, money_ in exl_money.items():
                         check_deposit(rec, -float(money_))
 
@@ -594,30 +596,41 @@ def chatroom(request, room_id):
     student_id = user.stu_id
     phone = user.phone
     dept = user.dept
+    nikename = username
+    rec_list = None
     if user.dept == 'None':
         dept = '暂无信息'
     # 检查是否是通知房间
     if get_notice_room_id(username) == room_id:
+        has_seen = ChatVision.objects.get(room_id=room_id, username=username)
+        has_seen.has_seen = True
+        has_seen.save()
+        # 右侧聊天框
+        task_description = '您的通知'
+        tot_people_num = 1
         pass
     else:
         # 找出当前task
-        pass
-
-    task = Task.objects.get(id=chatinfo_list.first().task_id)
-    nikename = '发布者:{}(你自己)'.format('天辉')
-    rec_list = Task_receive.objects.filter(task_id=task.id)
-    # 检查 username 是否有资格访问该聊天室
-    if not (username == task.publisher or rec_list.filter(username=username).count()):
-        return redirect('/profile/')
-    # 赶快把50个匿名补全(settings.NIKENAMES) 之后把下面的try except删掉
-    try:
-        for idx in range(len(rec_list.values_list('username'))):
-            if rec_list[idx].username == username:
-                nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
-                break
-    except:
-        pass
-    
+        task = Task.objects.get(id=chatinfo_list.first().task_id)
+        nikename = '发布者:{}(你自己)'.format('天辉')
+        rec_list = Task_receive.objects.filter(task_id=task.id)
+        # 检查 username 是否有资格访问该聊天室
+        if not (username == task.publisher or rec_list.filter(username=username).count()):
+            return redirect('/profile/')
+        # 赶快把50个匿名补全(settings.NIKENAMES) 之后把下面的try except删掉
+        try:
+            for idx in range(len(rec_list.values_list('username'))):
+                if rec_list[idx].username == username:
+                    nikename = "接收者:{}(你自己)".format(settings.NIKENAMES[idx])
+                    break
+        except:
+            pass
+        has_seen = ChatVision.objects.get(room_id=get_room_id(task), username=username)
+        has_seen.has_seen = True
+        has_seen.save()
+        # 右侧聊天框
+        task_description = task.task_description
+        tot_people_num = 1 + Task_receive.objects.filter(task_id=task.id).count()
     '''
     左侧的任务聊天框列表，目前只展示进行中的任务
     '''
@@ -641,8 +654,6 @@ def chatroom(request, room_id):
     '''
     右侧聊天框
     '''
-    task_description = task.task_description
-    tot_people_num = 1 + Task_receive.objects.filter(task_id=task.id).count()
     message_list = []
     begin_day = chatinfo_list.first().send_time.strftime('%Y-%m-%d')
     for message in chatinfo_list:
@@ -681,15 +692,38 @@ def chatroom(request, room_id):
         message_list.append(
             (_underline_flag, _underline_info, _NIKENAME, _message, _send_time, _yourself)
         )
+
     if request.method == 'POST':
         if 'settings' in request.POST:
             self_settings(request)
         elif 'send' in request.POST:
             new_message = request.POST.get('new_message')
-            new_chatinfo = Chatinfo.objects.create(room_id=room_id, task_id=task.id)
+            new_chatinfo = None
+            if room_id == get_notice_room_id(username):
+                new_chatinfo = Chatinfo.objects.create(room_id=room_id)
+            else:
+                new_chatinfo = Chatinfo.objects.create(room_id=room_id, task_id=task.id)
             new_chatinfo.message = new_message
             new_chatinfo.sender = username
             new_chatinfo.save()
+            # 设置消息查看
+            if room_id != get_notice_room_id(username):
+                if username == task.id:
+                    for rec in rec_list:
+                        chatvision = ChatVision.objects.create(room_id=room_id, has_seen=False, username=rec.username)
+                        chatvision.save()
+                else:
+                    chatvision = ChatVision.objects.create(room_id=room_id, has_seen=False, username=task.publisher)
+                    chatvision.save()
+                    for rec in rec_list:
+                        if rec.username != username:
+                            chatvision = ChatVision.objects.create(room_id=room_id, has_seen=False, username=rec.username)
+                            chatvision.save()
+            else:
+                #管理员功能
+                admin_sender = Admin_Sender()
+                admin_sender.recieve(new_message, username, room_id)
+
             return redirect('/chatroom/{}'.format(room_id))
     notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
     notice_num = chatinfo_num(username)
