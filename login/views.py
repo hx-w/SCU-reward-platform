@@ -5,8 +5,9 @@ import hashlib
 import datetime
 import time
 import random
+import os
 from decimal import *
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.conf import settings
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -15,6 +16,8 @@ from captcha.helpers import captcha_image_url
 from .forms import UserForm, RegisterForm
 from . import models
 from .pay import AliPay
+os.path.abspath('../')
+from task_platform.models import Chatinfo
 
 
 @csrf_exempt
@@ -59,7 +62,7 @@ def login(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
-        message = "请检查填写的内容, "+username+"!"
+        message = "请检查填写的内容, " + username + "!"
         if login_form.is_valid():
             try:
                 user = models.User.objects.get(name=username)
@@ -70,6 +73,8 @@ def login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
+                    # 发送通知
+                    
                     return redirect('/')
                 else:
                     message = "密码不正确！"

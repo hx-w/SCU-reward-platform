@@ -40,20 +40,27 @@ def get_notice_room_id(username):
 
 @csrf_exempt
 def send_notice(username, message):
-    notice = ChatVision.objects.create(room_id=get_notice_room_id(username))
+    notice = Chatinfo.objects.create(room_id=get_notice_room_id(username))
     notice.sender = 'Admin'
     notice.message = message
+    notice.task_id = 1
     notice.save()
 
 @csrf_exempt
 def check_chatroom_exist():
+    alluser = User.objects.all()
+    for euser in alluser:
+        send_notice(euser.name, '创建账号成功，开启你的赏金之旅吧！')
     alltask = Task.objects.all()
     for task in alltask:
-        new_chatinfo = Chatinfo.objects.create(task_id=task.id)
-        new_chatinfo.room_id = get_room_id(task)
-        new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
-        new_chatinfo.sender = 'Admin'
-        new_chatinfo.save()
+        new_info = Chatinfo.objects.create(task_id=task.id)
+        new_info.room_id = get_room_id(task)
+        new_info.sender = 'Admin'
+        new_info.save()
+        if task.task_state == '进行中':
+            send_notice(task.publisher, '恭喜你，任务已经开始，请关心任务动态！')
+            for allrec in Task_receive.objects.filter(task_id=task.id):
+                send_notice(allrec.username, '恭喜你，任务已经开始，请关心任务动态！')
 
 @csrf_exempt
 def sceneImgUpload(request):
@@ -265,10 +272,7 @@ def detail(request, task_id):
                 new_chatinfo = Chatinfo.objects.create(task_id=task.id)
                 new_chatinfo.room_id = get_room_id(task)
                 new_chatinfo.save()
-                notice = Chatinfo.objects.create(room_id=get_notice_room_id(username))
-                notice.sender = 'Admin'
-                new_chatinfo.message = '恭喜你！任务已经开始，请关心任务动态'
-
+                send_notice(username, '恭喜你，任务已开始，请留意新的通知！')
                 return redirect('/profile/')
         elif 'submit_money_' in request.POST:   # 用户提交报价
             message = '提交成功'
@@ -597,6 +601,9 @@ def chatroom(request, room_id):
         (Q(publisher=username) | Q(id__in=rec_task_id_list)) & ~Q(task_state='未开始')
     ).order_by('-task_state') # 进行中 任务在前面
     task_chatinfo_list = []
+    # 预置通知聊天室
+    notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
+    task_chatinfo_list.append((get_notice_room_id(username), '您的通知', notice.message, notice.send_time))
     for _task in latest_task_list:
         _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
