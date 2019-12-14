@@ -49,7 +49,7 @@
                 
                 {% for room_id, task_description, latest_message, latest_send_time in task_chatinfo_list %}
 
-                    <a onclick="window.location='/chatroom/{{ room_id }}'" class="tt-item tt-itemselect">
+                    <a onclick="window.location='/chatroom/{{ room_id }}'" id="{{ task_description }}" class="tt-item tt-itemselect">
                     <div class="tt-col-description">
                         <h4 class="tt-title"><span>{{ task_description }}</span> <span class="time">{{ latest_send_time }}</span></h4>
                         <div class="tt-message tt-select">{{ latest_message | safe }}</div>
@@ -70,7 +70,7 @@
                   </svg>
                 </i>
               </a>
-              <h2 class="tt-title">
+              <h2 class="tt-title" id="chatroomname">
                 {{ task_description }}
               </h2>
               <div class="tt-description">
@@ -153,6 +153,9 @@
   <script type="text/javascript">
   $(document).ready(function(){
   $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
+  var v = document.getElementById("chatroomname").innerText;
+  {% comment %} document.getElementById(v).style.background-color = "#223344"; {% endcomment %}
+  $("#"+v).css("border-color","#a8daff");$("#"+v).css("border-style","solid");
   });
   
 
