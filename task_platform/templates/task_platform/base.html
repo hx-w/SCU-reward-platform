@@ -150,22 +150,24 @@
               </div>
             </center>
             <center>
-              <a href="" class="tt-btn-icon" style="margin:7px;padding-right:0px;">
+              <a href="{{ notice_room }}" class="tt-btn-icon" style="margin:7px;padding-right:0px;">
                 <i class="tt-icon"><svg>
                     <use xlink:href="#icon-notification"></use>
                   </svg></i>
                 <div style="margin:0 0 15 0px;">
-                <div href="/logout/" class="btn btn-secondary" style="min-width: 16px;
-                  height: 16px;
-                  padding: 0 3px;
-                  border-radius: 8px;
-                  line-height: 16px;
-                  font-size: 12px;
-                  text-align: center;
-                  color: #fff;
-                  /* left: 20px; */
-                  z-index: 30;
-                  background-color: #FA5A57;">10</div></div>
+                {% if notice_num %}
+                  <div href="#" class="btn btn-secondary" style="min-width: 16px;
+                    height: 16px;
+                    padding: 0 3px;
+                    border-radius: 8px;
+                    line-height: 16px;
+                    font-size: 12px;
+                    text-align: center;
+                    color: #fff;
+                    /* left: 20px; */
+                    z-index: 30;
+                    background-color: #FA5A57;">{{ notice_num }}</div></div>
+                {% endif %}
               </a>
             </center>
             <div class="tt-account-btn">

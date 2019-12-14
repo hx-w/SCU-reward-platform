@@ -43,8 +43,11 @@ def send_notice(username, message):
     notice = Chatinfo.objects.create(room_id=get_notice_room_id(username))
     notice.sender = 'Admin'
     notice.message = message
-    notice.task_id = 1
     notice.save()
+    flag = ChatVision.objects.create(room_id=get_notice_room_id(username))
+    flag.username = username
+    flag.has_seen = False
+    flag.save()
 
 @csrf_exempt
 def check_chatroom_exist():
@@ -88,6 +91,10 @@ def sceneImgUpload(request):
         return JsonResponse(res)
     else:
         raise Http404()
+
+def chatinfo_num(username):
+    chatnum = ChatVision.objects.filter(username=username, has_seen=False).count()
+    return chatnum
 
 def self_settings(request):
     username = request.session.get('user_name', None)
@@ -144,7 +151,10 @@ def index(request):
     # 不要取消下面这行注释，除非你知道自己在干什么
     # check_chatroom_exist() 
     username = request.session.get('user_name', None)
+    print(username)
     tag_list = []
+    notice_room = '/login/'
+    notice_num = 0
     if username:
         user = User.objects.get(name=username)
         student_id = user.stu_id
@@ -152,7 +162,9 @@ def index(request):
         dept = user.dept
         if user.dept == 'None':
             dept = '暂无信息'
-
+        notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+        notice_num = chatinfo_num(username)
+        
     finder = {
         '未开始': '9', '进行中': '2',
         '中止': '3', '撤销': '3', 
@@ -188,6 +200,8 @@ def detail(request, task_id):
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
+    notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+    notice_num = chatinfo_num(username)
     user = User.objects.get(name=username)
     student_id = user.stu_id
     phone = user.phone
@@ -381,6 +395,8 @@ def create_task(request):
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
+    notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+    notice_num = chatinfo_num(username)
     user = User.objects.get(name=username)
     student_id = user.stu_id
     phone = user.phone
@@ -459,6 +475,8 @@ def profile(request):
     if not username:
         # 未登录用户无法访问 profile
         return redirect('/login/')
+    notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+    notice_num = chatinfo_num(username)
     user = User.objects.get(name=username)
     student_id = user.stu_id
     phone = user.phone
@@ -572,15 +590,22 @@ def chatroom(request, room_id):
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
-    task = Task.objects.get(id=chatinfo_list.first().task_id)
-    nikename = '发布者:{}(你自己)'.format('天辉')
-    rec_list = Task_receive.objects.filter(task_id=task.id)
     user = User.objects.get(name=username)
     student_id = user.stu_id
     phone = user.phone
     dept = user.dept
     if user.dept == 'None':
         dept = '暂无信息'
+    # 检查是否是通知房间
+    if get_notice_room_id(username) == room_id:
+        pass
+    else:
+        # 找出当前task
+        pass
+
+    task = Task.objects.get(id=chatinfo_list.first().task_id)
+    nikename = '发布者:{}(你自己)'.format('天辉')
+    rec_list = Task_receive.objects.filter(task_id=task.id)
     # 检查 username 是否有资格访问该聊天室
     if not (username == task.publisher or rec_list.filter(username=username).count()):
         return redirect('/profile/')
@@ -666,19 +691,36 @@ def chatroom(request, room_id):
             new_chatinfo.sender = username
             new_chatinfo.save()
             return redirect('/chatroom/{}'.format(room_id))
-
+    notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+    notice_num = chatinfo_num(username)
     return render(request, 'task_platform/chatroom.html', locals())
 
 def image_sight(request, img_id):
+    username = request.session.get('user_name', None)
+    if not username:
+        return redirect('/login/')
+    
+    notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+    notice_num = chatinfo_num(username)
     img_path = base64.b64decode(img_id).decode('utf-8')
     #img_path = base64.b64decode(img_id).decode('ascii', 'ignore')
     print (img_path)
     return render(request, 'task_platform/image_sight.html', locals())
 
 def guide(request):
+    username = request.session.get('user_name', None)
+    notice_room = '/login/'
+    if username:
+        notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+        notice_num = chatinfo_num(username)
 
     return render(request, 'task_platform/guide.html', locals())
 
 def about(request):
+    username = request.session.get('user_name', None)
+    notice_room = '/login/'
+    if username:
+        notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+        notice_num = chatinfo_num(username)
 
     return render(request, 'task_platform/about.html', locals())

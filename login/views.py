@@ -17,8 +17,25 @@ from .forms import UserForm, RegisterForm
 from . import models
 from .pay import AliPay
 os.path.abspath('../')
-from task_platform.models import Chatinfo
+import task_platform.models as task_models
 
+
+@csrf_exempt
+def get_notice_room_id(username):
+    md5 = hashlib.md5()
+    md5.update(username.encode())
+    return md5.hexdigest()
+
+@csrf_exempt
+def send_notice(username, message):
+    notice = task_models.Chatinfo.objects.create(room_id=get_notice_room_id(username))
+    notice.sender = 'Admin'
+    notice.message = message
+    notice.save()
+    flag = task_models.ChatVision.objects.create(room_id=get_notice_room_id(username))
+    flag.username = username
+    flag.has_seen = False
+    flag.save()
 
 @csrf_exempt
 def hash_code(s, salt='hx+ltq+wzy+hxj'):# 加点盐
@@ -73,8 +90,6 @@ def login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
-                    # 发送通知
-                    
                     return redirect('/')
                 else:
                     message = "密码不正确！"
@@ -256,6 +271,8 @@ def user_confirm(request):
         confirm.user.save()
         confirm.delete()
         message = '感谢确认，请使用账户登录！'
+        # 发送消息
+        send_notice(confirm.user.name, '恭喜您，账号创建成功，开始您的赏金之旅吧！')
         return render(request, 'login/confirm.html', locals())
 
 def recharge(request):
