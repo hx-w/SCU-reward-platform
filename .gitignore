@@ -10,4 +10,4 @@ __pycache__/
 build/
 
 # 数据库
-db.sqlite3
+# db.sqlite3
