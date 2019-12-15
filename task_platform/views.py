@@ -260,7 +260,8 @@ def detail(request, task_id):
                 return render(request, 'task_platform/detail.html', locals())
             else:
                 # 支付逻辑实现 and 未接受报价回退
-                rec_list = list(rec[:-1] for rec in rec_list)
+                # print (rec_list)
+                # rec_list = list(rec[:-1] for rec in rec_list)
                 rec_money = dict(zip(rec_list, map(lambda rec: user_task_list.get(username=rec).submit_money, rec_list)))
                 if user.money < sum(rec_money.values()):
                     redirect('/recharge/')
@@ -602,9 +603,10 @@ def chatroom(request, room_id):
         dept = '暂无信息'
     # 检查是否是通知房间
     if get_notice_room_id(username) == room_id:
-        has_seen = ChatVision.objects.get(room_id=room_id, username=username)
-        has_seen.has_seen = True
-        has_seen.save()
+        has_seen = ChatVision.objects.filter(room_id=room_id, username=username)
+        for each_ in has_seen:
+            each_.has_seen = True
+            each_.save()
         # 右侧聊天框
         task_description = '您的通知'
         tot_people_num = 1
@@ -634,7 +636,7 @@ def chatroom(request, room_id):
     '''
     左侧的任务聊天框列表，目前只展示进行中的任务
     '''
-    rec_task_id_list = Task_receive.objects.filter(username=username,).values_list('task_id')
+    rec_task_id_list = Task_receive.objects.filter(username=username).values_list('task_id')
     latest_task_list = Task.objects.filter(
         (Q(publisher=username) | Q(id__in=rec_task_id_list)) & ~Q(task_state='未开始')
     ).order_by('-task_state') # 进行中 任务在前面
@@ -647,7 +649,8 @@ def chatroom(request, room_id):
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
         _latest_send_time = _latest_send_time.strftime('%m-%d %H:%M:%S')
         # 对于信息进行缩略处理 图片压缩
-        _latest_message = re.sub('<img .* />', '[图片]', _latest_message)
+        if _latest_message:
+            _latest_message = re.sub('<img .* />', '[图片]', _latest_message)
         task_chatinfo_list.append((get_room_id(_task), _task.task_description, _latest_message, _latest_send_time))
     # 对信息框排序
     task_chatinfo_list = sorted(task_chatinfo_list, key=lambda x: x[3])
