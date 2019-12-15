@@ -18,7 +18,7 @@
       {% if tag_list %}
       {% for task, color, tags in tag_list %}
 
-      <div class="tt-item">
+      <div class="tt-item" style="">
         <div class="tt-col-avatar">
           {% if task.task_class == "赏金模式" %}
           <svg class="tt-icon">
@@ -60,12 +60,12 @@
           </div>
           <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
           <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
-            <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
-              <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
-                <div class="tt-col-value hide-mobile"> {{ task.expected_time_consuming }}h </div>
-                </div>
-                {% endfor %}
-    <div class="tt-item" style="display:none;text-align:center;" id="nosearchresult">
+          <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
+          <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+          <div class="tt-col-value hide-mobile"> {{ task.expected_time_consuming }}h </div>
+          </div>
+          {% endfor %}
+    <div class="tt-item" style="display:none; text-align:center;" id="nosearchresult">
       <span style="position:relative;left:40%;">
         <font style="font-size:20px;color:#000000">
           抱歉,没有您想要的搜索结果!
@@ -130,6 +130,10 @@ document.body.style.backgroundImage = "url(" + pattern.png() + ")";
     if(t==tas.length)
     {
       document.getElementById("nosearchresult").style.display = "";
+    }
+    else
+    {
+      document.getElementById("nosearchresult").style.display = "none";
     }
     }
 </script>

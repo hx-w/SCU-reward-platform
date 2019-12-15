@@ -15,6 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% block css %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="{% static 'css/detail.css' %}" rel="stylesheet">
     {% endblock %}
   </head>
 
@@ -74,11 +75,13 @@
             <form class="search-wrapper"style="margin-block-end: 1em;">
               <div class="search-form">
                 <input type="text" class="tt-search__input" placeholder="Search" id="thesearch">
+                <a href="/"> 
                 <button class="tt-search__btn" type="submit"style="position: absolute;top: 50%;transform: translateY(-50%);">
                   <svg class="tt-icon">
                     <use xlink:href="#icon-search"></use>
                   </svg>
                 </button>
+                </a>
                 <button class="tt-search__close">
                   <svg class="tt-icon">
                     <use xlink:href="#cancel"></use>
