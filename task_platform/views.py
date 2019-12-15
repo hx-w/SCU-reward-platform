@@ -151,8 +151,8 @@ def check_deposit(username, money, swicth_=True):
 def index(request):
     # 不要取消下面这行注释，除非你知道自己在干什么
     # check_chatroom_exist() 
+    # request.session.flush()
     username = request.session.get('user_name', None)
-    print(username)
     tag_list = []
     notice_room = '/login/'
     notice_num = 0
@@ -268,12 +268,12 @@ def detail(request, task_id):
                     for rec, money_ in rec_money.items():
                         check_deposit(publisher, float(money_) * (1 + percentage))
                         # 发送消息
-                        send_notice(rec, '您的报价已被接受，')
+                        send_notice(rec, '您的报价已被接受，任务已经开始，请及时完成任务。如果需要与任务发布者沟通，请点击<a href="/chatroom/{}>任务聊天室</a>跳转该任务聊天室。祝您任务顺利！"'.format(get_room_id(task)))
                     exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
                     exl_money = dict(exl_money_qs)
                     for rec, money_ in exl_money.items():
                         check_deposit(rec, -float(money_))
-
+                        send_notice(rec, '您的报价未被接受，押金{}已经退还至您的余额，请查验。'.format(money_))
                 # 设置task
                 task.begin_time = timezone.now()
                 task.task_state = '进行中'
@@ -287,6 +287,7 @@ def detail(request, task_id):
                 # 创建聊天室
                 new_chatinfo = Chatinfo.objects.create(task_id=task.id)
                 new_chatinfo.room_id = get_room_id(task)
+                new_chatinfo.sender = 'Admin'
                 new_chatinfo.save()
                 send_notice(username, '恭喜你，任务已开始，请留意新的通知！')
                 return redirect('/profile/')
@@ -600,15 +601,22 @@ def chatroom(request, room_id):
     rec_list = None
     if user.dept == 'None':
         dept = '暂无信息'
+    has_seen = ChatVision.objects.filter(room_id=room_id, username=username)
+    for has in has_seen:
+        has.has_seen = True
+        has.save()
     # 检查是否是通知房间
     if get_notice_room_id(username) == room_id:
-        has_seen = ChatVision.objects.get(room_id=room_id, username=username)
-        has_seen.has_seen = True
-        has_seen.save()
         # 右侧聊天框
         task_description = '您的通知'
         tot_people_num = 1
-        pass
+        # 检查状态过期
+        updated_time = user.updated_time
+        if updated_time:
+            if timezone.now() > updated_time + timedelta(0, settings.BACK_TIMEDELTA):
+                user.send_state = 1
+                user.updated_time = None
+                user.save()
     else:
         # 找出当前task
         task = Task.objects.get(id=chatinfo_list.first().task_id)
@@ -625,23 +633,20 @@ def chatroom(request, room_id):
                     break
         except:
             pass
-        has_seen = ChatVision.objects.get(room_id=get_room_id(task), username=username)
-        has_seen.has_seen = True
-        has_seen.save()
         # 右侧聊天框
         task_description = task.task_description
         tot_people_num = 1 + Task_receive.objects.filter(task_id=task.id).count()
     '''
     左侧的任务聊天框列表，目前只展示进行中的任务
     '''
-    rec_task_id_list = Task_receive.objects.filter(username=username,).values_list('task_id')
+    rec_task_id_list = Task_receive.objects.filter(username=username).values_list('task_id')
     latest_task_list = Task.objects.filter(
         (Q(publisher=username) | Q(id__in=rec_task_id_list)) & ~Q(task_state='未开始')
     ).order_by('-task_state') # 进行中 任务在前面
     task_chatinfo_list = []
     # 预置通知聊天室
     notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
-    task_chatinfo_list.append((get_notice_room_id(username), '您的通知', notice.message, notice.send_time))
+    task_chatinfo_list.append((get_notice_room_id(username), '您的通知', notice.message, notice.send_time.strftime('%m-%d %H:%M:%S')))
     for _task in latest_task_list:
         _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time

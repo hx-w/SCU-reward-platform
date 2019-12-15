@@ -163,6 +163,9 @@ NIKENAMES = [
     '幻影刺客', '巨魔战将', '狙击手', '龙骑士', '混沌骑士', '魅惑魔女', '敌法师', '凤凰', '艾欧', '风行者'
 ]
 
+# 自动回复
+BACK_TIMEDELTA = 30 * 60 # 30 min
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 

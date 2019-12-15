@@ -4,16 +4,16 @@
 
 <head>
   <meta charset="utf-8">
-  <title聊天室</title>
-  <meta name="keywords" content="HTML5 Template">
-  <meta name="description" content="Forum - Responsive HTML5 Template">
-  <meta name="author" content="Forum">
-  <link rel="shortcut icon" href="favicon/favicon.ico">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
+  <title聊天室</title> <meta name="keywords" content="HTML5 Template">
+    <meta name="description" content="Forum - Responsive HTML5 Template">
+    <meta name="author" content="Forum">
+    <link rel="shortcut icon" href="favicon/favicon.ico">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
 </head>
+
 <body>
   <main id="tt-pageContent" class="tt-offset-small">
     <div class="container">
@@ -45,105 +45,104 @@
                 </a>
               </div>
 
-              <div class="tt-list-avatar js-init-scroll" style="height:500px;overflow:auto;"  >
-                
-                {% for room_id, task_description, latest_message, latest_send_time in task_chatinfo_list %}
+              <div class="tt-list-avatar js-init-scroll" style="height:500px;overflow:auto;">
 
-                    <a onclick="window.location='/chatroom/{{ room_id }}'" id="{{ task_description }}" class="tt-item tt-itemselect">
-                    <div class="tt-col-description">
-                        <h4 class="tt-title"><span>{{ task_description }}</span> <span class="time">{{ latest_send_time }}</span></h4>
-                        <div class="tt-message tt-select">{{ latest_message | safe }}</div>
-                    </div>
-                    </a>
-                
+                {% for room_id_, task_description, latest_message, latest_send_time in task_chatinfo_list %}
+
+                <a onclick="window.location='/chatroom/{{ room_id_ }}'" id="{{ task_description }}" class="tt-item tt-itemselect">
+                  <div class="tt-col-description">
+                    <h4 class="tt-title"><span>{{ task_description }}</span> <span class="time">{{ latest_send_time }}</span></h4>
+                    <div class="tt-message tt-select">{{ latest_message | safe }}</div>
+                  </div>
+                </a>
                 {% endfor %}
               </div>
-
             </div>
           </div>
-          <div class="col-md-8">
-            <div class="tt-title-content">
-              <a href="#" class="tt-toggle-aside">
-                <i class="tt-icon">
-                  <svg class="icon">
-                    <use xlink:href="#icon-arrow_left"></use>
-                  </svg>
-                </i>
-              </a>
-              <h2 class="tt-title" id="chatroomname">
-                {{ task_description }}
+        </div>
+        <div class="col-md-8">
+          <div class="tt-title-content">
+            <a href="#" class="tt-toggle-aside">
+              <i class="tt-icon">
+                <svg class="icon">
+                  <use xlink:href="#icon-arrow_left"></use>
+                </svg>
+              </i>
+            </a>
+            <h2 class="tt-title" id="chatroomname">
+              {{ task_description }}
               </h2>
               <div class="tt-description">
                 共{{ tot_people_num }}人在聊天室中
               </div>
-              <a href="#" class="tt-icon-link">
-                <i class="tt-icon">
-                  <svg class="icon">
-                    <use xlink:href="#notification"></use>
-                  </svg>
-                </i>
-              </a>
-            </div>
-            <div id="scroll_div" class="tt-list-time-topic" style="height:380;overflow:auto;  ">
-              {% for underline_flag, underline_info, nikename, message, send_time, yourself in message_list %}
-    
-              {% if underline_flag %}
+                <a href="#" class="tt-icon-link">
+                  <i class="tt-icon">
+                    <svg class="icon">
+                      <use xlink:href="#notification"></use>
+                    </svg>
+                  </i>
+                </a>
+              </div>
+              <div id="scroll_div" class="tt-list-time-topic" style="height:380;overflow:auto;  ">
+                {% for underline_flag, underline_info, nikename, message, send_time, yourself in message_list %}
+
+                {% if underline_flag %}
                 <!-- 时间分割线 -->
                 <div class="tt-item-title">
                   <span>{{ underline_info }}</span>
-                </div> 
-              {% endif %}
-              {% if yourself %}
-              <div class="tt-item" id="chattable" style="margin-top:0px;margin-bottom:15px;margin-right:25px; text-align:right;justify-content:flex-end">
-                <div class="tt-col-description" style="padding:0 0 0 0px;">
-                  <h4 class="tt-title" style="" ><a id="chatusername" href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
-                  <span style="margin:0px">{{ message | safe }}</span>
                 </div>
-              </div>
-              {% else %}
-              <div class="tt-item" id="chattable" style="margin-bottom:15px;">
-                <div class="tt-col-description" style="padding:0 0 0 0px;">
-                  <h4 class="tt-title" style="" ><a id="chatusername" href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
-                  <span style="margin:0px">{{ message | safe }}</span>
-                </div>
-              </div>
-              {% endif %}
-              {% endfor %}
-            </div>
-            <div class="tt-wrapper-inner">
-              
-              <form class="pt-editor form-default" style="padding-top:10px;"method='POST'>
-                {% csrf_token %}
-                <div class="form-group">
-                  <h6 class="pt-title">聊天框</h6> 
-                  <script src="{% static "ckeditor/ckeditor-init.js" %}"></script>
-                  <script src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
-                  <textarea name="new_message" class="form-control" rows="3" placeholder="来发消息吧！"></textarea>
-                  <script>
-                    CKEDITOR.replace('new_message', {
-                      uiColor: '#F8F9FB',
-                      toolbar: [
-                        ['Smiley'],
-                        ['Bold', 'Italic', 'Underline'],
-                        ['TextColor', 'BGColor'],
-                        ['Image', 'Link', 'Unlink'],
-                        ['NumberedList', 'BulletedList'],
-                        ['Maximize']
-                      ],
-                      skin: 'moono-lisa',
-                      tabSpaces: 4,
-                      height: 150,
-                    });
-                  </script>
-                </div>
-                <div class="pt-row">
-                  <div class="col-auto ml-auto">
-                    <input type="submit" name="send" class="btn btn-secondary btn-custom" value="发送"></input>
+                {% endif %}
+                {% if yourself %}
+                <div class="tt-item" id="chattable" style="margin-top:0px;margin-bottom:15px;margin-right:25px; text-align:right;justify-content:flex-end">
+                  <div class="tt-col-description" style="padding:0 0 0 0px;">
+                    <h4 class="tt-title" style=""><a id="chatusername" href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
+                    <span style="margin:0px">{{ message | safe }}</span>
                   </div>
                 </div>
-              </form>
+                {% else %}
+                <div class="tt-item" id="chattable" style="margin-bottom:15px;">
+                  <div class="tt-col-description" style="padding:0 0 0 0px;">
+                    <h4 class="tt-title" style=""><a id="chatusername" href="#">{{ nikename }}</a> <span class="time">{{ send_time }}</span></h4>
+                    <span style="margin:0px">{{ message | safe }}</span>
+                  </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+              </div>
+              <div class="tt-wrapper-inner">
 
-            </div>
+                <form class="pt-editor form-default" style="padding-top:10px;" method='POST'>
+                  {% csrf_token %}
+                  <div class="form-group">
+                    <h6 class="pt-title">聊天框</h6>
+                    <script src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+                    <script src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+                    <textarea name="new_message" class="form-control" rows="3" placeholder="来发消息吧！"></textarea>
+                    <script>
+                      CKEDITOR.replace('new_message', {
+                        uiColor: '#F8F9FB',
+                        toolbar: [
+                          ['Smiley'],
+                          ['Bold', 'Italic', 'Underline'],
+                          ['TextColor', 'BGColor'],
+                          ['Image', 'Link', 'Unlink'],
+                          ['NumberedList', 'BulletedList'],
+                          ['Maximize']
+                        ],
+                        skin: 'moono-lisa',
+                        tabSpaces: 4,
+                        height: 150,
+                      });
+                    </script>
+                  </div>
+                  <div class="pt-row">
+                    <div class="col-auto ml-auto">
+                      <input type="submit" name="send" class="btn btn-secondary btn-custom" value="发送"></input>
+                    </div>
+                  </div>
+                </form>
+
+              </div>
           </div>
         </div>
       </div>
@@ -151,14 +150,12 @@
   </main>
   {% comment %} 以下js代码想保证id为“scroll_div”的垂直滚动条每次刷新保持在最底部 {% endcomment %}
   <script type="text/javascript">
-  $(document).ready(function(){
-  $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
-  var v = document.getElementById("chatroomname").innerText;
-  {% comment %} document.getElementById(v).style.background-color = "#223344"; {% endcomment %}
-  $("#"+v).css("border-color","#a8daff");$("#"+v).css("border-style","solid");
-  });
-  
-
+    $(document).ready(function () {
+      $('#scroll_div').scrollTop($('#scroll_div')[0].scrollHeight);
+      var v = document.getElementById("chatroomname").innerText; { % comment % } document.getElementById(v).style.background - color = "#223344"; { % endcomment % }
+      $("#" + v).css("border-color", "#a8daff");
+      $("#" + v).css("border-style", "solid");
+    });
   </script>
 </body>
 {% endblock %}
