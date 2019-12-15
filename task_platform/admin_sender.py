@@ -20,7 +20,7 @@ class Admin_Sender(object):
         self.__funcStr = {
             1: ('帮助', '提现', '统计'),
             2: ('\d+(\.\d+)?', '取消'),
-            3: ('<img src=.+? />'),
+            3: ('<img src=\"(.+?)\".*?/>', '取消'),
             4: ('取消'),
             5: ('确认')
         }
@@ -78,12 +78,13 @@ class Admin_Sender(object):
                 self.__user.updated_time = timezone.now()
                 self.__user.save()    
                 self.__send_notice__(
-                    '已记录您需提现{}元，请上传您的支付宝永久收款码，多次上传以最后一次为准。',
+                    '已记录您需提现{}元，请上传您的支付宝永久收款码，多次上传以最后一次为准。'.format(_money),
                     username, room_id
                 )   
         elif re.search(self.__funcStr[self.__state][1], message):
             self.__user.send_state = 1
             self.__user.updated_time = timezone.now()
+            self.__user.save()
             withdraw_list = models.Withdraw.objects.filter(username=username, state='发起')
             if withdraw_list:
                 withdraw_list.order_by('-start_time').first().state = '取消'
@@ -94,8 +95,32 @@ class Admin_Sender(object):
                 username, room_id)
 
     def __state_3(self, message, username, room_id):
-        
-        pass
+        if re.search(self.__funcStr[self.__state][0], message):
+            messages = re.findall(self.__funcStr[self.__state][0], message)
+            if messages:
+                withdraw_list = models.Withdraw.objects.filter(username=username, state='发起')
+                if withdraw_list:
+                    withdraw_list.order_by('-start_time').first().img_path = messages[:-1][0]
+                    withdraw_list.first().save()
+                    self.__user.send_state = 4
+                    self.__user.updated_time = timezone.now()
+                    self.__user.save()
+                    self.__send_notice__('已收到您的收款码：<img src="{}"/> 如果没问题，回复"确认"完成提现，如果有问题，回复"取消" 来取消当前操作'.format(messages[:-1][0]),
+                    username, room_id)
+            else:
+                self.__send_notice__(
+                    '请上传您的支付宝永久收款码，多个上传图片以最后一张为准。输入"取消"撤回提现操作。',
+                    username, room_id)
+        elif re.search(self.__funcStr[self.__state][1], message):
+            self.__user.send_state = 1
+            self.__user.updated_time = timezone.now()
+            self.__user.save()
+            withdraw_list = models.Withdraw.objects.filter(username=username, state='发起')
+            if withdraw_list:
+                withdraw_list.order_by('-start_time').first().state = '取消'
+                withdraw_list.first().save()
+            self.__send_notice__('提现撤销成功！', username, room_id)
+    
     
     def recieve(self, message, username, room_id):
         self.__user = login_models.User.objects.get(name=username)
@@ -104,5 +129,5 @@ class Admin_Sender(object):
             self.__state_1(message, username, room_id)
         elif self.__state == 2:
             self.__state_2(message, username, room_id)
-        elif self.__state ==3:
+        elif self.__state == 3:
             self.__state_3(message, username, room_id)

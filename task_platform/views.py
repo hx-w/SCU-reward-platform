@@ -645,7 +645,8 @@ def chatroom(request, room_id):
     task_chatinfo_list = []
     # 预置通知聊天室
     notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
-    task_chatinfo_list.append((get_notice_room_id(username), '您的通知', notice.message, notice.send_time.strftime('%m-%d %H:%M:%S')))
+    _message = re.sub('<img .* />', '[图片]', notice.message)
+    task_chatinfo_list.append((get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
     for _task in latest_task_list:
         _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
@@ -683,12 +684,13 @@ def chatroom(request, room_id):
                     nikename = "接收者:{}".format(settings.NIKENAMES[idx])
                     break
         # 信息加链接跳转
-        img_path_res = re.search('<img src=\"(.*?)\"(.+?)/>', _message)
+        img_path_res = re.findall('<img src=\"(.*?)\"(.+?)/>', _message)
         if img_path_res:
-            img_id = base64.b64encode(img_path_res.group(1).encode(encoding='utf-8')).decode('utf-8')
-            _message = re.sub(
-                '<img .*?/>', '<a href=/image/{}>{}</a>'.format(img_id, img_path_res.group()), _message
-            )
+            for each_ in img_path_res:
+                img_id = base64.b64encode(each_[0].encode(encoding='utf-8')).decode('utf-8')
+                _message = re.sub(
+                    '<img .*?/>[^</a>]', '<a href=/image/{}>{}</a>'.format(img_id, each_[0]), _message, 1
+                )
         if begin_day != _today:
             _underline_flag = True
             _underline_info = message.send_time.strftime('%m/%d/%Y')
@@ -728,7 +730,7 @@ def chatroom(request, room_id):
                 admin_sender = Admin_Sender()
                 admin_sender.recieve(new_message, username, room_id)
 
-            return redirect('/chatroom/{}'.format(room_id))
+        return redirect('/chatroom/{}'.format(room_id))
     notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
     notice_num = chatinfo_num(username)
     return render(request, 'task_platform/chatroom.html', locals())
