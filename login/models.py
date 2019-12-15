@@ -6,12 +6,6 @@ from django.conf import settings
 
 class User(models.Model):
     '''用户表'''
-
-    gender = (
-        ('male','男'),
-        ('female','女'),
-    )
-
     name = models.CharField(max_length=128, unique=True)
     password = models.CharField(max_length=256)
     stu_id = models.CharField(max_length=13, unique=True)

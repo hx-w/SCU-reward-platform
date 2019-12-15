@@ -14,7 +14,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.conf import settings
-from .models import Task, Task_tags, User_task, Task_receive, Chatinfo, ChatVision
+from .models import Task, Task_tags, User_task, Task_receive, Chatinfo, ChatVision, Withdraw
 from task_platform.admin_sender import Admin_Sender
 os.path.abspath('../')
 from login.models import User
@@ -566,7 +566,6 @@ def profile(request):
     for idx in range(5):
         tag_list = []
         for _task in eval('latest_task_list.filter({})'.format(tab_class[idx][0])):
-            
             _color = 'tt-color0{} tt-badge'.format(stcolor_finder[eval(tab_class[idx][1])])
             _settlement = calc_settlement(_task, username)
             _room_id = get_room_id(_task)

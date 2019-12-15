@@ -44,6 +44,24 @@ class User_task(models.Model):
         verbose_name = "用户任务报价"
         verbose_name_plural = "用户任务报价"
 
+class Withdraw(models.Model):
+    choice_ = (('发起', 'start'), ('完成', 'complete'), ('取消', 'cancel'))
+    username = models.CharField(max_length=128, null=True, blank=True)
+    img_path = models.CharField(max_length=256, null=True, blank=True)
+    money = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    state = models.CharField(max_length=20, choices=choice_, null=True, blank=True)
+    noticed = models.BooleanField(default=False)
+    start_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
+    
+    class Meta:
+        ordering = ['-start_time']
+        verbose_name = '提现记录'
+        verbose_name_plural = '提现记录'
+
+
 class Chatinfo(models.Model):
     room_id = models.CharField(max_length=32, null=True, blank=True)
     task_id = models.IntegerField(null=True, blank=True)
