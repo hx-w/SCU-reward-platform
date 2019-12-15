@@ -94,6 +94,13 @@ def sceneImgUpload(request):
         raise Http404()
 
 def chatinfo_num(username):
+    # 检查提现更新
+    withs = Withdraw.objects.filter(username=username, state='完成', noticed=False)
+    for each_with in withs:
+        send_notice(username, '恭喜您，您于{}发起的提现{}元的请求已经接受，请查看您支付宝余额，如果有问题请联系platform_office@163.com。'.format(each_with.start_time.strftime('%Y-%m-%d %M:%H:%S'), each_with.money))
+        each_with.noticed = True
+        each_with.save()
+
     chatnum = ChatVision.objects.filter(username=username, has_seen=False).count()
     return chatnum
 
@@ -101,7 +108,7 @@ def self_settings(request):
     username = request.session.get('user_name', None)
     user = User.objects.get(name=username)
     # POST
-    message = '格式错误'
+    message_ = '格式错误'
     new_password1 = request.POST.get('new_password1', '')
     new_password2 = request.POST.get('new_password2', '')
     new_dept = request.POST.get('new_dept', '')
@@ -109,17 +116,17 @@ def self_settings(request):
     #-------
     flg_changed = False
     if new_password1 != new_password2:
-        message = '两次输入的密码不同！'
+        message_ = '两次输入的密码不同！'
         return 
 
     if new_phone.strip() != '':
         same_phone = User.objects.filter(phone=new_phone)
         if same_phone:
-            message = '手机号码已被注册，请重新输入！'
+            message_ = '手机号码已被注册，请重新输入！'
             return 
         new_phone = new_phone.strip()
         if new_phone.isdigit() == False or len(new_phone) != 11:
-            message = '手机号码有误，请重新输入！'
+            message_ = '手机号码有误，请重新输入！'
             return 
         user.phone = new_phone
         flg_changed = True
@@ -127,14 +134,14 @@ def self_settings(request):
     if new_dept.strip() != '':
         new_dept = new_dept.strip()
         if len(new_dept) > 50:
-            message = '学院名过长，请重新输入！'
+            message_ = '学院名过长，请重新输入！'
             return
         user.dept = new_dept
         flg_changed = True
 
     if flg_changed:
         user.save()
-        message = ''
+        message_ = ''
     return
 
 def check_deposit(username, money, swicth_=True):
@@ -323,9 +330,11 @@ def detail(request, task_id):
             '''
             task_rec = Task_receive.objects.filter(task_id=task.id)
             tot_money, avg_deposit = 0.0, settings.DEPOSIT / task_rec.count() 
+            send_notice(task.publisher, '您已成功撤销任务，押金已经被扣除，请前往个人页面查看结算')
             for rec in task_rec:
                 tot_money += float(rec.done_money)
                 check_deposit(rec.username, -(float(rec.done_money) + avg_deposit)) # 回退接收者
+                send_notice(rec.username, '您正在进行的任务:{} 已经被发布者撤销，请前往个人页面查看结算'.format(task.task_description))
             check_deposit(username, -float(tot_money * (1 + percentage))) # 回退发布者
             task.task_state = '撤销'
             task.end_time = timezone.now()
@@ -338,6 +347,9 @@ def detail(request, task_id):
             '''
             task_rec = Task_receive.objects.filter(task_id=task.id)
             check_deposit(task.publisher, -settings.DEPOSIT) # 回退押金
+            send_notice(task.publisher, '恭喜您，任务:{} 已经完成，请前往个人页面查看结算'.format(task.task_description))
+            for rec in task_rec:
+                send_notice(rec.username, '恭喜您，任务:{} 已经完成，请前往个人页面查看结算'.format(task.task_description))
             if task_class == '赏金模式':
                 for rec in task_rec:
                     check_deposit(rec.username, -2 * float(rec.done_money))
@@ -356,6 +368,12 @@ def detail(request, task_id):
         - 所有接受者中止，任务结束, 发布者押金回退
         '''
         sig_rec = Task_receive.objects.filter(task_id=task.id)
+        key_word = '中止'
+        if is_overtime(task):
+            key_word = '超时'
+        send_notice(task.publisher, '任务:{} 已经{}，请前往个人页面查看结算'.format(task.task_description, key_word))
+        for rec in sig_rec:
+            send_notice(task.publisher, '任务:{} 已经{}，请前往个人页面查看结算'.format(task.task_description, key_word))
         if task_class == '赏金模式':
             sig_rec = sig_rec.get(username=username)
             sig_rec.is_abort = True
@@ -542,19 +560,19 @@ def profile(request):
                     _settlement = -float(rec_task_list.first().done_money) * (1 - settings.PERCENTAGE)
                 elif task.task_state in ['中止', '超时']:
                     _settlement = -settings.DEPOSIT
-        elif username in rec_task_id_list.values_list('username'):
+        elif rec_task_list.filter(username=username):
             if task.task_class == '赏金模式':
                 if task.task_state == '完成':
-                    pass
+                    _settlement = float(rec_task_list.get(username=username).done_money)
                 elif task.task_state in ['中止', '超时']:
-                    pass
+                    _settlement = -float(rec_task_list.get(username=username).done_money)
                 elif task.task_state == '撤销':
-                    pass
+                    _settlement = float(settings.DEPOSIT) / rec_task_list.count()
             else:
                 if task.task_state == '完成':
-                    pass
+                    _settlement = -float(rec_task_list.get(username=username).done_money)
                 elif task.task_state in ['中止', '超时']:
-                    pass
+                    _settlement = float(settings.DEPOSIT)
         if type(_settlement) == str:
             return _settlement
         if _settlement >= 0:
@@ -645,14 +663,14 @@ def chatroom(request, room_id):
     task_chatinfo_list = []
     # 预置通知聊天室
     notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
-    _message = re.sub('<img .* />', '[图片]', notice.message)
+    _message = re.sub('<img.*/>', '[图片]', notice.message)
     task_chatinfo_list.append((get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
     for _task in latest_task_list:
         _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
         _latest_send_time = _latest_send_time.strftime('%m-%d %H:%M:%S')
         # 对于信息进行缩略处理 图片压缩
-        _latest_message = re.sub('<img .* />', '[图片]', _latest_message)
+        _latest_message = re.sub('<img.*/>', '[图片]', _latest_message)
         task_chatinfo_list.append((get_room_id(_task), _task.task_description, _latest_message, _latest_send_time))
     # 对信息框排序
     task_chatinfo_list = sorted(task_chatinfo_list, key=lambda x: x[3])

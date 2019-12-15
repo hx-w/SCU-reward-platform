@@ -47,7 +47,7 @@ class User_task(models.Model):
 class Withdraw(models.Model):
     choice_ = (('发起', 'start'), ('确认', 'confirmed'), ('完成', 'complete'), ('取消', 'cancel'))
     username = models.CharField(max_length=128, null=True, blank=True)
-    img_path = models.CharField(max_length=256, null=True, blank=True)
+    img_path = RichTextUploadingField(null=True, blank=True)
     money = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     state = models.CharField(max_length=20, choices=choice_, null=True, blank=True)
     noticed = models.BooleanField(default=False)
