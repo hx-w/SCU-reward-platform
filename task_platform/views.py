@@ -711,12 +711,12 @@ def chatroom(request, room_id):
                     break
         # 信息加链接跳转
         if _message:
-            img_path_res = re.findall('<img src=\"(.*?)\"(.+?)/>', _message)
+            img_path_res = re.findall('<img.*src=\"(.*?)\"(.+?)/>', _message)
             if img_path_res:
                 for each_ in img_path_res:
                     img_id = base64.b64encode(each_[0].encode(encoding='utf-8')).decode('utf-8')
                     _message = re.sub(
-                        '<img .*?/>[^</a>]', '<a href=/image/{}>{}</a>'.format(img_id, each_[0]), _message, 1
+                        '<img.*?/>[^</a>]', '<a href=/image/{}>{}</a>'.format(img_id, each_[0]), _message, 1
                     )
         else:
             _message = ''

@@ -128,25 +128,6 @@
     <div class="tt-topic-list tt-offset-top-30">
       <div class="tt-list-search">
         <div class="tt-title">典型任务示例</div>
-        <!-- tt-search -->
-        <div class="tt-search">
-          <form class="search-wrapper">
-            <div class="search-form">
-              <input type="text" class="tt-search__input" placeholder="搜索其他任务">
-              <button class="tt-search__btn" type="submit">
-                <svg class="tt-icon">
-                  <use xlink:href="#icon-search"></use>
-                </svg>
-              </button>
-              <button class="tt-search__close">
-                <svg class="tt-icon">
-                  <use xlink:href="#icon-cancel"></use>
-                </svg>
-              </button>
-            </div>
-          </form>
-        </div>
-        <!-- /tt-search -->
       </div>
       <div class="tt-list-header tt-border-bottom">
         <div class="tt-col-value" style="width: 17%;">
@@ -167,9 +148,15 @@
 
       <div class="tt-item">
         <div class="tt-col-avatar">
+          {% if task.task_class == "赏金模式 "%}
           <svg class="tt-icon">
-            <use xlink:href="#icon-ava-k"></use>
+            <use xlink:href="#bounty"></use>
           </svg>
+          {% else %}
+          <svg class="tt-icon">
+            <use xlink:href="#hunter"></use>
+          </svg>
+          {% endif %}
         </div>
         <div class="tt-col-description">
           <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
