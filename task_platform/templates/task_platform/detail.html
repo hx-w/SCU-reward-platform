@@ -13,9 +13,17 @@
           <div class="tt-item-header">
             <div class="tt-item-info info-top">
               <div class="tt-avatar-icon">
-                <i class="tt-icon"><svg>
-                    <use xlink:href="#icon-ava-d"></use>
-                  </svg></i>
+                <i class="tt-icon">
+                {% if task_class == "赏金模式" %}
+                  <svg>
+                    <use xlink:href="#bounty"></use>
+                  </svg>
+                {% else %}
+                  <svg>
+                    <use xlink:href="#hunter"></use>
+                  </svg>
+                {% endif %}
+                </i>
               </div>
               <div class="tt-avatar-title">
                 <a href="#">{{ publisher }}</a>
@@ -47,64 +55,46 @@
           {% if message %}
             <label>{{ message }}</label>
           {% endif %}
-          <label>报价排序
-            <select name="dropdown">
-              {% for choice in sort_choice_list %}
-              <option id="sort_choice" value={{ choice }}>{{ choice }}</option>
-                {% endfor %}
-            </select>
-          </label>
           <!--接受报价-->
           <form class="form-default" method='POST'>
             {% csrf_token %}
-            {% if user_task_list %}
+            {% if user_task_list %} 
+            <div class="container">
+            <div class="tt-topic-list">
+            <div class="tt-list-header" style="background-color:#f8f9fb">
+              <div class="tt-col-value" style="width: 90%;"><center>描述</center></div>
+              <div class="tt-col-category" style="width: 17%">赏金要求</div>
+              <div class="tt-col-value" style="width: 20%;padding-left:2%">选择报价</div>
+              <div class="tt-col-value hide-mobile" style="width: 10%;padding:0%">发布时间</div>
+            </div>
               {% for sig in user_task_list %}
+              
                 <div class="tt-item">
-                  <div class="tt-single-topic">
-                    <div class="tt-item-header pt-noborder">
-                      <div class="tt-item-info info-top">
-                        <div class="tt-avatar-icon">
-                          <i class="tt-icon"><svg><use xlink:href="#icon-ava-t"></use></svg></i>
-                        </div>
-                        <div class="tt-avatar-title">
-                          <span id="sub_money" style="display:none;">{{ sig.submit_money }}</span>
+                <div class="tt-col-value" style="width: 90%;">{{ sig.description }}</div>
+                <div class="tt-col-value" style="width: 17%"><span name="sub_money" >{{ sig.submit_money }}</span>
                           <span id="perc" style="display:none;">{{ percentage }}</span>
-                          <span id="class_" style="display:none;">{{ task_class }}</span>
-                          {% comment %} {{ sig.submit_money }} * (1 + {{ percentage }} ) {% endcomment %}
-                          <script type="text/javascript">
-                            var money_ = document.getElementById('sub_money').innerHTML;
-                            var perc_ = document.getElementById('perc').innerHTML;
-                            var class_ = document.getElementById('class_').innerHTML;
-                            if (class_ == "赏金模式") {
-                              money_ = money_ * (1 + perc_);
-                            }
-                            else if (class_ == "猎人模式") {
-                              money_ = money_ * (1 - perc_);
-                            }
-                            else {
-                              alert('出错啦！')
-                            }
-                            document.write(money_)
-                          </script>
-                        </div>
-                        <a href="#" class="tt-info-time">
-                          <i class="tt-icon"><svg><use xlink:href="#icon-time"></use></svg></i>
-                          {{ sig.pub_time }}
-                        </a>
-                      </div>
-                    </div>
-                    <div class="tt-item-description">
-                      {{ sig.description }}
-                    </div>
-                     <div class="checkbox-item">
-                        <input name="accept" id="item1" type="checkbox" value={{ sig.username }}/>
-                      </div>
-                  </div>
+                          <span name="class_" style="display:none;">{{ task_class }}</span></div>
+                <div class="tt-col-value" style="width: 20%;padding-left:2%">
+                <input name="accept" type="checkbox" id={{ sig.username }} value={{ sig.username }} style="">
+                <label class="square" for={{ sig.username }}></label>
+                {% comment %} <input name="accept" type="checkbox" id={{ sig.username}} value={{ sig.username }} style=""/> {% endcomment %}
+                </div>
+                <div class="tt-col-value hide-mobile" style="width: 10%;padding:0%">{{ sig.pub_time }}</div>
                 </div>
               {% endfor %}
+            </div>
+            <div style="height:60px">
+            </div>
+            </div>
               <center><input onclick="return confirm('确定要提交?')" type="submit" class="btn btn-secondary" style="background-color: #cd6521" value="开始任务" ></center>
             {% else %}
-            <label>暂无报价</label>
+            <div class="tt-single-topic" style="text-align:center;">
+              <span style="position:relative;">
+                <font style="font-size:20px;color:#000000">
+                  暂无报价！
+                </font>
+              </span>
+            </div>
             {% endif %}
           </form>
 
@@ -206,6 +196,27 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript">
+    var money_ = document.getElementsByName('sub_money');
+    var class_ = document.getElementsByName('class_');
+    var perc_ = document.getElementById('perc').innerHTML;
+    console.log(money_[0].innerHTML);
+    for(i = 0; i < money_.length; i++)
+    {
+      if (class_[i].innerHTML == "赏金模式") {
+        console.log(money_[i].innerHTML);
+          money_[i].innerHTML = money_[i].innerHTML * (1 + parseFloat(perc_));
+          console.log(money_[i].innerHTML);
+        }
+      else if (class_[i].innerHTML == "猎人模式") {
+          money_[i].innerHTML = money_[i].innerHTML * (1 - parseFloat(perc_));
+        }
+      else {
+          alert('出错啦！')
+        }
+      money_[i].innerHTML=parseFloat(money_[i].innerHTML).toFixed(2);
+      console.log(money_[i].innerHTML+" hanpi");
+    }
+  </script>
 </main>
-<script>{% static 'js/jquery-3.4.1.js' %%}</script>
 {% endblock %}

@@ -1,57 +1,28 @@
-.checkbox-item{
-	margin-right: 20px;
-	display: inline-block;	
-	position: relative;
+input[type="checkbox"] {
+	/*
+   display: none;这样会让tab键无法选取自定义的checkbox，所以使用下面的方法
+   clip 属性剪裁绝对定位元素。
+   */
+   position: absolute;
+   clip: rect(0, 0, 0, 0)
+ }
+ .square::before {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: #EEE;
+    vertical-align: middle;
+    margin-right: 5px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    transition: background ease-in .5s;
 }
-.checkbox-item label{
-	line-height: 34px;
-	vertical-align: middle;
-	cursor: pointer;
+label {
+    cursor: default;
 }
-.checkbox-item input[type="checkbox"] {
-	margin-right: 5px;
-	width: 20px;
-	height: 20px;
-	visibility: hidden;
-}
-.checkbox-item label:BEFORE {
-	content: '';
-	position: absolute;
-	top: 5px;
-	left: 0px;
-	width: 20px;
-	height: 20px;
-	border-radius: 2px;
-	border: 1px solid #bbb;
-	background: #fff;
-	cursor: pointer;
-}
-.checkbox-item input[type="checkbox"]:checked +label:BEFORE {
-	content: '\2713';
-	display: block;
-	line-height: 20px;
-	text-align: center;
-	background-color: rgb(10, 94, 173);
-    color: #ffffff;
-}
-.navbar {
-    width: 100%;
-    margin-left: auto ;
-    margin-right: auto ;
-    background-color: #ABCDEF;
-}
-.navbar ul {
-    list-style-type: none; /*to remove bullets*/
-    text-align: center;
-    margin: 0px;
-    padding: 0px;
-    width: 90%;
-    overflow: hidden;
-}
-.navbar li{
-    float: left;
-    padding: 2px;
-    width: 150px;
-    margin-left: auto ;
-    margin-right: auto ;
+input[type="checkbox"]:checked+.square::before {
+    background-color: #FA8E53;
+    border: 5px #EEE solid;
 }
