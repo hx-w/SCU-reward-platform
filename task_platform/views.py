@@ -638,6 +638,8 @@ def chatroom(request, room_id):
     else:
         # 找出当前task
         task = Task.objects.get(id=chatinfo_list.first().task_id)
+        if task.task_state != '进行中':
+            return redirect('/profile/')
         nikename = '发布者:{}(你自己)'.format('天辉')
         rec_list = Task_receive.objects.filter(task_id=task.id)
         # 检查 username 是否有资格访问该聊天室
@@ -659,7 +661,7 @@ def chatroom(request, room_id):
     '''
     rec_task_id_list = Task_receive.objects.filter(username=username).values_list('task_id')
     latest_task_list = Task.objects.filter(
-        (Q(publisher=username) | Q(id__in=rec_task_id_list)) & ~Q(task_state='未开始')
+        (Q(publisher=username) | Q(id__in=rec_task_id_list)) & Q(task_state='进行中')
     ).order_by('-task_state') # 进行中 任务在前面
     task_chatinfo_list = []
     # 预置通知聊天室
