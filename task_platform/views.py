@@ -539,22 +539,19 @@ def profile(request):
         rec_task_list = Task_receive.objects.filter(task_id=task.id)
         if task.publisher == username:
             if task.task_class == '赏金模式':
-                tot_money = 0
-                for rec in rec_task_list:
-                    if rec.is_abort:
-                        tot_money -= float(rec.done_money) * (2 + settings.PERCENTAGE)
-                    else:
-                        tot_money += float(rec.done_money) * (1 + settings.PERCENTAGE)
                 if task.task_state == '完成':
-                    _settlement = -tot_money
-                elif task.task_state in ['中止', '超时']:
-                    _settlement = -tot_money
+                    _settlement = 0
+                    for rec in rec_task_list:
+                        _settlement -= (1 + settings.PERCENTAGE) * float(rec.done_money)
+                elif task.task_state in ['中止']:
+                    _settlement = 0
+                    for rec in rec_task_list:
+                        _settlement += float(rec.done_money)
                 elif task.task_state == '撤销':
                     _settlement = -settings.DEPOSIT
                     for rec in rec_task_list:
-                        if not rec.is_abort:
-                            tot_money -= float(rec.done_money) * (1 + settings.PERCENTAGE)
-                    _settlement -= tot_money
+                        if rec.is_abort:
+                            _settlement += float(rec.done_money)
             else:
                 if task.task_state == '完成':
                     _settlement = -float(rec_task_list.first().done_money) * (1 - settings.PERCENTAGE)
@@ -668,6 +665,8 @@ def chatroom(request, room_id):
     # 预置通知聊天室
     notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
     _message = re.sub('<img.*/>', '[图片]', notice.message)
+    if _message == None or _message == 'None':
+        _message = '无内容'
     task_chatinfo_list.append((get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
     for _task in latest_task_list:
         _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
