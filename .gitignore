@@ -5,9 +5,14 @@
 # python缓存文件
 __pycache__/
 *.pyc 
+<<<<<<< HEAD
+.jsbeautifyrc
+db.sqlite3
+=======
 
 # 模板
 build/
 
 # 数据库
 # db.sqlite3
+>>>>>>> master
