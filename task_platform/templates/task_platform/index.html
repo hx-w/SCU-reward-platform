@@ -5,7 +5,7 @@
 <main id="tt-pageContent" class="tt-offset-small">
   <div class="container">
     <div class="tt-topic-list">
-      <div class="tt-list-header">
+      <div class="tt-list-header" style="background-color:#f8f9fb">
         <div class="tt-col-value" style="width: 17%;"><center>类型</center></div>
         <div class="tt-col-category" style="width: 90%">简述</div>
         <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务状态</div>
@@ -18,7 +18,7 @@
       {% if tag_list %}
       {% for task, color, tags in tag_list %}
 
-      <div class="tt-item">
+      <div class="tt-item" style="">
         <div class="tt-col-avatar">
           {% if task.task_class == "赏金模式" %}
           <svg class="tt-icon">
@@ -31,7 +31,7 @@
           {% endif %}
         </div>
         <div class="tt-col-description">
-          <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
+          <h6 class="tt-title"><a href="{% url 'detail' task.id %}" name="taskdesc">
 
               {% if task.task_state == "完成" %}
                 <svg class="tt-icon">
@@ -60,11 +60,18 @@
           </div>
           <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
           <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
-            <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
-              <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
-                <div class="tt-col-value hide-mobile"> {{ task.expected_time_consuming }}h </div>
-                </div>
-                {% endfor %}
+          <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
+          <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+          <div class="tt-col-value hide-mobile"> {{ task.expected_time_consuming }}h </div>
+          </div>
+          {% endfor %}
+    <div class="tt-item" style="display:none; text-align:center;" id="nosearchresult">
+      <span style="position:relative;left:40%;">
+        <font style="font-size:20px;color:#000000">
+          抱歉,没有您想要的搜索结果!
+        </font>
+      </span>
+    </div>
                 {% else %}
                 <!-- No task -->
                 {% endif %}
@@ -80,6 +87,55 @@
 	document.body.style.backgroundSize = "cover"; 
  
 document.body.style.backgroundImage = "url(" + pattern.png() + ")";
+
+{% comment %} searchpart {% endcomment %}
+  var oTxt = document.getElementById('thesearch');
+  var cpLock = false;
+  $('#thesearch').on('compositionstart', function () {
+        cpLock = true;
+    });
+  $('#thesearch').on('compositionend', function () {
+        cpLock = false;
+        var keyWord = oTxt.value;
+        console.log(keyWord);
+        MySearch(keyWord);
+    });
+  $('#thesearch').on('input', function () {
+        if (!cpLock) {
+            var keyWord = oTxt.value;
+            console.log(keyWord);
+            MySearch(keyWord);
+        }
+    });
+  function MySearch (word) {
+    var tas = document.getElementsByName("taskdesc");
+    var t = 0;
+    for(i = 0; i < tas.length; i++)
+    {
+      {% comment %} console.log(tas[i].innerHTML+" 1"); {% endcomment %}
+      tas[i].innerHTML = tas[i].innerHTML.replace('<font style="display: inline;background: rgba(255,255,128,0.36);"><strong>', "");
+      tas[i].innerHTML = tas[i].innerHTML.replace("</strong></font>", "");
+      {% comment %} console.log(tas[i].innerHTML+" 2"); {% endcomment %}
+      if(tas[i].innerText.indexOf(word) == -1)
+      {
+        t++;
+        tas[i].parentNode.parentNode.parentNode.style.display = "none";
+      }
+      else
+      {
+        tas[i].parentNode.parentNode.parentNode.style.display = "";
+        tas[i].innerHTML = tas[i].innerHTML.replace(word, "<font style='display: inline;background: rgba(255,255,128,0.36);' ><strong>"+word+"</strong></font>");
+      }
+    }
+    if(t==tas.length)
+    {
+      document.getElementById("nosearchresult").style.display = "";
+    }
+    else
+    {
+      document.getElementById("nosearchresult").style.display = "none";
+    }
+    }
 </script>
 {% comment %} <script type="text/javascript">var now=(new Date).getTime();15761664e5<now&&now<1576252799e3&&(document.querySelector("html").style.filter="grayscale(100%)")</script> {% endcomment %}
 </main>

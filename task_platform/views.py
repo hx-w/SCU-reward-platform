@@ -267,7 +267,8 @@ def detail(request, task_id):
                 return render(request, 'task_platform/detail.html', locals())
             else:
                 # 支付逻辑实现 and 未接受报价回退
-                rec_list = list(rec[:-1] for rec in rec_list)
+                # print (rec_list)
+                # rec_list = list(rec[:-1] for rec in rec_list)
                 rec_money = dict(zip(rec_list, map(lambda rec: user_task_list.get(username=rec).submit_money, rec_list)))
                 if user.money < sum(rec_money.values()):
                     redirect('/recharge/')
@@ -624,6 +625,10 @@ def chatroom(request, room_id):
         has.save()
     # 检查是否是通知房间
     if get_notice_room_id(username) == room_id:
+        has_seen = ChatVision.objects.filter(room_id=room_id, username=username)
+        for each_ in has_seen:
+            each_.has_seen = True
+            each_.save()
         # 右侧聊天框
         task_description = '您的通知'
         tot_people_num = 1

@@ -139,12 +139,13 @@
   </main>
   {% comment %} 以下js代码想保证id为“scroll_div”的垂直滚动条每次刷新保持在最底部 {% endcomment %}
   <script type="text/javascript">
-    $(document).ready(function () {
-      $('#scroll_div').scrollTop($('#scroll_div')[0].scrollHeight);
-      var v = document.getElementById("chatroomname").innerText; { % comment % } document.getElementById(v).style.background - color = "#223344"; { % endcomment % }
-      $("#" + v).css("border-color", "#a8daff");
-      $("#" + v).css("border-style", "solid");
-    });
+  $(document).ready(function(){
+  $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
+  var v = document.getElementById("chatroomname").innerText;
+  $("#"+v).css("border-color","#a8daff");$("#"+v).css("border-style","solid");
+  });
+  
+
   </script>
 </body>
 {% endblock %}
