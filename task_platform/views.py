@@ -267,7 +267,6 @@ def detail(request, task_id):
                 return render(request, 'task_platform/detail.html', locals())
             else:
                 # 支付逻辑实现 and 未接受报价回退
-                # print (rec_list)
                 # rec_list = list(rec[:-1] for rec in rec_list)
                 rec_money = dict(zip(rec_list, map(lambda rec: user_task_list.get(username=rec).submit_money, rec_list)))
                 if user.money < sum(rec_money.values()):

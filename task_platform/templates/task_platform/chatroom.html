@@ -32,7 +32,7 @@
             </a>
             <div class="tt-all-avatar">
               <div class="tt-box-search">
-                <input class="tt-input" type="text" placeholder="搜索信息">
+                <input class="tt-input" type="text" placeholder="搜索信息" />
                 <a href="#" class="tt-btn-input">
                   <svg>
                     <use xlink:href="#icon-search"></use>
@@ -49,7 +49,7 @@
                 {% for room_id_, task_description, latest_message, latest_send_time in task_chatinfo_list %}
                 <a onclick="window.location='/chatroom/{{ room_id_ }}'" id="{{ task_description }}" class="tt-item tt-itemselect">
                   <div class="tt-col-description">
-                    <h4 class="tt-title"><span>{{ task_description }}</span> <span class="time">{{ latest_send_time }}</span></h4>
+                    <h4><span>{{ task_description }}</span><span class="time">{{ latest_send_time }}</span></h4>
                     <div class="tt-message tt-select">{{ latest_message | safe }}</div>
                   </div>
                 </a>
@@ -64,7 +64,7 @@
               </h2>
                 <div class="tt-description">
                   共{{ tot_people_num }}人在聊天室中
-              </div>
+                </div>
                   <a href="#" class="tt-icon-link">
                     <i class="tt-icon">
                       <svg class="icon">
@@ -99,6 +99,21 @@
                   {% endif %}
                   {% endfor %}
                 </div>
+                      {% comment %} 以下js代码想保证id为“scroll_div”的垂直滚动条每次刷新保持在最底部 {% endcomment %}
+                    <script type="text/javascript">
+                      $(document).ready(function(){
+                      $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
+                      var v = document.getElementById("chatroomname").innerText;
+                      $("#"+v).css("border-color","#a8daff");$("#"+v).css("border-style","solid");
+                      });
+                    </script>
+                    <script type="text/javascript">
+                      $(document).ready(function(){
+                      $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
+                      var v = document.getElementById("chatroomname").innerText;
+                      $("#"+v).css("border-color","#a8daff");$("#"+v).css("border-style","solid");
+                      });
+                    </script>
                 <div class="tt-wrapper-inner">
                   <form class="pt-editor form-default" style="padding-top:10px;" method='POST'>
                     {% csrf_token %}
@@ -131,21 +146,11 @@
                     </div>
                   </form>
                 </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </main>
-  {% comment %} 以下js代码想保证id为“scroll_div”的垂直滚动条每次刷新保持在最底部 {% endcomment %}
-  <script type="text/javascript">
-  $(document).ready(function(){
-  $('#scroll_div').scrollTop( $('#scroll_div')[0].scrollHeight);
-  var v = document.getElementById("chatroomname").innerText;
-  $("#"+v).css("border-color","#a8daff");$("#"+v).css("border-style","solid");
-  });
-  
-
-  </script>
+    </main>
 </body>
 {% endblock %}
