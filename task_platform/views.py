@@ -664,12 +664,6 @@ def chatroom(request, room_id):
         (Q(publisher=username) | Q(id__in=rec_task_id_list)) & Q(task_state='进行中')
     ).order_by('-task_state') # 进行中 任务在前面
     task_chatinfo_list = []
-    # 预置通知聊天室
-    notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
-    _message = re.sub('<img.*/>', '[图片]', notice.message)
-    if _message == None or _message == 'None':
-        _message = '无内容'
-    task_chatinfo_list.append((get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
     for _task in latest_task_list:
         _latest_chatinfo = Chatinfo.objects.filter(task_id=_task.id).order_by('-send_time').first()
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
@@ -680,6 +674,13 @@ def chatroom(request, room_id):
         task_chatinfo_list.append((get_room_id(_task), _task.task_description, _latest_message, _latest_send_time))
     # 对信息框排序
     task_chatinfo_list = sorted(task_chatinfo_list, key=lambda x: x[3])
+    # 预置通知聊天室
+    notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
+    _message = re.sub('<img.*/>', '[图片]', notice.message)
+    if _message == None or _message == 'None':
+        _message = '无内容'
+    task_chatinfo_list.insert(0, (get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
+
     '''
     右侧聊天框
     '''
