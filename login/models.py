@@ -6,12 +6,6 @@ from django.conf import settings
 
 class User(models.Model):
     '''用户表'''
-
-    gender = (
-        ('male','男'),
-        ('female','女'),
-    )
-
     name = models.CharField(max_length=128, unique=True)
     password = models.CharField(max_length=256)
     stu_id = models.CharField(max_length=13, unique=True)
@@ -20,6 +14,8 @@ class User(models.Model):
     money = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     c_time = models.DateTimeField(auto_now_add=True)
     has_confirmed = models.BooleanField(default=False)
+    send_state = models.IntegerField(default=1)
+    updated_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name

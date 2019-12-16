@@ -14,31 +14,40 @@
         <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">发布时间</div>
         <div class="tt-col-value" style="width: 20%;padding:0%">预期耗时</div>
       </div>
-      {% comment %} <div class="tt-topic-alert tt-alert-default" role="alert">
-        <a href="#" target="_blank">4 new posts</a> are added recently, click here to load them.
-      </div> {% endcomment %}
 
       {% if tag_list %}
       {% for task, color, tags in tag_list %}
 
-      <div class="tt-item tt-itemselect">
+      <div class="tt-item">
         <div class="tt-col-avatar">
+          {% if task.task_class == "赏金模式" %}
           <svg class="tt-icon">
-            <use xlink:href="#icon-ava-k"></use>
+            <use xlink:href="#bounty"></use>
           </svg>
+          {% else %}
+          <svg class="tt-icon">
+            <use xlink:href="#hunter"></use>
+          </svg>
+          {% endif %}
         </div>
         <div class="tt-col-description">
           <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
-              <!-- 跳转链接 -->>
-              <svg class="tt-icon">
-                <use xlink:href="#icon-pinned"></use>
-              </svg>
+
+              {% if task.task_state == "完成" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-verified"></use>
+                </svg>
+              {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-locked"></use>
+                </svg>
+              {% endif %}
               {{ task.task_description }}
                         </a></h6>
           <div class="row align-items-center no-gutters">
             <div class="col-11">
               <ul class="tt-list-badge">
-                <li class="show-mobile"><a href="#"><span class={{color}}>{{ task.task_state }}</span></a></li>
+                <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_state }}</span></a></li>
                 {% for tag in tags %}
                 <li><a><span class="tt-badge">{{ tag }}</span></a></li>
                 {% endfor%}
@@ -49,13 +58,7 @@
               </div>
             </div>
           </div>
-
-          <div class="tt-col-category"><span id="change-the-color" class="{{color}}">{{ task.task_state }}</span>
-          <script>
-                    document.getElementsByClassName("p").getElementById("change-the-color").className = "tt-color05 tt-badge";
-          </script>
-          </div>
-          
+          <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
           <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
             <div class="tt-col-value tt-color-select hide-mobile">{{ task.people_now }}</div>
               <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
@@ -66,14 +69,18 @@
                 <!-- No task -->
                 {% endif %}
 
-                <div class="tt-row-btn">
-                  <button type="button" class="btn-icon js-topiclist-showmore">
-                    <svg class="tt-icon">
-                      <use xlink:href="#icon-load_lore_icon"></use>
-                    </svg>
-                  </button>
-                </div>
               </div>
             </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/2.0.0/trianglify.min.js"></script>
+<script>
+	var pattern = Trianglify({
+		width: window.innerWidth,
+		height: window.innerHeight
+	});
+	document.body.style.backgroundSize = "cover"; 
+ 
+document.body.style.backgroundImage = "url(" + pattern.png() + ")";
+</script>
+{% comment %} <script type="text/javascript">var now=(new Date).getTime();15761664e5<now&&now<1576252799e3&&(document.querySelector("html").style.filter="grayscale(100%)")</script> {% endcomment %}
 </main>
 {% endblock %}

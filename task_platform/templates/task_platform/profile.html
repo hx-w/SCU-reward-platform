@@ -1,0 +1,437 @@
+{% extends 'task_platform/base.html'%}
+{% load staticfiles %}
+{% block content %}
+<head>
+  <meta charset="utf-8">
+  <title>个人页面</title>
+  <meta name="keywords" content="HTML5 Template">
+  <meta name="description" content="Forum - Responsive HTML5 Template">
+  <meta name="author" content="Forum">
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link href="{% static 'css/profile.css' %}" rel="stylesheet">
+</head>
+
+<main id="tt-pageContent" class="tt-offset-small">
+  <div class="tt-wrapper-section">
+    <div class="container">
+      <div class="tt-user-header">
+
+        {% if message %}
+        <label>{{ message }}</label>
+        {% endif %}
+
+        <div class="tt-col-avatar">
+          <a href="#">
+                  <svg class="tt-icon">
+                    <use xlink:href="#icon-ava-c"></use>
+                  </svg>
+          </a>
+        </div>
+        <div class="tt-col-title">
+          <div class="tt-title">
+            <a href="#">赏金</a>
+          </div>
+          <ul class="tt-list-badge">
+            <li><a href="#"><span class="tt-color14 tt-badge">{{ money }}</span></a></li>
+          </ul>
+        </div>
+        <div class="tt-col-btn" id="js-settings-btn">
+          <div class="tt-list-btn">
+            <a href="/recharge/" class="btn btn-secondary">充值</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="tt-tab-wrapper">
+      <div class="tt-wrapper-inner">
+        <ul class="nav nav-tabs pt-tabs-default" role="tablist">
+          <li class="nav-item show">
+            <a class="nav-link active" data-toggle="tab" href="#tt-tab-01" role="tab"><span>赏金模式</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tt-tab-02" role="tab">
+              <div class="box-container">
+                <div class="border-right"><span>猎人模式</span></div>
+              </div>
+             </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tt-tab-03" role="tab"><span>未开始任务</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tt-tab-04" role="tab"><span>进行中任务</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#tt-tab-05" role="tab"><span>已结束任务</span></a>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane tt-indent-none show active" id="tt-tab-01" role="tabpanel">
+          <div class="tt-topic-list">
+            <div class="tt-list-header">
+              <div class="tt-col-value" style="width: 17%;"><center>聊天室</center></div>
+              <div class="tt-col-category" style="width: 90%">简述</div>
+              <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务状态</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">需求人数</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">参与状态</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">发布时间</div>
+              <div class="tt-col-value" style="width: 20%;padding:0%">结算</div>
+            </div>
+
+            {% if tag_list_1 %}
+            {% for task, color, settlement, room_id, tags in tag_list_1 %}
+
+              <div class="tt-item">
+                <div class="tt-col-avatar">
+                  <a href="/chatroom/{{ room_id }}">
+                  <svg class="tt-icon">
+                    <use xlink:href="#icon-ava-c"></use>
+                  </svg>
+                  </a>
+                </div>
+                <div class="tt-col-description">
+                  <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
+                      {% if task.task_state == "完成" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-verified"></use>
+                        </svg>
+                      {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-locked"></use>
+                        </svg>
+                      {% endif %}
+                      {{ task.task_description }}
+                    </a></h6>
+                  <div class="row align-items-center no-gutters">
+                    <div class="col-11">
+                      <ul class="tt-list-badge">
+                        <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_state }}</span></a></li>
+                        {% for tag in tags %}
+                        <li><a><span class="tt-badge">{{ tag }}</span></a></li>
+                        {% endfor%}
+                      </ul>
+                    </div>
+                    <div class="col-1 ml-auto show-mobile">
+                      <div class="tt-value">{{ settlement }}h</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
+                <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
+                <div class="tt-col-value   hide-mobile">
+                  {% if task.publisher == username %}
+                  发布
+                  {% else %}
+                  接收
+                  {% endif %}
+                </div>
+                <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+                <div class="tt-col-value hide-mobile">{{ settlement }}</div>
+              </div>
+            {% endfor %}
+            {% else %}
+            <p>暂无任务</p>
+            <!-- 无任务 -->
+            {% endif %}
+          </div>
+        </div>
+        <div class="tab-pane tt-indent-none" id="tt-tab-02" role="tabpanel">
+
+          <div class="tt-topic-list">
+            <div class="tt-list-header">
+              <div class="tt-col-value" style="width: 17%;"><center>聊天室</center></div>
+              <div class="tt-col-category" style="width: 90%">简述</div>
+              <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务状态</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">需求人数</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">参与状态</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">发布时间</div>
+              <div class="tt-col-value" style="width: 20%;padding:0%">结算</div>
+            </div>
+
+            {% if tag_list_2 %}
+            {% for task, color, settlement, room_id, tags in tag_list_2 %}
+
+              <div class="tt-item">
+                <div class="tt-col-avatar">
+                  <a href="/chatroom/{{ room_id }}">
+                  <svg class="tt-icon">
+                    <use xlink:href="#icon-ava-c"></use>
+                  </svg>
+                  </a>
+                </div>
+                <div class="tt-col-description">
+                  <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
+                      {% if task.task_state == "完成" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-verified"></use>
+                        </svg>
+                      {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-locked"></use>
+                        </svg>
+                      {% endif %}
+                      {{ task.task_description }}
+                    </a></h6>
+                  <div class="row align-items-center no-gutters">
+                    <div class="col-11">
+                      <ul class="tt-list-badge">
+                        <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_state }}</span></a></li>
+                        {% for tag in tags %}
+                        <li><a><span class="tt-badge">{{ tag }}</span></a></li>
+                        {% endfor%}
+                      </ul>
+                    </div>
+                    <div class="col-1 ml-auto show-mobile">
+                      <div class="tt-value">{{ settlement }}h</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tt-col-category"><span class="{{ color }}">{{ task.task_state }}</span></div>
+                <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
+                <div class="tt-col-value hide-mobile">
+                  {% if task.publisher == username %}
+                  发布
+                  {% else %}
+                  接收
+                  {% endif %}
+                </div>
+                <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+                <div class="tt-col-value hide-mobile">{{ settlement }}</div>
+              </div>
+            {% endfor %}
+            {% else %}
+            <p>暂无任务</p>
+            <!-- 无任务 -->
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="tab-pane tt-indent-none" id="tt-tab-03" role="tabpanel">
+
+          <div class="tt-topic-list">
+            <div class="tt-list-header">
+              <div class="tt-col-value" style="width: 17%;"><center>聊天室</center></div>
+              <div class="tt-col-category" style="width: 90%">简述</div>
+              <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务类型</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">需求人数</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">参与状态</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">发布时间</div>
+              <div class="tt-col-value" style="width: 20%;padding:0%">结算</div>
+            </div>
+
+            {% if tag_list_3 %}
+            {% for task, color, settlement, room_id, tags in tag_list_3 %}
+
+              <div class="tt-item">
+                <div class="tt-col-avatar">
+                  <a href="/chatroom/{{ room_id }}">
+                  <svg class="tt-icon">
+                    <use xlink:href="#icon-ava-c"></use>
+                  </svg>
+                </a>
+                </div>
+                <div class="tt-col-description">
+                  <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
+                      {% if task.task_state == "完成" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-verified"></use>
+                        </svg>
+                      {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-locked"></use>
+                        </svg>
+                      {% endif %}
+                      {{ task.task_description }}
+                    </a></h6>
+                  <div class="row align-items-center no-gutters">
+                    <div class="col-11">
+                      <ul class="tt-list-badge">
+                        <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_class }}</span></a></li>
+                        {% for tag in tags %}
+                        <li><a><span class="tt-badge">{{ tag }}</span></a></li>
+                        {% endfor%}
+                      </ul>
+                    </div>
+                    <div class="col-1 ml-auto show-mobile">
+                      <div class="tt-value">{{ settlement }}h</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tt-col-category"><span class="{{ color }}">{{ task.task_class }}</span></div>
+                <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
+                <div class="tt-col-value hide-mobile">
+                  {% if task.publisher == username %}
+                  发布
+                  {% else %}
+                  接收
+                  {% endif %}
+                </div>
+                <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+                <div class="tt-col-value hide-mobile">{{ settlement }}</div>
+              </div>
+            {% endfor %}
+            {% else %}
+            <p>暂无任务</p>
+            <!-- 无任务 -->
+            {% endif %}
+          </div>
+        </div>
+
+
+        <div class="tab-pane tt-indent-none" id="tt-tab-04" role="tabpanel">
+
+          <div class="tt-topic-list">
+            <div class="tt-list-header">
+              <div class="tt-col-value" style="width: 17%;"><center>聊天室</center></div>
+              <div class="tt-col-category" style="width: 90%">简述</div>
+              <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务类型</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">需求人数</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">参与状态</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">发布时间</div>
+              <div class="tt-col-value" style="width: 20%;padding:0%">结算</div>
+            </div>
+
+            {% if tag_list_4 %}
+            {% for task, color, settlement, room_id, tags in tag_list_4 %}
+
+              <div class="tt-item">
+                <div class="tt-col-avatar">
+                <a href="/chatroom/{{ room_id }}">
+                  <svg class="tt-icon">
+                    <use xlink:href="#icon-ava-c"></use>
+                  </svg>
+                </a>
+                </div>
+                <div class="tt-col-description">
+                  <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
+              {% if task.task_state == "完成" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-verified"></use>
+                </svg>
+              {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                <svg class="tt-icon">
+                  <use xlink:href="#icon-locked"></use>
+                </svg>
+              {% endif %}
+                      {{ task.task_description }}
+                    </a></h6>
+                  <div class="row align-items-center no-gutters">
+                    <div class="col-11">
+                      <ul class="tt-list-badge">
+                        <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_class }}</span></a></li>
+                        {% for tag in tags %}
+                        <li><a><span class="tt-badge">{{ tag }}</span></a></li>
+                        {% endfor%}
+                      </ul>
+                    </div>
+                    <div class="col-1 ml-auto show-mobile">
+                      <div class="tt-value">{{ settlement }}h</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tt-col-category"><span class="{{ color }}">{{ task.task_class }}</span></div>
+                <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
+                <div class="tt-col-value hide-mobile">
+                  {% if task.publisher == username %}
+                  发布
+                  {% else %}
+                  接收
+                  {% endif %}
+                </div>
+                <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+                <div class="tt-col-value hide-mobile">{{ settlement }}</div>
+              </div>
+            {% endfor %}
+            {% else %}
+            <p>暂无任务</p>
+            <!-- 无任务 -->
+            {% endif %}
+          </div>
+        </div>
+
+
+
+        <div class="tab-pane tt-indent-none" id="tt-tab-05" role="tabpanel">
+
+          <div class="tt-topic-list">
+            <div class="tt-list-header">
+              <div class="tt-col-value" style="width: 17%;"><center>聊天室</center></div>
+              <div class="tt-col-category" style="width: 90%">简述</div>
+              <div class="tt-col-category" style="width: 30%;padding-left:5.5%">任务类型</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">需求人数</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">参与状态</div>
+              <div class="tt-col-value hide-mobile" style="width: 20%;padding-left:2%">发布时间</div>
+              <div class="tt-col-value" style="width: 20%;padding:0%">结算</div>
+            </div>
+
+            {% if tag_list_5 %}
+            {% for task, color, settlement, room_id, tags in tag_list_5 %}
+
+              <div class="tt-item">
+                <div class="tt-col-avatar">
+                  <a href="/chatroom/{{ room_id }}">
+                  <svg class="tt-icon">
+                    <use xlink:href="#icon-ava-c"></use>
+                  </svg>
+                </a>
+                </div>
+                <div class="tt-col-description">
+                  <h6 class="tt-title"><a href="{% url 'detail' task.id %}">
+                      {% if task.task_state == "完成" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-verified"></use>
+                        </svg>
+                      {% elif task.task_state == "中止" or task.task_state == "撤销" or task.task_state == "超时" %}
+                        <svg class="tt-icon">
+                          <use xlink:href="#icon-locked"></use>
+                        </svg>
+                      {% endif %}
+                      {{ task.task_description }}
+                    </a></h6>
+                  <div class="row align-items-center no-gutters">
+                    <div class="col-11">
+                      <ul class="tt-list-badge">
+                        <li class="show-mobile"><a href="#"><span class="{{ color }}">{{ task.task_class }}</span></a></li>
+                        {% for tag in tags %}
+                        <li><a><span class="tt-badge">{{ tag }}</span></a></li>
+                        {% endfor%}
+                      </ul>
+                    </div>
+                    <div class="col-1 ml-auto show-mobile">
+                      <div class="tt-value">{{ settlement }}h</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tt-col-category"><span class="{{ color }}">{{ task.task_class }}</span></div>
+                <div class="tt-col-value hide-mobile">{{ task.people_needed }}</div>
+                <div class="tt-col-value hide-mobile">
+                  {% if task.publisher == username %}
+                  发布
+                  {% else %}
+                  接收
+                  {% endif %}
+                </div>
+                <div class="tt-col-value hide-mobile">{{ task.pub_time }}</div>
+                <div class="tt-col-value hide-mobile">{{ settlement }}</div>
+              </div>
+            {% endfor %}
+            {% else %}
+            <p>暂无任务</p>
+            <!-- 无任务 -->
+            {% endif %}
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</main>
+
+{% endblock %}

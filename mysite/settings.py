@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'captcha',
     'ckeditor',
     'ckeditor_uploader',
-    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -121,13 +120,13 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.163.com'
 EMAIL_PORT = 25
-EMAIL_HOST_USER = '17361019875@163.com'
-EMAIL_HOST_PASSWORD = 'Hexiang811021'
+EMAIL_HOST_USER = 'platform_office@163.com'
+EMAIL_HOST_PASSWORD = 'SQM811021'
 
 # 注册有效期天数
 CONFIRM_DAYS = 7
@@ -157,17 +156,15 @@ ALIPAY_PUBLIC_KEY_PATH = './login/keys/alipay_key_2048.txt'
 ALIPAY_DEBUG = True
 RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
 EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
+PERCENTAGE = 0.05
+DEPOSIT = 5 # 5元押金
 
-# 双工通信
-ASGI_APPLICATION = 'mysite.routing.application'
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('localhost', 6379)],
-        },
-    },
-}
+NIKENAMES = [
+    '幻影刺客', '巨魔战将', '狙击手', '龙骑士', '混沌骑士', '魅惑魔女', '敌法师', '凤凰', '艾欧', '风行者'
+]
+
+# 自动回复
+BACK_TIMEDELTA = 30 * 60 # 30 min
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/

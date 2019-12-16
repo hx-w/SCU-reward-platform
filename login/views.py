@@ -5,8 +5,9 @@ import hashlib
 import datetime
 import time
 import random
+import os
 from decimal import *
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from django.conf import settings
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -15,7 +16,26 @@ from captcha.helpers import captcha_image_url
 from .forms import UserForm, RegisterForm
 from . import models
 from .pay import AliPay
+os.path.abspath('../')
+import task_platform.models as task_models
 
+
+@csrf_exempt
+def get_notice_room_id(username):
+    md5 = hashlib.md5()
+    md5.update(username.encode())
+    return md5.hexdigest()
+
+@csrf_exempt
+def send_notice(username, message):
+    notice = task_models.Chatinfo.objects.create(room_id=get_notice_room_id(username))
+    notice.sender = 'Admin'
+    notice.message = message
+    notice.save()
+    flag = task_models.ChatVision.objects.create(room_id=get_notice_room_id(username))
+    flag.username = username
+    flag.has_seen = False
+    flag.save()
 
 @csrf_exempt
 def hash_code(s, salt='hx+ltq+wzy+hxj'):# 加点盐
@@ -43,7 +63,7 @@ def send_email(email, code):
                     <p>这里是四川大学任务悬赏平台注册系统</p>
                     <p>请点击站点链接完成注册确认！</p>
                     <p>此链接有效期为{}天！</p>
-                    '''.format('127.0.0.1:8000', code, settings.CONFIRM_DAYS)
+                    '''.format('192.168.1.245:8000', code, settings.CONFIRM_DAYS)
 
     msg = EmailMultiAlternatives(subject, text_content, settings.EMAIL_HOST_USER, [email])
     msg.attach_alternative(html_content, "text/html")
@@ -59,7 +79,7 @@ def login(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
-        message = "请检查填写的内容, "+username+"!"
+        message = "请检查填写的内容, " + username + "!"
         if login_form.is_valid():
             try:
                 user = models.User.objects.get(name=username)
@@ -251,6 +271,8 @@ def user_confirm(request):
         confirm.user.save()
         confirm.delete()
         message = '感谢确认，请使用账户登录！'
+        # 发送消息
+        send_notice(confirm.user.name, '恭喜您，账号创建成功，开始您的赏金之旅吧！')
         return render(request, 'login/confirm.html', locals())
 
 def recharge(request):

@@ -1632,7 +1632,19 @@ module.exports = function (element) {
 	if (ttJsActiveBtn.length){
 		ttJsActiveBtn.on('click', '.tt-button-icon', function(e){
 			$(this).closest(ttJsActiveBtn).find('.tt-button-icon').removeClass('active');
-			$(this).addClass('active');
+      $(this).addClass('active');
+      var tmp = $(this).attr("xx")
+      $("#v").val(tmp);
+      if (tmp == "赏金模式")
+      {
+        document.getElementById("表").innerHTML = "<input name='people_needed' class='form-control' placeholder='最多50人' style='width:100px;'>";
+        document.getElementById("tips").innerHTML = "<center>赏金模式(可以为多人任务）</center><br /><center>发布任务并支付赏金</center>";
+        }
+        else
+      {
+        document.getElementById("表").innerHTML = "<input name='people_needed' class='form-control' readonly='readonly' value='1' style='width:100px;'></input>";
+        document.getElementById("tips").innerHTML = "<center>猎人模式（只能由1人接收）</center><br /><center>发布自己能做的任务并收取一定报酬</center>";
+      }
 			return false;
 		});
 	};
@@ -1646,13 +1658,14 @@ module.exports = function (element) {
 
     if(!$ttDesctopMenu) return;
 
-    $ttDesctopMenu.find('li').each(function(){
-        var link = $(this).find('a').attr('href');
+  // $ttDesctopMenu.find('li').each(function ()
+  //   {
+  //       var link = $(this).find('a').attr('href');
 
-        if (location.indexOf(link) !== -1){
-            $(this).addClass('active');
-        }
-    });
+  //       if (location.indexOf(link) !== -1){
+  //           $(this).addClass('active');
+  //       }
+  //   });
 
     $ttDesctopMenu.find('ul li').on("mouseenter", function() {
         var $ul = $(this).find('ul:first');
