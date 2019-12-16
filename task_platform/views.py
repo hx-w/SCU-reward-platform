@@ -670,7 +670,8 @@ def chatroom(request, room_id):
         _latest_message, _latest_send_time = _latest_chatinfo.message, _latest_chatinfo.send_time
         _latest_send_time = _latest_send_time.strftime('%m-%d %H:%M:%S')
         # 对于信息进行缩略处理 图片压缩
-        _latest_message = re.sub('<img.*/>', '[图片]', _latest_message)
+        if _latest_message:
+            _latest_message = re.sub('<img.*/>', '[图片]', _latest_message)
         task_chatinfo_list.append((get_room_id(_task), _task.task_description, _latest_message, _latest_send_time))
     # 对信息框排序
     task_chatinfo_list = sorted(task_chatinfo_list, key=lambda x: x[3])
@@ -697,18 +698,22 @@ def chatroom(request, room_id):
         elif message.sender == task.publisher:
             _NIKENAME = '发布者:天辉'
         else:
-            for idx in range(len(rec_list.values_list('username'))):
+            lens = len(rec_list.values_list('username'))
+            for idx in range(lens):
                 if rec_list[idx].username == message.sender:
-                    nikename = "接收者:{}".format(settings.NIKENAMES[idx])
+                    _NIKENAME = "接收者:{}".format(settings.NIKENAMES[idx])
                     break
         # 信息加链接跳转
-        img_path_res = re.findall('<img src=\"(.*?)\"(.+?)/>', _message)
-        if img_path_res:
-            for each_ in img_path_res:
-                img_id = base64.b64encode(each_[0].encode(encoding='utf-8')).decode('utf-8')
-                _message = re.sub(
-                    '<img .*?/>[^</a>]', '<a href=/image/{}>{}</a>'.format(img_id, each_[0]), _message, 1
-                )
+        if _message:
+            img_path_res = re.findall('<img src=\"(.*?)\"(.+?)/>', _message)
+            if img_path_res:
+                for each_ in img_path_res:
+                    img_id = base64.b64encode(each_[0].encode(encoding='utf-8')).decode('utf-8')
+                    _message = re.sub(
+                        '<img .*?/>[^</a>]', '<a href=/image/{}>{}</a>'.format(img_id, each_[0]), _message, 1
+                    )
+        else:
+            _message = ''
         if begin_day != _today:
             _underline_flag = True
             _underline_info = message.send_time.strftime('%m/%d/%Y')

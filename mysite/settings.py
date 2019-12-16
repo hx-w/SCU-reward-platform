@@ -150,10 +150,12 @@ CKEDITOR_RESTRICT_BY_USER = True
 
 # 支付宝接口设置
 ALIPAY_APPID = '2016101600701040'
+# APP_NOTIFY_URL = 'http://127.0.0.1:8000/alipay/return/'
 APP_NOTIFY_URL = 'http://127.0.0.1:8000/alipay/return/'
 APP_PRIVATE_KEY_PATH = './login/keys/private_2048.txt'
 ALIPAY_PUBLIC_KEY_PATH = './login/keys/alipay_key_2048.txt'
 ALIPAY_DEBUG = True
+# RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
 RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
 EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
 PERCENTAGE = 0.05
