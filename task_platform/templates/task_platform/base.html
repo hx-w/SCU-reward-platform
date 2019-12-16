@@ -72,13 +72,15 @@
               </svg>
             </button>
             <!-- /toggle -->
-            <form class="search-wrapper"style="margin-block-end: 1em;">
-              <div class="search-form">
-                <input type="text" class="tt-search__input" placeholder="Search" id="thesearch">
-                <a href="/"> 
-                <button class="tt-search__btn" type="submit"style="position: absolute;top: 50%;transform: translateY(-50%);">
-                  <svg class="tt-icon">
+            {% comment %} <form class="search-wrapper"style="margin-block-end: 1em;"> {% endcomment %}
+              <div class="search-form" style="margin-bottom:12px">
+                <input  class="tt-search__input" placeholder="搜索" id="thesearch">
+                <a href="/">
+                <button class="tt-search__btn" style="position: absolute;top: 50%;transform: translateY(-50%);">
+                  <svg class="tt-icon" >
+                  <a href="/">
                     <use xlink:href="#icon-search"></use>
+                  </a>
                   </svg>
                 </button>
                 </a>
@@ -88,7 +90,7 @@
                   </svg>
                 </button>
               </div>
-            </form>
+            {% comment %} </form> {% endcomment %}
           </div>
           <!-- /tt-search -->
         </div>
