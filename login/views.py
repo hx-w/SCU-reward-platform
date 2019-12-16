@@ -46,7 +46,7 @@ def hash_code(s, salt='hx+ltq+wzy+hxj'):# 加点盐
 def make_confirm_string(user):
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     code = hash_code(user.name, now)
-    models.ConfirmString.objects.create(code=code, user=user,)
+    models.ConfirmString.objects.create(code=code, user=user)
     return code
 
 def send_email(email, code):
@@ -134,7 +134,6 @@ def register(request):
     hashkey = CaptchaStore.generate_key()
     imgage_url = captcha_image_url(hashkey)
     if request.session.get('is_login', None):
-        # 登录状态不允许注册。你可以修改这条原则！
         return redirect("/")
 
     if request.method == "POST":
