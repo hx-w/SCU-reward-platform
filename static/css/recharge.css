@@ -1,0 +1,55 @@
+.payout{
+    width: 480px!important;
+    padding-right: 50px!important;
+    padding: 10px 9px 10px 7px;
+    border: 0;
+    background-image: none;
+    height: 20px;
+    line-height: 20px;
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    margin: 0;
+    vertical-align: top;
+    outline: 0;
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    -webkit-appearance: textfield;
+    background-color: white;
+    -webkit-rtl-ordering: logical;
+
+}
+.payoutbutton{
+    background-position: -206px 0;
+    -webkit-box-shadow: 1px 1px 3px rgba(0,0,0,.2);
+    width: 104px;
+    height: 40px;
+    line-height: 40px;
+    padding: 0;
+    border: 0;
+    background-position: -464px -42px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+    background: 0 0;
+    background-color: #38f;font-weight: 400;
+    font: 22px arial;
+    -webkit-appearance: push-button;
+    user-select: none;
+    white-space: pre;
+    align-items: flex-start;
+    text-align: center;
+    -webkit-writing-mode: horizontal-tb !important;
+    text-rendering: auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+}

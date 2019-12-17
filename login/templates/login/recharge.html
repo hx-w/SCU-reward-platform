@@ -15,12 +15,16 @@
 </head>
 
 <main id='tt-pageContent'>
-    <div class="container">
+    <div>
+    <div class="container"style="margin-top:210px;" >
+    <center>
         <form action="/alipay/pay/" method="POST">
             {% csrf_token %}
-            <input type="text" class="form-control" name="money">
-            <input type="submit" value="去支付">
+            <input type="text" class="form-control payout" style="height:50px" name="money">
+            <input type="submit" class="payoutbutton" style="height:50px;" value="支付">
         </form>
+    </center>
+    </div>
     </div>
 </main>
 {% endblock %}
