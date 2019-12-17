@@ -281,6 +281,15 @@ def detail(request, task_id):
                     for rec, money_ in exl_money.items():
                         check_deposit(rec, -float(money_))
                         send_notice(rec, '您的报价未被接受，押金{}已经退还至您的余额，请查验。'.format(money_))
+                else:
+                    for rec in rec_money.keys():
+                        send_notice(rec, '您的报价已被接受，任务已开始，如果有需要请与发布者沟通！')
+                    exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
+                    exl_money = dict(exl_money_qs)
+                    for rec, money_ in exl_money.items():
+                        check_deposit(rec, -float(money_))
+                        send_notice(rec, '您的报价未被接受，押金{}已经退还至您的余额，请查验。'.format(money_))
+                    
                 # 设置task
                 task.begin_time = timezone.now()
                 task.task_state = '进行中'
