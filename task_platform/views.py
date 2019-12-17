@@ -687,6 +687,7 @@ def chatroom(request, room_id):
     task_chatinfo_list = sorted(task_chatinfo_list, key=lambda x: x[3])
     # 预置通知聊天室
     notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
+    _message = notice.message
     if _message == None or _message == 'None':
         _message = '<p>无内容</p>'
     _message = re.sub('<img.*/>', '[图片]', notice.message)
@@ -722,15 +723,15 @@ def chatroom(request, room_id):
                     break
         # 信息加链接跳转
         if _message:
-            img_path_res = re.findall('<img.*src=\"(.*?)\"(.+?)/>', _message)
+            img_path_res = re.findall('(<img.*src=\"(.*?)\"(.*?)/>)', _message)
             if img_path_res:
                 for each_ in img_path_res:
-                    img_id = base64.b64encode(each_[0].encode(encoding='utf-8')).decode('utf-8')
+                    img_id = base64.b64encode(each_[1].encode(encoding='utf-8')).decode('utf-8')
                     _message = re.sub(
-                        '<img.*?/>[^</a>]', '<a href=/image/{}>{}</a>'.format(img_id, each_[0]), _message, 1
+                        '<img.*?/>(?!</a>)', '<a href=/image/{}>{}</a>'.format(img_id, each_[0]), _message, 1
                     )
         else:
-            _message = ''
+            _message = '无内容'
         if begin_day != _today:
             _underline_flag = True
             _underline_info = message.send_time.strftime('%m/%d/%Y')
