@@ -573,9 +573,9 @@ def profile(request):
         if type(_settlement) == str:
             return _settlement
         if _settlement >= 0:
-            return '+{}'.format(_settlement)
+            return '+{}'.format(round(_settlement, 2))
         else:
-            return str(_settlement)
+            return str(round(_settlement, 2))
 
 
     for idx in range(5):
