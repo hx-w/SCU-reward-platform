@@ -89,6 +89,7 @@ class Admin_Sender(object):
                 withs = withdraw_list.order_by('-start_time').first()
                 withs.state = '取消'
                 withs.save()
+                self.__send_notice__('提现撤销成功！', username, room_id)
         else:
             self.__send_notice__(
                 '请输入提现金额(纯数字)，最低5赏金，回复"取消" 来取消当前操作。',
