@@ -104,9 +104,12 @@
           </div>
           <center><strong><div class='text'>如果你想接受这个任务，你需要提出自己的报价。注意：提交报价时你需要支付与你的报价相同金额的赏金币作为押金。</div></strong></center>
           {% if message %}
+          <center><strong>
             <div class="tt-item tt-item-popup">
               <div class="tt-col-message">{{ message }}</div>
             </div>
+          </strong>
+          </center>
           {% endif %}
           <form class="form-default" method="POST">
             {% csrf_token %}
