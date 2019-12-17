@@ -671,14 +671,16 @@ def chatroom(request, room_id):
         # 对于信息进行缩略处理 图片压缩
         if _latest_message:
             _latest_message = re.sub('<img.*/>', '[图片]', _latest_message)
+        else:
+            _latest_message = '<p>无内容</p>'
         task_chatinfo_list.append((get_room_id(_task), _task.task_description, _latest_message, _latest_send_time))
     # 对信息框排序
     task_chatinfo_list = sorted(task_chatinfo_list, key=lambda x: x[3])
     # 预置通知聊天室
     notice = Chatinfo.objects.filter(room_id=get_notice_room_id(username)).order_by('-send_time').first()
-    _message = re.sub('<img.*/>', '[图片]', notice.message)
     if _message == None or _message == 'None':
-        _message = '无内容'
+        _message = '<p>无内容</p>'
+    _message = re.sub('<img.*/>', '[图片]', notice.message)
     task_chatinfo_list.insert(0, (get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
 
     '''
