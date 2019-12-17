@@ -36,7 +36,7 @@
                 {% for room_id_, task_description, latest_message, latest_send_time in task_chatinfo_list %}
                 <a onclick="window.location='/chatroom/{{ room_id_ }}'" id="{{ task_description }}" class="tt-item tt-itemselect">
                   <div class="tt-col-description">
-                    <h4><span>{{ task_description }}</span><span class="time">{{ latest_send_time }}</span></h4>
+                    <h4 class='tt-title'><span>{{ task_description }}</span><span class="time">{{ latest_send_time }}</span></h4>
                     <div class="tt-message tt-select">{{ latest_message | safe }}</div>
                   </div>
                 </a>
