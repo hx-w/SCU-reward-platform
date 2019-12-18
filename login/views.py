@@ -121,6 +121,8 @@ def page_login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
+                    user.money = Decimal(10)
+                    user.save()
                     return redirect('/')
                 else:
                     message = "密码不正确！"
