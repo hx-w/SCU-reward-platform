@@ -79,17 +79,19 @@ def login(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
-        message = "请检查填写的内容, " + username + "!"
+        message = "{}, 请检查填写的傻逼内容！fuck(from ltq)".format(username)
         if login_form.is_valid():
             try:
                 user = models.User.objects.get(name=username)
                 if not user.has_confirmed:
-                    message = '请前往您的邮箱'+user.stu_id +'@stu.scu.edu.cn 进行确认！'
+                    message = '请前往您的邮箱' + user.stu_id + '@stu.scu.edu.cn 进行确认！'
                     return render(request, 'login/login.html', locals())
                 if user.password == hash_code(password):  # 哈希值和数据库内的值进行比对
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
+                    user.money = Decimal(10)
+                    user.save()
                     return redirect('/')
                 else:
                     message = "密码不正确！"
@@ -110,7 +112,6 @@ def page_login(request):
         # username = request.POST.get('username', '')
         # password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
-        message = "请检查填写的傻逼内容！fuck"
         if login_form.is_valid():
             try:
                 user = models.User.objects.get(name=username)
@@ -121,7 +122,6 @@ def page_login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.id
                     request.session['user_name'] = user.name
-                    user.money = Decimal(10)
                     user.save()
                     return redirect('/')
                 else:
