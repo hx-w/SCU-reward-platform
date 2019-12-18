@@ -450,9 +450,6 @@ def create_task(request):
         if 'settings' in request.POST:
             self_settings(request)
         else:
-            # 判断金额是否充足
-            if not check_deposit(username, float(settings.DEPOSIT)):
-                return redirect('/recharge/') # 余额不足
             # 返回该任务详细信息页 /detail/tk Id
             task_class = request.POST.get('v')
             task_description = request.POST.get('task_description')
@@ -478,6 +475,9 @@ def create_task(request):
             if int(people_needed) > 50:
                 message = '所需人数：数字过大'
                 return render(request, 'task_platform/create-task.html', locals())
+            # 判断金额是否充足
+            if not check_deposit(username, float(settings.DEPOSIT)):
+                return redirect('/recharge/') # 余额不足
             # 没有检查 expected_time_consuming
             task = Task.objects.create()
             task.task_class = task_class
