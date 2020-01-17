@@ -134,12 +134,3 @@ def get_alipay_url(app_id, order_sn, order_mount):
     re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
 
     return re_url
-
-
-if __name__ == "__main__":
-    url = get_alipay_url(
-        '2016101600701040',
-        '201902923423436',
-        1.00
-    )
-    print(url)

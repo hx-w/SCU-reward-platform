@@ -8,8 +8,6 @@ from login import views
 urlpatterns = [ 
     path('login/', views.login),
     path('register/', views.register),
-    path('page-login/', views.page_login),
-    path('page-signup/', views.page_signup),
     path('logout/', views.logout),
     path('confirm/', views.user_confirm),
     path('recharge/', views.recharge),

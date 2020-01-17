@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
 import os
-import hashlib
 import random
 import re
 import base64
@@ -14,169 +13,60 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.conf import settings
-from .models import Task, Task_tags, User_task, Task_receive, Chatinfo, ChatVision, Withdraw
+from .models import Task, Task_tags, User_task, Task_receive, Chatinfo, ChatVision 
 from task_platform.admin_sender import Admin_Sender
 os.path.abspath('../')
 from login.models import User
+from .tools import *
 
-# Create your views here.
-
-@csrf_exempt
-def hash_code(s, salt='hx+ltq+wzy+hxj'):  # 加点盐
-    h = hashlib.sha256()
-    h.update((s + salt).encode())  # update方法只接收bytes类型
-    return h.hexdigest()
-
-@csrf_exempt
-def get_room_id(task):
-    md5 = hashlib.md5()
-    md5.update('{}{}'.format(task.id, task.publisher).encode())
-    return md5.hexdigest()
-
-@csrf_exempt
-def get_notice_room_id(username):
-    md5 = hashlib.md5()
-    md5.update(username.encode())
-    return md5.hexdigest()
-
-@csrf_exempt
-def send_notice(username, message):
-    notice = Chatinfo.objects.create(room_id=get_notice_room_id(username))
-    notice.sender = 'Admin'
-    notice.message = message
-    notice.save()
-    flag = ChatVision.objects.create(room_id=get_notice_room_id(username))
-    flag.username = username
-    flag.has_seen = False
-    flag.save()
-
-@csrf_exempt
-def check_chatroom_exist():
-    alluser = User.objects.all()
-    for euser in alluser:
-        send_notice(euser.name, '创建账号成功，开启你的赏金之旅吧！')
-    alltask = Task.objects.all()
-    for task in alltask:
-        new_info = Chatinfo.objects.create(task_id=task.id)
-        new_info.room_id = get_room_id(task)
-        new_info.sender = 'Admin'
-        new_info.save()
-        if task.task_state == '进行中':
-            send_notice(task.publisher, '恭喜你，任务已经开始，请关心任务动态！')
-            for allrec in Task_receive.objects.filter(task_id=task.id):
-                send_notice(allrec.username, '恭喜你，任务已经开始，请关心任务动态！')
 
 @csrf_exempt
 def sceneImgUpload(request):
     username = request.session.get('user_name')
     if request.method == 'POST':
         try:
-            path = 'media/upload/' + time.strftime("%Y/%m/%d/",
-                                                   time.localtime())
+            path = 'media/upload/' + time.strftime("%Y/%m/%d/", time.localtime())
             dirpath = Path(path)
             dirpath.mkdir(parents=True, exist_ok=True)
-
-            f = request.FILES["upload"]
-            file_name = path + '_' + username + '_' + str(
-                time.time()) + '_' + f.name
+            file_ = request.FILES["upload"]
+            file_name = path + '_' + username + '_' + str(time.time()) + '_' + file_.name
             des_origin_f = open(file_name, "wb+")
-            for chunk in f.chunks():
+            for chunk in file_.chunks():
                 des_origin_f.write(chunk)
             des_origin_f.close()
-        except Exception as e:
-            print(e)
-        res = {
-            'uploaded': True,
-            'url': '/' + file_name,
-        }
+        except Exception as ex:
+            print(ex)
+        res = { 'uploaded': True, 'url': '/' + file_name }
         return JsonResponse(res)
     else:
         raise Http404()
 
-def chatinfo_num(username):
-    # 检查提现更新
-    withs = Withdraw.objects.filter(username=username, state='完成', noticed=False)
-    for each_with in withs:
-        send_notice(username, '恭喜您，您于{}发起的提现{}元的请求已经接受，请查看您支付宝余额，如果有问题请联系platform_office@163.com。'.format(each_with.start_time.strftime('%Y-%m-%d %M:%H:%S'), each_with.money))
-        each_with.noticed = True
-        each_with.save()
-
-    chatnum = ChatVision.objects.filter(username=username, has_seen=False).count()
-    return chatnum
-
-def self_settings(request):
-    username = request.session.get('user_name', None)
-    user = User.objects.get(name=username)
-    # POST
-    message_ = '格式错误'
-    new_password1 = request.POST.get('new_password1', '')
-    new_password2 = request.POST.get('new_password2', '')
-    new_dept = request.POST.get('new_dept', '')
-    new_phone = request.POST.get('new_phone', '')
-    #-------
-    flg_changed = False
-    if new_password1 != new_password2:
-        message_ = '两次输入的密码不同！'
-        return 
-
-    if new_phone.strip() != '':
-        same_phone = User.objects.filter(phone=new_phone)
-        if same_phone:
-            message_ = '手机号码已被注册，请重新输入！'
-            return 
-        new_phone = new_phone.strip()
-        if new_phone.isdigit() == False or len(new_phone) != 11:
-            message_ = '手机号码有误，请重新输入！'
-            return 
-        user.phone = new_phone
-        flg_changed = True
-
-    if new_dept.strip() != '':
-        new_dept = new_dept.strip()
-        if len(new_dept) > 50:
-            message_ = '学院名过长，请重新输入！'
-            return
-        user.dept = new_dept
-        flg_changed = True
-
-    if flg_changed:
-        user.save()
-        message_ = ''
-    return
-
-def check_deposit(username, money, swicth_=True):
-    # makesure username in User
-    user = User.objects.get(name=username)
-    if money > user.money:
-        return False
-    else:
-        if swicth_:
-            user.money -= Decimal.from_float(money)
-            user.save()
-        return True
 
 def index(request):
-    # 不要取消下面这行注释，除非你知道自己在干什么
+    # 不要取消下面这两行注释，除非你知道自己在干什么
     # check_chatroom_exist() 
     # request.session.flush()
     username = request.session.get('user_name', None)
+    # 初始化变量
     tag_list = []
-    notice_room = '/login/'
-    notice_num = 0
     if username:
         user = User.objects.get(name=username)
         student_id = user.stu_id
         phone = user.phone
         dept = user.dept
-        if user.dept == 'None':
-            dept = '暂无信息'
         notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
         notice_num = chatinfo_num(username)
+        if user.dept == 'None':
+            dept = '暂无信息'
+        # 更改个人信息
+        if request.method == 'POST':
+            sl_message = self_settings(request, user)
         
+    # 主页 任务状态图标颜色
     finder = {
         '未开始': '9', '进行中': '2',
-        '中止': '3', '撤销': '3', 
-        '超时': '3', '完成': '4'
+        '中止': '3',   '撤销': '3', 
+        '超时': '3',   '完成': '4'
     }
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
@@ -186,14 +76,6 @@ def index(request):
             (task, color,
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
 
-    if request.method == 'POST':
-        '''
-        处理settings:
-        student_id, phone, dept
-        new_password1, new_password2, new_dept, new_phone
-        message
-        '''
-        self_settings(request)
     return render(request, 'task_platform/index.html', locals())
 
 def detail(request, task_id):
@@ -255,7 +137,7 @@ def detail(request, task_id):
 
     if request.method == 'POST':
         if 'settings' in request.POST: # 个人信息修改
-            self_settings(request)
+            sl_message = self_settings(request, user)
         elif 'accept' in request.POST: # 发布者接受报价
             message = '任务已开始！'
             rec_list = request.POST.getlist('accept')
@@ -448,7 +330,7 @@ def create_task(request):
 
     if request.method == "POST":
         if 'settings' in request.POST:
-            self_settings(request)
+            sl_message = self_settings(request, user)
         else:
             # 返回该任务详细信息页 /detail/tk Id
             task_class = request.POST.get('v')
@@ -605,7 +487,7 @@ def profile(request):
     )
 
     if request.method == 'POST' and 'settings' in request.POST:
-        self_settings(request)
+        sl_message = self_settings(request, user)
     return render(request, 'task_platform/profile.html', locals())
 
 
@@ -742,7 +624,7 @@ def chatroom(request, room_id):
 
     if request.method == 'POST':
         if 'settings' in request.POST:
-            self_settings(request)
+            sl_message = self_settings(request, user)
         elif 'send' in request.POST:
             new_message = request.POST.get('new_message')
             new_chatinfo = None

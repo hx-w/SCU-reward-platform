@@ -19,19 +19,22 @@ from .pay import AliPay
 os.path.abspath('../')
 import task_platform.models as task_models
 
-
+# 对username进行MD5哈希得到房间号
 @csrf_exempt
 def get_notice_room_id(username):
     md5 = hashlib.md5()
     md5.update(username.encode())
     return md5.hexdigest()
 
+# 以Admin的身份向username发送消息message
 @csrf_exempt
 def send_notice(username, message):
+    # 创建新的消息记录
     notice = task_models.Chatinfo.objects.create(room_id=get_notice_room_id(username))
     notice.sender = 'Admin'
     notice.message = message
     notice.save()
+    # 创建消息查看记录
     flag = task_models.ChatVision.objects.create(room_id=get_notice_room_id(username))
     flag.username = username
     flag.has_seen = False
@@ -60,7 +63,7 @@ def send_email(email, code):
 
     html_content = '''
                     <p>感谢注册<a href="http://{}/confirm/?code={}" target=blank>SCU-reward-platform</a></p>
-                    <p>这里是Gg四川大学任务悬赏平台注册系统</p>
+                    <p>这里是四川大学任务悬赏平台注册系统</p>
                     <p>请点击站点链接完成注册确认！</p>
                     <p>此链接有效期为{}天！</p>
                     '''.format('127.0.0.1:8000', code, settings.CONFIRM_DAYS)
@@ -79,7 +82,7 @@ def login(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         login_form = UserForm(request.POST)
-        message = "{}, 请检查填写的傻逼内容！fuck(from ltq)".format(username)
+        message = "{}, 请检查填写的内容！".format(username)
         if login_form.is_valid():
             try:
                 user = models.User.objects.get(name=username)
@@ -101,36 +104,6 @@ def login(request):
 
     login_form = UserForm()
     return render(request, 'login/login.html', locals())
-
-def page_login(request):
-    hashkey = CaptchaStore.generate_key()
-    imgage_url = captcha_image_url(hashkey)
-    if request.session.get('is_login',None):
-         return redirect('/')
-
-    if request.method == "POST":
-        # username = request.POST.get('username', '')
-        # password = request.POST.get('password', '')
-        login_form = UserForm(request.POST)
-        if login_form.is_valid():
-            try:
-                user = models.User.objects.get(name=username)
-                if not user.has_confirmed:
-                    message = '用户还未经过邮件确认！'
-                    return render(request, 'login/page-login.html', locals())
-                if user.password == hash_code(password):  # 哈希值和数据库内的值进行比对
-                    request.session['is_login'] = True
-                    request.session['user_id'] = user.id
-                    request.session['user_name'] = user.name
-                    user.save()
-                    return redirect('/')
-                else:
-                    message = "密码不正确！"
-            except:
-                message = "用户"+ username +"不存在" 
-            return render(request, 'login/page-login.html', locals())
-    login_form = UserForm()
-    return render(request, 'login/page-login.html', locals())
 
 def register(request):
     hashkey = CaptchaStore.generate_key()
@@ -184,66 +157,13 @@ def register(request):
                 send_email(email, code)
                 message = '请前往邮箱确认！'
                 return render(request, 'login/confirm.html') # 跳转确认页面
-                # return redirect('/login/')  # 自动跳转到登录页面
         else:
             message = '可能是验证码填写错误！'        
-    register_form = RegisterForm()
     return render(request, 'login/register.html', locals())
 
-def page_signup(request):
-    hashkey = CaptchaStore.generate_key()
-    imgage_url = captcha_image_url(hashkey)
-    if request.session.get('is_login', None):
-        # 登录状态不允许注册。你可以修改这条原则！
-        return redirect("/")
-
-    if request.method == "POST":
-        username = request.POST.get('username', '')
-        student_id = request.POST.get('student_id', '')
-        password1 = request.POST.get('password1', '')
-        password2 = request.POST.get('password2', '')
-        phone = request.POST.get('phone', '')
-        register_form = RegisterForm(request.POST)
-        message = "请检查填写的内容, "+username+"!"
-        if register_form.is_valid():  # 获取数据
-            message = "验证码对了， 但是请检查填写的内容！"
-            email = student_id + '@stu.scu.edu.cn' # SCU邮箱
-            if password1 != password2:  # 判断两次密码是否相同
-                message = "两次输入的密码不同！"
-                return render(request, 'login/page-signup.html', locals())
-            else:
-                same_name_user = models.User.objects.filter(name=username)
-                if same_name_user:  # 用户名唯一
-                    message = '用户已经存在，请重新选择用户名！'
-                    return render(request, 'login/page-signup.html', locals())
-                same_stu_id = models.User.objects.filter(stu_id=student_id)
-                if same_stu_id:   # 学号唯一
-                    message = '学生邮箱已被注册，请重新输入邮箱！'
-                    return render(request, 'login/page-signup.html', locals())
-                same_phone = models.User.objects.filter(phone=phone)
-                if same_phone:   # 学号唯一
-                    message = '手机号码已被注册，请重新输入学号！'
-                    return render(request, 'login/page-signup.html', locals())
-                # 当一切都OK的情况下，创建新用户
-                new_user = models.User.objects.create()
-                new_user.name = username
-                new_user.stu_id = student_id
-                new_user.password = hash_code(password1)  # 使用加密密码
-                new_user.phone = phone
-                new_user.save()
-
-                code = make_confirm_string(new_user)
-                send_email(email, code)
-                message = '请前往邮箱确认！'
-                return render(request, 'login/confirm.html') # 跳转确认页面
-        else:
-            message = 'something went wrong!'        
-    register_form = RegisterForm()
-    return render(request, 'login/page-signup.html', locals())
 
 def logout(request):
     if not request.session.get('is_login', None):
-        # 如果本来就未登录，也就没有登出一说
         return redirect("/")
     request.session.flush()
     # 或者使用下面的方法
@@ -276,6 +196,7 @@ def user_confirm(request):
         send_notice(confirm.user.name, '恭喜您，账号创建成功，开始您的赏金之旅吧！')
         return render(request, 'login/confirm.html', locals())
 
+# 充值赏金
 def recharge(request):
     if not request.session.get('user_name', None):
         return render(request, 'login/login.html', locals())
@@ -350,7 +271,7 @@ class AlipayView(object):
         sign = callback_data.pop('sign', None)
         self.order_sn = callback_data.get('out_trade_no', None) #订单号
         self.trade_no = callback_data.get('trade_no', None) #支付宝订单号
-        self.order_mount = Decimal(callback_data.get('total_amount', None)) # 
+        self.order_mount = Decimal(callback_data.get('total_amount', None)) # 订单金额
 
         # 验证签名
         self.verify = self.alipay.verify(callback_data, sign)
@@ -369,7 +290,7 @@ class AlipayView(object):
         sign = callback_data.pop('sign', None)
         self.order_sn = callback_data.get('out_trade_no', None) #订单号
         self.trade_no = callback_data.get('trade_no', None) #支付宝订单号
-        self.order_mount = float(callback_data.get('total_amount', None)) # 
+        self.order_mount = float(callback_data.get('total_amount', None))
         self.order.save()
         # 验证签名
         self.verify = self.alipay.verify(callback_data, sign)
@@ -387,7 +308,6 @@ class AlipayView(object):
             return float(rmb) * settings.EXCHANGE_RATE
         # 数据库中查询订单记录
         order = models.OrderInfo.objects.get(order_sn=self.order_sn)
-        # order = models.OrderInfo.objects.get(order_sn=self.order_sn)
         order.trade_no = self.trade_no
 
         # 把人民币转换成对应的金币

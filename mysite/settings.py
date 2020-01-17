@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'db.sqlite3',        #数据库名字
-        'USER': 'root',          #账号
-        'PASSWORD': '123456',      #密码
-        'HOST': "127.0.0.1",           #IP
-        'PORT': '3306',                   #端口
+        'NAME': 'db.sqlite3',        # 数据库名字
+        'USER': 'root',          # 账号
+        'PASSWORD': '123456',      # 密码
+        'HOST': "127.0.0.1",           # IP
+        'PORT': '3306',                   # 端口
     }
 }
 
@@ -133,7 +133,7 @@ CONFIRM_DAYS = 7
 
 # 富文本
 CKEDITOR_CONFIGS = {
-    'default' : {
+    'default': {
         'skin': 'moono-lisa',
         'width': 'auto',
         'height': 'auto',
@@ -157,16 +157,16 @@ ALIPAY_PUBLIC_KEY_PATH = './login/keys/alipay_key_2048.txt'
 ALIPAY_DEBUG = True
 # RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
 RETURN_URL = 'http://127.0.0.1:8000/alipay/return/'
-EXCHANGE_RATE = 1 #1 rmb = 1 * EXCHANGE_RATE reward
+EXCHANGE_RATE = 1  # 1 rmb = 1 * EXCHANGE_RATE reward
 PERCENTAGE = 0.05
-DEPOSIT = 5 # 5元押金
+DEPOSIT = 5  # 5元押金
 
 NIKENAMES = [
     '幻影刺客', '巨魔战将', '狙击手', '龙骑士', '混沌骑士', '魅惑魔女', '敌法师', '凤凰', '艾欧', '风行者'
 ]
 
 # 自动回复
-BACK_TIMEDELTA = 30 * 60 # 30 min
+BACK_TIMEDELTA = 30 * 60  # 30 min
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
