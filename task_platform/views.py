@@ -150,7 +150,7 @@ def detail(request, task_id):
                     for rec, money_ in rec_money.items():
                         check_deposit(publisher, float(money_) * (1 + percentage))
                         # 发送消息
-                        send_notice(rec, '您的报价已被接受，任务已经开始，请及时完成任务。如果需要与任务发布者沟通，请点击<a href="/chatroom/{}>任务聊天室</a>跳转该任务聊天室。祝您任务顺利！"'.format(get_room_id(task)))
+                        send_notice(rec, '您的报价已被接受，任务已经开始，请及时完成任务。如果需要与任务发布者沟通，祝您任务顺利！"'.format(get_room_id(task)))
                     exl_money_qs = user_task_list.exclude(username__in=rec_list).values_list('username', 'submit_money')
                     exl_money = dict(exl_money_qs)
                     for rec, money_ in exl_money.items():
@@ -566,7 +566,7 @@ def chatroom(request, room_id):
         _message = '<p>无内容</p>'
     _message = re.sub('<img.*/>', '[图片]', notice.message)
     task_chatinfo_list.insert(0, (get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
-
+    print('-----TEST-----', task_chatinfo_list)
     '''
     右侧聊天框
     '''
