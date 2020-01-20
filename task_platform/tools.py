@@ -5,7 +5,7 @@ import hashlib
 from decimal import Decimal
 from pathlib import Path
 from django.views.decorators.csrf import csrf_exempt
-from .models import Withdraw, ChatVision
+from .models import Withdraw, ChatVision, Chatinfo
 os.path.abspath('../')
 from login.models import User
 

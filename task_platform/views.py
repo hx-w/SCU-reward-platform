@@ -65,18 +65,17 @@ def index(request):
     # 主页 任务状态图标颜色
     finder = {
         '未开始': '9', '进行中': '2',
-        '中止': '3',   '撤销': '3', 
-        '超时': '3',   '完成': '4'
+        '中止': '3', '撤销': '3', 
+        '超时': '3', '完成': '4'
     }
     latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
         color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
-
-        tag_list.append(
-            (task, color,
+        tag_list.append((task, color,
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
 
     return render(request, 'task_platform/index.html', locals())
+
 
 def detail(request, task_id):
     '''
@@ -108,11 +107,11 @@ def detail(request, task_id):
     task_state = task.task_state
     task_class = task.task_class
 
-
-    sort_choice_list = (
-        '发布时间 最近', '发布时间 最远',
-        '报价 最低', '报价 最高'
-    )
+    # 代办
+    # sort_choice_list = (
+    #     '发布时间 最近', '发布时间 最远',
+    #     '报价 最低', '报价 最高'
+    # )
     is_publisher = True
     if username != publisher:
         publisher = '匿名用户：{}'.format(
@@ -127,13 +126,8 @@ def detail(request, task_id):
 
     # 判断超时
     def is_overtime(task):
-        return (
-            task.task_state == '进行中'
-            and timezone.now() > task.begin_time + timedelta(
-                0, # 天
-                float(task.expected_time_consuming) * 3600 # 秒
-            )
-        )
+        return (task.task_state == '进行中' and timezone.now() > task.begin_time + timedelta(
+                0, float(task.expected_time_consuming) * 3600 )) # 天 秒
 
     if request.method == 'POST':
         if 'settings' in request.POST: # 个人信息修改
@@ -149,7 +143,6 @@ def detail(request, task_id):
                 return render(request, 'task_platform/detail.html', locals())
             else:
                 # 支付逻辑实现 and 未接受报价回退
-                # rec_list = list(rec[:-1] for rec in rec_list)
                 rec_money = dict(zip(rec_list, map(lambda rec: user_task_list.get(username=rec).submit_money, rec_list)))
                 if user.money < float(sum(rec_money.values())) * (1 + percentage):
                     redirect('/recharge/')
@@ -186,6 +179,7 @@ def detail(request, task_id):
                 new_chatinfo = Chatinfo.objects.create(task_id=task.id)
                 new_chatinfo.room_id = get_room_id(task)
                 new_chatinfo.sender = 'Admin'
+                new_chatinfo.message = '任务已开始，可以与任务参与者进行沟通，但是不要透露过多隐私信息，以防诈骗。'
                 new_chatinfo.save()
                 send_notice(username, '恭喜你，任务已开始，请留意新的通知！')
                 return redirect('/profile/')
@@ -492,12 +486,15 @@ def profile(request):
 
 
 def chatroom(request, room_id):
-    chatinfo_list = Chatinfo.objects.filter(room_id=room_id).order_by('send_time')
-    if chatinfo_list.count() == 0:
-        return redirect('/profile/')
+    # 判断用户是否登录
     username = request.session.get('user_name', None)
     if not username:
         return redirect('/login/')
+    # 判断聊天室是否存在
+    chatinfo_list = Chatinfo.objects.filter(room_id=room_id).order_by('send_time')
+    if chatinfo_list.count() == 0:
+        return redirect('/profile/')
+    
     user = User.objects.get(name=username)
     student_id = user.stu_id
     phone = user.phone
@@ -506,16 +503,10 @@ def chatroom(request, room_id):
     rec_list = None
     if user.dept == 'None':
         dept = '暂无信息'
-    has_seen = ChatVision.objects.filter(room_id=room_id, username=username)
-    for has in has_seen:
-        has.has_seen = True
-        has.save()
+    # 信息已经浏览
+    ChatVision.objects.filter(room_id=room_id, username=username).update(has_seen=True)
     # 检查是否是通知房间
     if get_notice_room_id(username) == room_id:
-        has_seen = ChatVision.objects.filter(room_id=room_id, username=username)
-        for each_ in has_seen:
-            each_.has_seen = True
-            each_.save()
         # 右侧聊天框
         task_description = '您的通知'
         tot_people_num = 1
@@ -529,6 +520,7 @@ def chatroom(request, room_id):
     else:
         # 找出当前task
         task = Task.objects.get(id=chatinfo_list.first().task_id)
+        # 已经结束的任务无法聊天
         if task.task_state != '进行中':
             return redirect('/profile/')
         nikename = '发布者:{}(你自己)'.format('天辉')
