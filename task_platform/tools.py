@@ -114,3 +114,6 @@ def check_deposit(username, money, swicth_=True):
             user.money -= Decimal.from_float(money)
             user.save()
         return True
+
+def task_search(info):
+    print (info)

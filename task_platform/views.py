@@ -59,6 +59,7 @@ def index(request):
         if user.dept == 'None':
             dept = '暂无信息'
         # 更改个人信息
+        print(request.GET)
         if request.method == 'POST':
             sl_message = self_settings(request, user)
         
@@ -554,6 +555,7 @@ def chatroom(request, room_id):
         # 对于信息进行缩略处理 图片压缩
         if _latest_message:
             _latest_message = re.sub('<img.*/>', '[图片]', _latest_message)
+            _latest_message = re.sub('<a.*?</a>', '<链接>', _latest_message)
         else:
             _latest_message = '<p>无内容</p>'
         task_chatinfo_list.append((get_room_id(_task), _task.task_description, _latest_message, _latest_send_time))
@@ -566,7 +568,6 @@ def chatroom(request, room_id):
         _message = '<p>无内容</p>'
     _message = re.sub('<img.*/>', '[图片]', notice.message)
     task_chatinfo_list.insert(0, (get_notice_room_id(username), '您的通知', _message, notice.send_time.strftime('%m-%d %H:%M:%S')))
-    print('-----TEST-----', task_chatinfo_list)
     '''
     右侧聊天框
     '''
@@ -632,14 +633,12 @@ def chatroom(request, room_id):
                 if username == task.id:
                     for rec in rec_list:
                         chatvision = ChatVision.objects.create(room_id=room_id, has_seen=False, username=rec.username)
-                        chatvision.save()
                 else:
                     chatvision = ChatVision.objects.create(room_id=room_id, has_seen=False, username=task.publisher)
                     chatvision.save()
                     for rec in rec_list:
                         if rec.username != username:
                             chatvision = ChatVision.objects.create(room_id=room_id, has_seen=False, username=rec.username)
-                            chatvision.save()
             else:
                 #管理员功能
                 admin_sender = Admin_Sender()
