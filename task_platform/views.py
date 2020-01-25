@@ -59,17 +59,22 @@ def index(request):
         if user.dept == 'None':
             dept = '暂无信息'
         # 更改个人信息
-        print(request.GET)
         if request.method == 'POST':
             sl_message = self_settings(request, user)
-        
+        # 搜索
+        search_message = request.GET.get('search', None)
+        if search_message:
+            latest_task_list = task_search(request, search_message)
+
     # 主页 任务状态图标颜色
     finder = {
         '未开始': '9', '进行中': '2',
         '中止': '3', '撤销': '3', 
         '超时': '3', '完成': '4'
     }
-    latest_task_list = Task.objects.order_by('-pub_time')
+
+    if not search_message:
+        latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
         color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
         tag_list.append((task, color,

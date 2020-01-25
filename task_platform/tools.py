@@ -5,7 +5,8 @@ import hashlib
 from decimal import Decimal
 from pathlib import Path
 from django.views.decorators.csrf import csrf_exempt
-from .models import Withdraw, ChatVision, Chatinfo
+from django.shortcuts import render
+from .models import Withdraw, ChatVision, Chatinfo, Task
 os.path.abspath('../')
 from login.models import User
 
@@ -115,5 +116,10 @@ def check_deposit(username, money, swicth_=True):
             user.save()
         return True
 
-def task_search(info):
-    print (info)
+
+def task_search(request, info):
+    '''
+    实现任务简单搜索功能，只实现搜索任务简介内容
+    '''
+    info = info.strip()
+    return Task.objects.filter(task_description__contains=info).order_by('-pub_time')
