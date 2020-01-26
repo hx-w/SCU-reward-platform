@@ -104,6 +104,9 @@ def search(request):
     latest_task_list = Task.objects.filter(task_description__contains=info).order_by('-pub_time')
     for task in latest_task_list:
         color = 'tt-color0{} tt-badge'.format(finder[task.task_state])
+        task.task_description = re.sub(
+            info, ''.join(['<mark>', info, '</mark>']), task.task_description
+        )
         tag_list.append((task, color,
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
 

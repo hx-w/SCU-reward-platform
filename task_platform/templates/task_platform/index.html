@@ -44,7 +44,7 @@
                 <use xlink:href="#icon-locked"></use>
               </svg>
               {% endif %}
-              {{ task.task_description }}
+              {{ task.task_description | safe }}
                         </a></h6>
           <div class="row align-items-center no-gutters">
             <div class="col-11">
