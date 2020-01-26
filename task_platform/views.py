@@ -61,10 +61,6 @@ def index(request):
         # 更改个人信息
         if request.method == 'POST':
             sl_message = self_settings(request, user)
-        # 搜索
-        search_message = request.GET.get('search', None)
-        if search_message:
-            latest_task_list = task_search(request, search_message)
 
     # 主页 任务状态图标颜色
     finder = {
@@ -73,10 +69,41 @@ def index(request):
         '超时': '3', '完成': '4'
     }
 
-    if not search_message:
-        latest_task_list = Task.objects.order_by('-pub_time')
+    latest_task_list = Task.objects.order_by('-pub_time')
     for task in latest_task_list:
         color = 'tt-color0{} tt-badge'.format(finder[task.task_state]) 
+        tag_list.append((task, color,
+             Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
+
+    return render(request, 'task_platform/index.html', locals())
+
+def search(request):
+    username = request.session.get('user_name', None)
+    # 初始化变量
+    tag_list = []
+    if username:
+        user = User.objects.get(name=username)
+        student_id = user.stu_id
+        phone = user.phone
+        dept = user.dept
+        notice_room = '/chatroom/{}'.format(get_notice_room_id(username))
+        notice_num = chatinfo_num(username)
+        if user.dept == 'None':
+            dept = '暂无信息'
+        # 更改个人信息
+        if request.method == 'POST':
+            sl_message = self_settings(request, user)
+
+    # 主页 任务状态图标颜色
+    finder = {
+        '未开始': '9', '进行中': '2',
+        '中止': '3', '撤销': '3', 
+        '超时': '3', '完成': '4'
+    }
+    info = request.GET.get('search').strip()
+    latest_task_list = Task.objects.filter(task_description__contains=info).order_by('-pub_time')
+    for task in latest_task_list:
+        color = 'tt-color0{} tt-badge'.format(finder[task.task_state])
         tag_list.append((task, color,
              Task_tags.objects.filter(task_id=task.id).order_by('sig_tag')))
 

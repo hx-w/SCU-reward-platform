@@ -115,11 +115,3 @@ def check_deposit(username, money, swicth_=True):
             user.money -= Decimal.from_float(money)
             user.save()
         return True
-
-
-def task_search(request, info):
-    '''
-    实现任务简单搜索功能，只实现搜索任务简介内容
-    '''
-    info = info.strip()
-    return Task.objects.filter(task_description__contains=info).order_by('-pub_time')
