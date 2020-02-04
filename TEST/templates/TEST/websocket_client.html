@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="/static/js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            // 点击连接websocket按钮，则启动访问websocket
+            $('#connect_websocket').click(function () {
+
+                if(window.s){
+                    window.s.close()
+                }
+
+                // 设置websocket的服务端url
+                var s = new WebSocket("ws://" + window.location.host + "/test_websocket");
+
+                // 打开连接websocket服务，连接成功则打印信息
+                s.onopen = function () {
+                    console.log('WebSocket open');//成功连接上Websocket
+                };
+
+                // 接收服务端发送过来的数据，在浏览器上刷新
+                s.onmessage = function (e) {
+                    console.log('message: ' + e.data);//打印出服务端返回过来的数据
+                    $('#messagecontainer').prepend('<p>' + e.data + '</p>');
+                };
+
+                window.s = s;
+            });
+
+            // 点击发送消息按钮，则通过websocket发送数据至服务端
+            $('#send_message').click(function () {
+                if (!window.s) {
+                    alert("Please connect server.");
+                } else {
+                    window.s.send($('#message').val());//通过websocket发送数据
+                }
+            });
+
+            // 点击关闭websocket连接
+            $('#close_websocket').click(function () {
+                if (window.s) {
+                    window.s.close();//关闭websocket
+                    console.log('websocket is closed!');
+                }
+            });
+
+        });
+    </script>
+</head>
+<body>
+
+    <input type="text" id="message" value="Open websocket!" />
+    <button type="button" id="connect_websocket">连接websocket</button>
+    <button type="button" id="send_message">发送 message</button>
+    <button type="button" id="close_websocket">关闭websocket</button>
+    <h1>Received Messages</h1>
+    <div id="messagecontainer"></div>
+
+</body>
+</html>

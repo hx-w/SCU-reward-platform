@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'task_platform.apps.TaskPlatformConfig',
+    'TEST.apps.TestConfig',
     'captcha',
     'ckeditor',
     'ckeditor_uploader',
@@ -176,3 +177,9 @@ STATIC_ROOT = os.path.join(os.path.join(BASE_DIR, '/static/'))
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+import dwebsocket
+
+MIDDLEWARE_CLASSES = ['dwebsocket.middleware.WebSocketMiddleware']
+
+WEBSOCKET_ACCEPT_ALL = True
