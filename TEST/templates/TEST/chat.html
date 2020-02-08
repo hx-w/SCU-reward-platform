@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="zh">
+<head>
+    <link href="{% static 'css/bootstrap-4.3.1.css' %}" rel="stylesheet">
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        td {
+            border: 1px #000 solid;
+            margin: 0;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body style="padding: 30px">
+<span id="userid">我的随机账号：</span>
+<table>
+    <tr>
+        <td style="width: 500px;">
+            <div id="historymsg" style="height: 400px;overflow: auto"></div>
+        </td>
+        <td style="width: 400px">
+            <div id="userlist" style="height: 400px;overflow: auto"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <textarea id="msg"></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <select class="form-control" id="isgroup">
+            </select>
+            <input class="btn btn-info btn-block" type="button" onclick="send()" value="发送">
+        </td>
+    </tr>
+</table>
+<!--脚本开始-->
+<script>
+var ws,myid;
+    window.onload = function () {
+        //先判断浏览器是否支持websocket
+        if ("WebSocket" in window) {
+            // 打开一个 web socket,链接服务器
+            ws = new WebSocket("ws://" + window.location.host + "/chat/");
+            ws.onopen = function () {
+                // Web Socket 已连接上，使用 send() 方法尝试发送数据
+                ws.send("test");
+            };
+            //监听服务端是否有消息发送过来，当有消息时执行方法
+            ws.onmessage = function (evt) {
+                //获取服务器发来的消息
+                var received_msg = evt.data;
+                //判断是返回的是消息还是用户列表和id，1是消息，0是用户列表和id
+                msg = eval("(" + received_msg + ")")
+                //用户列表和id
+                if (msg.type == 0) {
+                    //userid为空表示更新用户列表,不需要更新自己的id，否则为初次登录
+                    if (msg.userid != null) {
+                        myid = msg.userid
+                        $("#userid").append(myid)
+                    }
+                    //当收到新的用户列表时，清空原来的用户列表,清空原来的用户选择框,添加群组发送选项
+                    $("#userlist").empty()
+                    $("#isgroup").empty()
+                    $("#isgroup").append("<option value='1'>群发（或选择要私聊的用户）</option>")
+                    for (var i = 0; i < msg.userlist.length; i++) {
+                        //填充用户列表
+                        $("#userlist").append(msg.userlist[i] + "<hr />")
+                        //填充用户选择框
+                        $("#isgroup").append("<option value='" + msg.userlist[i] + "'>" + msg.userlist[i] + "</option>")
+                    }
+                }
+                //用户发送的消息
+                else {
+                    var myDate = new Date();
+                    nowtime = myDate.toLocaleString(); //获取日期与时间
+                    newmsg = ""
+                    //判断是自己的消息，绿色显示
+                    if (myid == msg.data.user) {
+                        newmsg = "<span style='color:blue'>" + msg.data.user + ":" + nowtime + "<br />" + msg.data.msg + "</span>" + "<br />"
+                    } else {
+                        newmsg = "<span >" + msg.data.user + ":" + nowtime + "<br />" + msg.data.msg + "</span>" + "<br />"
+                    }
+                    $("#historymsg").append(
+                        newmsg
+                    )
+                }
+            };
+            //关闭页面或其他行为导致与服务器断开链接是执行
+            ws.onclose = function () {
+                // 关闭 websocket
+                alert("连接已关闭...");
+            };
+        } else {
+            // 浏览器不支持 WebSocket
+            alert("您的浏览器不支持 WebSocket!");
+        }
+    }
+    //消息发送
+    function send() {
+        msgtxt = $("#msg").val()
+        msguser = $("#isgroup").val()
+        //判断是否是群发0是，不是0 则是私聊
+        if ($("#isgroup").val() == "1") {
+            msg = {
+                type: "1",
+                txt: msgtxt,
+                userfrom: myid
+            }
+        } else {
+            msg = {
+                type: "0",
+                txt: msgtxt,
+                userto: msguser,
+                userfrom: myid
+            }
+        }
+        //发送消息后清空消息框，并定位到消息框内
+        $.post("/msg_send/", msg, function () {
+            $("#msg").val("")
+            $("#msg").focus()
+        })
+    }
+</script>
+<!--脚本结束-->
+</body>
+</html>
