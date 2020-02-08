@@ -31,7 +31,7 @@
 ---------------------------------------*/
 /* Colors */
 /*-------  1.1 Bootstrap  --------*/
-@import url("https://fonts.googleapis.com/css?family=Krub:400,500,600");
+/* @import url("https://fonts.googleapis.com/css?family=Krub:400,500,600"); */
 /* Bootstrap variables */
 /* Colors */
 /* Grid */
@@ -43,7 +43,6 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md)
  */
-@import url(../../node_modules/magnific-popup/dist/magnific-popup.css);
 *,
 *::before,
 *::after {
@@ -3375,7 +3374,7 @@ html {
     margin-left: auto !important; } }
 
 /*-------  1.2 Magnific Popup  --------*/
-.mfp-gallery button {
+/* .mfp-gallery button {
   outline: none; }
 
 .mfp-with-zoom .mfp-container,
@@ -3393,7 +3392,7 @@ html {
 
 .mfp-with-zoom.mfp-removing .mfp-container,
 .mfp-with-zoom.mfp-removing.mfp-bg {
-  opacity: 0; }
+  opacity: 0; } */
 
 /*-------  1.3 Perfect scrollbar  --------*/
 /* perfect-scrollbar v0.6.10 */
@@ -3678,7 +3677,6 @@ textarea:focus:-ms-input-placeholder {
         position: relative;
         display: block;
         pointer-events: none;
-        content: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTMiIHZpZXdCb3g9IjAgMCAxNiAxMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgNS4xNjY2N0w2LjM4NDYyIDExTDE1IDEiIHN0cm9rZT0iIzE4MjczMCIgc3Ryb2tlLXdpZHRoPSIxLjYiLz4KPC9zdmc+Cg==");
         left: 5px;
         top: 7px; }
     .checkbox-group label .tt-text {
@@ -3749,7 +3747,6 @@ select:disabled.simple-control::-ms-expand {
     background: #ffffff; }
   .custom-select-01::after {
     content: "";
-    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 23.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E%3Csvg version='1.1' id='Layer_25' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 81 45' style='enable-background:new 0 0 81 45;' xml:space='preserve'%3E%3Cstyle type='text/css'%3E .st0%7Bfill:%23666F74;%7D%0A%3C/style%3E%3Cg%3E%3Cpath class='st0' d='M40.5,45c-1.15,0-2.3-0.44-3.18-1.32l-36-36c-1.76-1.76-1.76-4.61,0-6.36c1.76-1.76,4.61-1.76,6.36,0 L40.5,34.13L73.32,1.32c1.76-1.76,4.61-1.76,6.36,0c1.76,1.76,1.76,4.61,0,6.36l-36,36C42.8,44.56,41.65,45,40.5,45z'/%3E%3C/g%3E%3C/svg%3E%0A");
     width: 12px;
     height: 7px;
     line-height: 1;
@@ -4889,7 +4886,6 @@ hr {
     border-bottom: 1px solid #e2e7ea;
     margin-bottom: 15px; }
   .panel-menu .mm-prev-level:before {
-    content: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 8L3.43431 7.43431L2.86863 8L3.43431 8.56569L4 8ZM10.4343 0.434315L3.43431 7.43431L4.56569 8.56569L11.5657 1.56569L10.4343 0.434315ZM3.43431 8.56569L10.4343 15.5657L11.5657 14.4343L4.56569 7.43431L3.43431 8.56569Z' fill='%23666f74'/%3E%3C/svg%3E%0A");
     padding-right: 10px;
     position: relative;
     top: 2px;
@@ -4904,7 +4900,6 @@ hr {
     color: #182730;
     background-color: transparent; }
   .panel-menu .mm-next-level:after {
-    content: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 1L11 8L4 15' stroke='%23666f74' stroke-width='1.6'/%3E%3C/svg%3E%0A");
     padding-left: 10px;
     top: 10px;
     right: 30px;
@@ -5983,17 +5978,12 @@ hr + .row-object-inline {
       right: 20px;
       -webkit-transition: 0.2s linear;
       transition: 0.2s linear; }
-    .modal .close:before {
-      content: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjQzNDMgMC40MzQzMTVMMC40MzQzMTUgMTQuNDM0M0wxLjU2NTY5IDE1LjU2NTdMMTUuNTY1NyAxLjU2NTY5TDE0LjQzNDMgMC40MzQzMTVaTTAuNDM0MzE1IDEuNTY1NjlMMTQuNDM0MyAxNS41NjU3TDE1LjU2NTcgMTQuNDM0M0wxLjU2NTY5IDAuNDM0MzE1TDAuNDM0MzE1IDEuNTY1NjlaIiBmaWxsPSIjRDBEMEQwIi8+Cjwvc3ZnPgo="); }
     .modal .close:after {
-      content: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjQzNDMgMC40MzQzMTVMMC40MzQzMTUgMTQuNDM0M0wxLjU2NTY5IDE1LjU2NTdMMTUuNTY1NyAxLjU2NTY5TDE0LjQzNDMgMC40MzQzMTVaTTAuNDM0MzE1IDEuNTY1NjlMMTQuNDM0MyAxNS41NjU3TDE1LjU2NTcgMTQuNDM0M0wxLjU2NTY5IDAuNDM0MzE1TDAuNDM0MzE1IDEuNTY1NjlaIiBmaWxsPSIjMzMzMzMzIi8+Cjwvc3ZnPgo=");
       opacity: 0; }
     .modal .close:hover:before {
       opacity: 0; }
     .modal .close:hover:after {
       opacity: 1; }
-    .modal .close.pt-color-white:before {
-      content: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjQzNDMgMC40MzQzMTVMMC40MzQzMTUgMTQuNDM0M0wxLjU2NTY5IDE1LjU2NTdMMTUuNTY1NyAxLjU2NTY5TDE0LjQzNDMgMC40MzQzMTVaTTAuNDM0MzE1IDEuNTY1NjlMMTQuNDM0MyAxNS41NjU3TDE1LjU2NTcgMTQuNDM0M0wxLjU2NTY5IDAuNDM0MzE1TDAuNDM0MzE1IDEuNTY1NjlaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K"); }
   .modal .modal-header {
     border: none; }
   .modal .modal-content {
@@ -6701,7 +6691,6 @@ html.ie.gecko body.modal-open {
     width: 100%;
     height: auto; }
   .tt-gallery-obj:before {
-    content: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAyMy4wLjEsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfNDgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMTQ0IDkwIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAxNDQgOTA7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+DQoJLnN0MHtmaWxsOiNmZmZmZmY7fQ0KPC9zdHlsZT4NCjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik03MiwwQzMyLjI0LDAsMCwzNiwwLDQ1czMyLjI0LDQ1LDcyLDQ1czcyLTM2LDcyLTQ1UzExMS43NiwwLDcyLDB6IE03Miw3MmMtMTQuOTEsMC0yNy0xMi4wOS0yNy0yNw0KCWMwLTE0LjkxLDEyLjA5LTI3LDI3LTI3YzE0LjkxLDAsMjcsMTIuMDksMjcsMjdDOTksNTkuOTEsODYuOTEsNzIsNzIsNzJ6Ii8+DQo8L3N2Zz4NCg==");
     display: block;
     top: 50%;
     left: 50%;
