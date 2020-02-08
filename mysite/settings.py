@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'login.apps.LoginConfig',
     'task_platform.apps.TaskPlatformConfig',
-    'TEST.apps.TestConfig',
+    'chatroom.apps.ChatroomConfig',
     'captcha',
     'ckeditor',
     'ckeditor_uploader',

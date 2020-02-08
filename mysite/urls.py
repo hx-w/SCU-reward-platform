@@ -23,7 +23,7 @@ urlpatterns = [
     path('', include('login.urls')),
     path('captcha/', include('captcha.urls')),
     path('', include('task_platform.urls')),
-    path('', include('TEST.urls')),
+    path('', include('chatroom.urls')),
     path('admin/', admin.site.urls),
     path('ckeditor/', include(ckeditor_uploader_urls)),
 ]
