@@ -13,6 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/chatroom.css' %}">
+    <script src="{% static 'js/chat.js' %}"></script>
 </head>
 
 <body>
@@ -55,13 +56,12 @@
             </div>
 
             <div id="scroll_div" class="tt-list-time-topic" style="height:380px;overflow:auto;">
-              <div class="tt-item" style="margin-bottom:380;">
+              <div name="scroll_div" class="tt-item" >
                 <div class="tt-col-description" style="padding:0 0 0 0px;">
                   <span style="margin:0px" id='historymsg'></span>
                 </div>
               </div>
             </div>
-
 
             <div class="tt-wrapper-inner">
               <div class="form-group">
@@ -102,12 +102,6 @@
 </body>
 
 <!--脚本开始-->
-{% comment %} <script type="text/javascript">
-    $(document).ready(function(){
-      $('#scroll_div').scrollTop($('#scroll_div')[0].scrollHeight);
-    });
-</script>  {% endcomment %}
-<script src="{% static 'js/chat.js' %}"></script>
 <!--脚本结束-->
 
 {% endblock %}

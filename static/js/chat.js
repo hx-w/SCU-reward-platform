@@ -70,5 +70,8 @@ function send() {
     // 将光标移至最末
     editor.focus();
     editor.setData('');
+
+    // 滚动条置底
+    $("#scroll_div").scrollTop($("#scroll_div")[0].scrollHeight);
   })
 }
