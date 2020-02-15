@@ -67,7 +67,8 @@ function send() {
   //发送消息后清空消息框，并定位到消息框内
   $.post("/msg_send/", msg, function () {
     var editor = CKEDITOR.instances.msg;
-    editor.setData('');
+    // 将光标移至最末
     editor.focus();
+    editor.setData('');
   })
 }

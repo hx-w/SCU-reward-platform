@@ -102,11 +102,11 @@
 </body>
 
 <!--脚本开始-->
-<script type="text/javascript">
+{% comment %} <script type="text/javascript">
     $(document).ready(function(){
       $('#scroll_div').scrollTop($('#scroll_div')[0].scrollHeight);
     });
-</script> 
+</script>  {% endcomment %}
 <script src="{% static 'js/chat.js' %}"></script>
 <!--脚本结束-->
 
