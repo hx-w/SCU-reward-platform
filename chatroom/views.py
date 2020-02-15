@@ -56,7 +56,6 @@ def msg_send(request):
     msg = request.POST.get("txt")
     useridfrom = request.POST.get("userfrom")
     ########## 过滤信息 ###########
-
     ##############################
     for client in clients:
         # type=1表示有信息到来 更新聊天框
