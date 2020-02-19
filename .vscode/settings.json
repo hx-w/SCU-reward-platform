@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "D:/Python/python",
+    "python.pythonPath": "D:\\Python\\python.exe",
     "python.linting.pylintPath": "D:/Python/Scripts/pylint",
     "python.formatting.provider": "yapf",
     "python.linting.enabled": false,

@@ -1,8 +1,9 @@
 import json
 import uuid
-from dwebsocket.decorators import accept_websocket,require_websocket
-from django.shortcuts import render, HttpResponse, redirect
+
+from django.shortcuts import HttpResponse, redirect, render
 from django.views.decorators.csrf import csrf_exempt
+from dwebsocket.decorators import accept_websocket, require_websocket
 
 # 维护当前在线用户信息
 clients = {}

@@ -1,23 +1,29 @@
 # -*- coding: utf-8 -*-
-import time
+import base64
 import os
 import random
 import re
-import base64
+import time
+from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
-from datetime import timedelta
-from django.utils import timezone
-from django.shortcuts import render, get_object_or_404, redirect, Http404, HttpResponse
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+
 from django.conf import settings
-from .models import Task, Task_tags, User_task, Task_receive, Chatinfo, ChatVision 
-from task_platform.admin_sender import Admin_Sender
-os.path.abspath('../')
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import (Http404, HttpResponse, get_object_or_404,
+                              redirect, render)
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+
 from login.models import User
+from task_platform.admin_sender import Admin_Sender
+
+from .models import (Chatinfo, ChatVision, Task, Task_receive, Task_tags,
+                     User_task)
 from .tools import *
+
+os.path.abspath('../')
 
 
 @csrf_exempt

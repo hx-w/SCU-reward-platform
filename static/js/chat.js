@@ -37,12 +37,12 @@ window.onload = function () {
         //判断是自己的消息，绿色显示
         if (myid == msg.data.user) {
           newmsg = "<span style='color:blue'>" + msg.data.user + ":" + nowtime + "<br />" + msg.data.msg + "</span>" + "<br />"
+          $("historymsgRight").append(newmsg);
         } else {
           newmsg = "<span >" + msg.data.user + ":" + nowtime + "<br />" + msg.data.msg + "</span>" + "<br />"
+          $("historymsgLeft").append(newmsg);
         }
-        $("#historymsg").append(
-          newmsg
-        )
+        $("historymsg").append(newmsg);
       }
     };
     //关闭页面或其他行为导致与服务器断开链接是执行
